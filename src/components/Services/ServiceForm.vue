@@ -29,9 +29,7 @@
         <v-col cols="12" lg="6">
           <CurrencyInput v-model="model.value" label="Valor" required />
         </v-col>
-        <v-col cols="12" lg="6">
-          <TransactionPaymentFormSelect v-model="model.paymentForm" required />
-        </v-col>
+        <v-col cols="12" lg="6"> </v-col>
         <v-col cols="12" lg="6">
           <v-checkbox
             v-model="model.fixed"

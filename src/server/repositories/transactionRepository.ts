@@ -9,6 +9,7 @@ export const index = async (input: {
   status?: string;
 }) => {
   const { finalDate, initialDate, userId, status } = input;
+  console.log("🚀 ~ input:", input);
 
   const gte = initialDate ? new Date(String(initialDate)) : new Date();
   const lte = finalDate ? new Date(String(finalDate)) : new Date();
@@ -27,6 +28,7 @@ export const index = async (input: {
       fixed: true,
       portion: true,
       status: true,
+      paymentMethod: true,
       Category: {
         select: {
           color: true,
@@ -56,7 +58,7 @@ export const create = async ({
   emisstionDate,
   fixed,
   title,
-  paymentForm,
+  paymentMethod,
   portion,
   portionTotal,
   type,
@@ -75,7 +77,7 @@ export const create = async ({
         portionTotal: portionTotal!,
         type: type as TransactionType,
         userId: userId!,
-        paymentMethod: paymentForm as TransactionPaymentMethod,
+        paymentMethod: paymentMethod as TransactionPaymentMethod,
       },
     });
   } catch (error) {
@@ -94,7 +96,7 @@ export const update = async ({
   emisstionDate,
   fixed,
   title,
-  paymentForm,
+  paymentMethod,
   type,
 }: TransactionProps) => {
   const transaction = await exists(publicId!);
@@ -108,7 +110,7 @@ export const update = async ({
         fixed: fixed!,
         title: String(title),
         type: type as TransactionType,
-        paymentMethod: paymentForm as TransactionPaymentMethod,
+        paymentMethod: paymentMethod as TransactionPaymentMethod,
       },
       where: {
         id: transaction.id,
@@ -158,6 +160,7 @@ const exists = async (publicId: string) => {
       fixed: true,
       portion: true,
       status: true,
+      paymentMethod: true,
       Category: {
         select: {
           color: true,

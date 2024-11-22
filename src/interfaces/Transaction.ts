@@ -12,9 +12,15 @@ export interface TransactionProps {
   fixed?: boolean;
   type?: string;
   publicId?: string;
-  paymentForm?: string;
+  paymentMethod?: string;
   createdAt?: string;
   updatedAt?: string;
   Category?: CategoryProps;
   User?: UserProps;
+}
+
+export interface TransactionsFilterProps {
+  initialDate?: string;
+  finalDate?: string;
+  status?: string;
 }

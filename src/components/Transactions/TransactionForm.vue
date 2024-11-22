@@ -30,7 +30,7 @@
           <CurrencyInput v-model="model.value" label="Valor" required />
         </v-col>
         <v-col cols="12" lg="6">
-          <TransactionPaymentFormSelect v-model="model.paymentForm" required />
+          <PaymentMethodSelect v-model="model.paymentMethod" required />
         </v-col>
         <v-col cols="12" lg="6">
           <v-checkbox
@@ -66,6 +66,9 @@ import moment from "moment";
 import { useForm } from "vee-validate";
 
 const { handleReset } = useForm();
+const { amountFormated } = useUtils();
+const transactionStore = useTransactionStore();
+
 const props = defineProps({
   data: {
     type: Object as PropType<TransactionProps>,
@@ -77,15 +80,16 @@ const drawer = defineModel({
 });
 
 const model = ref({
-  id: 0,
+  publicId: "",
   type: "",
-  paymentForm: "",
+  paymentMethod: "",
   Category: undefined as CategoryProps | undefined,
   emission: moment().format("YYYY-MM-DD"),
   due: moment().add(30, "days").format("YYYY-MM-DD"),
   name: "",
   value: "",
   portions: "1",
+  status: "A",
   isPortions: false,
   fixed: false,
 });
@@ -93,7 +97,7 @@ const model = ref({
 watch(
   () => drawer.value,
   () => {
-    if (props.data.id && drawer.value) {
+    if (props.data.publicId && drawer.value) {
       loadModel();
     }
   }
@@ -101,16 +105,17 @@ watch(
 
 const loadModel = () => {
   model.value = {
-    id: props.data.id!,
+    publicId: props.data.publicId!,
     type: props.data.type!,
-    paymentForm: props.data.paymentForm!,
+    paymentMethod: props.data.paymentMethod!,
     Category: props.data.Category,
     emission: moment(props.data.emisstionDate).format("YYYY-MM-DD"),
     due: moment(props.data.dueDate).format("YYYY-MM-DD"),
-    name: props.data.name!,
-    value: props.data.amount!.toString(),
-    portions: props.data.portionTotal!.toString() ?? "1",
+    name: props.data.title!,
+    value: amountFormated(props.data.amount!, false),
+    portions: "1", //props.data.portionTotal!.toString() ?? "1",
     isPortions: false,
+    status: props.data.status!,
     fixed: props.data.fixed ?? false,
   };
 };
@@ -135,7 +140,7 @@ const validations = () => {
 
 const clearModel = () => {
   model.value = {
-    id: 0,
+    publicId: "",
     type: "",
     Category: undefined,
     emission: moment().format("YYYY-MM-DD"),
@@ -143,9 +148,10 @@ const clearModel = () => {
     name: "",
     value: "",
     portions: "1",
-    paymentForm: "",
+    paymentMethod: "",
     isPortions: false,
     fixed: false,
+    status: "A",
   };
 };
 
@@ -158,8 +164,49 @@ const handleDrawerModelValue = (value: boolean) => {
 
 const handleSubmit = async () => {
   if (!validations()) return;
+  try {
+    if (props.data.publicId) {
+      await update();
+    } else {
+      await create();
+    }
+    clearModel();
+    drawer.value = false;
+  } catch (error) {
+    console.error(error);
+  }
+};
 
-  clearModel();
-  drawer.value = false;
+const create = async () => {
+  await transactionStore.create({
+    amount: parseFloat(model.value.value),
+    categoryId: model.value.Category?.id!,
+    dueDate: model.value.due,
+    fixed: model.value.fixed,
+    emisstionDate: model.value.emission,
+    paymentMethod: model.value.paymentMethod,
+    title: model.value.name,
+    type: model.value.type,
+    status: model.value.status,
+    portionTotal: parseInt(model.value.portions),
+    portion: 1,
+  });
+};
+
+const update = async () => {
+  await transactionStore.update({
+    publicId: props.data.publicId!,
+    amount: parseFloat(model.value.value),
+    categoryId: model.value.Category?.id!,
+    dueDate: model.value.due,
+    fixed: model.value.fixed,
+    emisstionDate: model.value.emission,
+    paymentMethod: model.value.paymentMethod,
+    title: model.value.name,
+    type: model.value.type,
+    status: model.value.status,
+    // portionTotal: parseInt(model.value.portions),
+    // portion: 1,
+  });
 };
 </script>

@@ -7,7 +7,11 @@
             <Logo height="40" />
 
             <!-- <Logo v-else height="30" /> -->
-            <v-tabs v-model="tab" color="green">
+            <v-tabs
+              v-model="tab"
+              color="green"
+              @update:model-value="handleTabs"
+            >
               <v-tab
                 v-for="item in menuItens"
                 :key="item.id"
@@ -95,11 +99,13 @@
 </template>
 
 <script setup lang="ts">
+import moment from "moment";
 import { useDisplay } from "vuetify";
 const route = useRouter();
 const { user, clear } = useUserSession();
 const { api } = useAxios();
 const { mobile } = useDisplay();
+const transactionStore = useTransactionStore();
 
 const menuItens = ref([
   { title: "Dashboard", icon: "mdi-view-dashboard", id: 1 },
@@ -117,6 +123,19 @@ const handleLogout = async () => {
     await route.push("/");
   } catch (error) {
     console.error(error);
+  }
+};
+
+const handleTabs = async () => {
+  if (tab.value === 2) {
+    const initialDate = moment().startOf("month").format("YYYY-MM-DD");
+    const finalDate = moment().endOf("month").format("YYYY-MM-DD");
+
+    await transactionStore.index({
+      initialDate,
+      finalDate,
+      status: "A",
+    });
   }
 };
 </script>
