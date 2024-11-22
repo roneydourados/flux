@@ -1,0 +1,196 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+// Looking for ways to speed up your queries, or scale easily with your serverless or edge functions?
+// Try Prisma Accelerate: https://pris.ly/cli/accelerate-init
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id                       Int           @id @default(autoincrement())
+  publicId                 String        @unique @default(dbgenerated("gen_random_uuid()")) @map("public_id") @db.Uuid
+  name                     String        @db.VarChar(200)
+  email                    String        @unique
+  urlFoto                  String        @map("url_foto")
+  stripeCustomerId         String?       @map("stripe_customer_id")
+  stripeSubscriptionId     String?       @map("stripe_subscription_id")
+  stripeSubscriptionStatus String?       @map("stripe_subscription_status")
+  stripePriceId            String?       @map("stripe_price_id")
+  createdAt                DateTime?     @default(now()) @map("created_at") @db.Timestamptz
+  updatedAt                DateTime?     @default(now()) @map("updated_at") @db.Timestamptz
+  Transaction              Transaction[]
+  Categoy                  Category[]
+  Address                  Address[]
+  Client                   Client[]
+  Task                     Task[]
+
+  @@index([email], name: "user_email_idx")
+  @@map("users")
+}
+
+model Address {
+  id         Int       @id @default(autoincrement())
+  publicId   String    @unique @default(dbgenerated("gen_random_uuid()")) @map("public_id") @db.Uuid
+  userId     Int       @map("user_id") @db.Integer
+  zipCode    String    @map("zip_code") @db.VarChar(20)
+  street     String    @db.VarChar(100)
+  number     String    @db.VarChar(10)
+  complement String?   @db.VarChar(200)
+  district   String    @db.VarChar(100)
+  city       String    @db.VarChar(100)
+  state      String    @db.VarChar(2)
+  category   String    @db.VarChar(20)
+  createdAt  DateTime? @default(now()) @map("created_at") @db.Timestamptz
+  updatedAt  DateTime? @default(now()) @map("updated_at") @db.Timestamptz
+  User       User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId], name: "address_user_id_idx")
+  @@index([category], name: "address_category_idx")
+  @@map("address")
+}
+
+model Client {
+  id               Int             @id @default(autoincrement())
+  publicId         String          @unique @default(dbgenerated("gen_random_uuid()")) @map("public_id") @db.Uuid
+  userId           Int             @map("user_id")
+  name             String          @db.VarChar(100)
+  phone            String?         @db.VarChar(20)
+  email            String?         @db.VarChar(100)
+  observation      String?         @db.Text
+  cnpjCpf          String?         @map("cnpj_cpf") @db.VarChar(20)
+  type             String?         @default("F") @db.Char(1)
+  isActive         Boolean?        @default(true) @map("is_active")
+  hourValueDefault Decimal         @map("hour_value_default") @db.Decimal(18, 2)
+  createdAt        DateTime?       @default(now()) @map("created_at") @db.Timestamptz(6)
+  updatedAt        DateTime?       @default(now()) @map("updated_at") @db.Timestamptz(6)
+  User             User            @relation(fields: [userId], references: [id], onDelete: Cascade)
+  Task             Task[]
+  ClientProject    ClientProject[]
+
+  @@index([name], map: "client_idx_name")
+  @@index([userId], map: "client_idx_user_id")
+  @@map("clients")
+}
+
+model ClientProject {
+  id       Int    @id @default(autoincrement())
+  clientId Int    @map("client_id")
+  name     String @db.VarChar(100)
+  color    String @db.VarChar(20)
+  Client   Client @relation(fields: [clientId], references: [id], onDelete: Cascade)
+  Task     Task[]
+
+  @@index([name], map: "client_projects_idx_name")
+  @@map("clients_projects")
+}
+
+model Task {
+  id              Int              @id @default(autoincrement())
+  publicId        String           @unique @default(dbgenerated("gen_random_uuid()")) @map("public_id") @db.Uuid
+  userId          Int              @map("user_id")
+  clientId        Int              @map("client_id")
+  clientProjectId Int              @map("client_project_id")
+  title           String           @db.Text
+  hourValue       Decimal          @map("hour_value") @db.Decimal(18, 2)
+  totalValue      Decimal          @default(0) @map("total_value") @db.Decimal(18, 2)
+  status          String?          @db.VarChar(20)
+  taskDate        DateTime?        @default(now()) @map("task_date") @db.Date
+  taskEndDate     DateTime?        @map("task_end_date") @db.Date
+  isInvoiced      Boolean          @default(false) @map("is_invoiced")
+  createdAt       DateTime?        @default(now()) @map("created_at") @db.Timestamptz
+  updatedAt       DateTime?        @default(now()) @map("updated_at") @db.Timestamptz
+  User            User             @relation(fields: [userId], references: [id], onDelete: Cascade)
+  Client          Client           @relation(fields: [clientId], references: [id], onDelete: Cascade)
+  TaskOccurrence  TaskOccurrence[]
+  ClientProject   ClientProject    @relation(fields: [clientProjectId], references: [id])
+
+  @@index([title], map: "task_idx_task_title")
+  @@index([taskDate], map: "task_idx_task_date")
+  @@index([taskEndDate], map: "task_idx_task_end_date")
+  @@index([clientId], map: "task_idx_client_id")
+  @@index([userId], map: "task_idx_user_id")
+  @@map("tasks")
+}
+
+model TaskOccurrence {
+  id        Int       @id @default(autoincrement())
+  publicId  String    @unique @default(dbgenerated("gen_random_uuid()")) @map("public_id") @db.Uuid
+  taskId    Int       @map("task_id")
+  started   String    @db.VarChar(20)
+  ended     String?   @db.VarChar(20)
+  createdAt DateTime? @default(now()) @map("created_at") @db.Timestamptz
+  updatedAt DateTime? @default(now()) @map("updated_at") @db.Timestamptz
+  Task      Task      @relation(fields: [taskId], references: [id], onDelete: Cascade)
+
+  @@index([taskId], map: "task_ocorrence_idx_task_id")
+  @@index([started], map: "task_ocorrence_idx_started")
+  @@index([ended], map: "task_ocorrence_idx_ended")
+  @@map("tasks_occurrences")
+}
+
+model Category {
+  id           Int           @id @default(autoincrement())
+  publicId     String        @unique @default(dbgenerated("gen_random_uuid()")) @map("public_id") @db.Uuid
+  userId       Int           @map("user_id") @db.Integer
+  categoryName String        @map("category_name") @db.VarChar(200)
+  icon         String        @db.VarChar(30)
+  color        String        @db.VarChar(30)
+  createdAt    DateTime?     @default(now()) @map("created_at") @db.Timestamptz
+  updatedAt    DateTime?     @default(now()) @map("updated_at") @db.Timestamptz
+  Transaction  Transaction[]
+  User         User          @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId], name: "category_user_id_idx")
+  @@index([categoryName], name: "category_category_name_idx")
+  @@map("categories")
+}
+
+model Transaction {
+  id            Int                      @id @default(autoincrement())
+  publicId      String                   @unique @default(dbgenerated("gen_random_uuid()")) @map("public_id") @db.Uuid
+  userId        Int                      @map("user_id") @db.Integer
+  categoryId    Int                      @map("category_id") @db.Integer
+  portion       Int                      @default(1)
+  portionTotal  Int                      @default(1) @map("portion_total")
+  emisstionDate DateTime                 @map("emission_date") @db.Date
+  dueDate       DateTime                 @map("due_date") @db.Date
+  title         String
+  amount        Decimal                  @db.Decimal(18, 2)
+  status        String                   @default("A") @db.Char(1) // A - Active, C - Canceled, P - Paid
+  fixed         Boolean                  @default(false) //valor fixo cobrado mensalmente
+  type          TransactionType
+  paymentMethod TransactionPaymentMethod @map("payment_method")
+  createdAt     DateTime?                @default(now()) @map("created_at") @db.Timestamptz
+  updatedAt     DateTime?                @default(now()) @map("updated_at") @db.Timestamptz
+  Category      Category                 @relation(fields: [categoryId], references: [id])
+  User          User                     @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId], name: "transaction_user_id_idx")
+  @@index([emisstionDate], name: "transaction_emission_date_idx")
+  @@index([dueDate], name: "transaction_due_date_idx")
+  @@index([status], name: "transaction_status_idx")
+  @@map("transactions")
+}
+
+enum TransactionPaymentMethod {
+  CREDIT_CARD
+  DEBIT_CARD
+  BANK_TRANSFER
+  BANK_SLIP
+  CASH
+  PIX
+  OTHER
+}
+
+enum TransactionType {
+  CREDIT
+  EXPENSE
+  INVESTMENT
+}

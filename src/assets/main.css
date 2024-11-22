@@ -1,0 +1,20 @@
+@font-face {
+  font-family: "GeistVF";
+  src: url("/fonts/GeistVF.woff") format("woff2");
+  font-weight: normal;
+  font-style: normal;
+}
+
+/* Aplicar a fonte globalmente (opcional) */
+body,
+html {
+  font-family: "GeistVF", sans-serif;
+  background-color: rgb(var(--v-theme-background1)) !important;
+}
+
+.v-data-table .v-table__wrapper > table > thead > tr > td,
+.v-data-table .v-table__wrapper > table > thead > tr th,
+.v-data-table .v-table__wrapper > table tbody > tr > td,
+.v-data-table .v-table__wrapper > table tbody > tr th {
+  background: rgb(var(--v-theme-background)) !important;
+}
