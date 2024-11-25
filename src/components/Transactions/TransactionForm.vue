@@ -58,6 +58,7 @@
       </v-row>
       <!-- <pre>{{ model }}</pre> -->
     </FormCrud>
+    <ApplicationOverlay :overlay="loading" />
   </DrawerForm>
 </template>
 
@@ -75,6 +76,9 @@ const props = defineProps({
     default: () => ({}),
   },
 });
+
+const emit = defineEmits(["submit"]);
+const loading = ref(false);
 const drawer = defineModel({
   default: false,
 });
@@ -164,16 +168,33 @@ const handleDrawerModelValue = (value: boolean) => {
 
 const handleSubmit = async () => {
   if (!validations()) return;
+
+  loading.value = true;
   try {
     if (props.data.publicId) {
       await update();
     } else {
       await create();
     }
+    const initial = `${moment().year()}-${
+      Number(localStorage.getItem("month_transaction") || moment().month()) + 1
+    }-01`;
+
+    const initialDate = moment(initial).startOf("month").format("YYYY-MM-DD");
+    const finalDate = moment(initial).endOf("month").format("YYYY-MM-DD");
+
+    await transactionStore.index({
+      initialDate,
+      finalDate,
+      //status: "A",
+    });
+
     clearModel();
     drawer.value = false;
   } catch (error) {
     console.error(error);
+  } finally {
+    loading.value = false;
   }
 };
 

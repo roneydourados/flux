@@ -128,8 +128,12 @@ const handleLogout = async () => {
 
 const handleTabs = async () => {
   if (tab.value === 2) {
-    const initialDate = moment().startOf("month").format("YYYY-MM-DD");
-    const finalDate = moment().endOf("month").format("YYYY-MM-DD");
+    const initial = `${moment().year()}-${
+      Number(localStorage.getItem("month_transaction") || moment().month()) + 1
+    }-01`;
+
+    const initialDate = moment(initial).startOf("month").format("YYYY-MM-DD");
+    const finalDate = moment(initial).endOf("month").format("YYYY-MM-DD");
 
     await transactionStore.index({
       initialDate,

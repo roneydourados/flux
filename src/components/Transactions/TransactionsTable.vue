@@ -127,7 +127,7 @@
       @cancel="dialogQuestion = false"
       @confirm="dialogQuestion = false"
     />
-    <pre>{{ $transactions }}</pre>
+    <!-- <pre>{{ $transactions }}</pre> -->
   </div>
 </template>
 

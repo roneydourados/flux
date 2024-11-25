@@ -13,7 +13,7 @@
         >
           Selcionar Mês
         </MenuButton> -->
-        <Months class="w-50" />
+        <Months class="w-50" @month="setLocalStorageMonth($event)" />
         <Button
           color="green"
           :block="mobile"
@@ -79,10 +79,12 @@
       </v-col>
     </v-row>
     <TransactionForm v-model="showForm" />
+    <ApplicationOverlay :overlay="loading" />
   </div>
 </template>
 
 <script setup lang="ts">
+import moment from "moment";
 import { useDisplay } from "vuetify";
 
 defineProps({
@@ -93,7 +95,9 @@ defineProps({
 });
 
 const { mobile } = useDisplay();
+const transactionStore = useTransactionStore();
 const showForm = ref(false);
+const loading = ref(false);
 const filter = ref({
   month: "",
   type: "ALL",
@@ -122,13 +126,29 @@ const $transactionPaymentForms = computed(() => {
 
   return tp;
 });
-const menuMonthItems = computed(() => {
-  return months.map((month) => {
-    return {
-      title: month.monthFull,
-      icon: "",
-      iconColor: "",
-    };
-  });
-});
+
+const setLocalStorageMonth = async (month: number) => {
+  localStorage.setItem("month_transaction", month.toString());
+  await getTransactions();
+};
+
+const getTransactions = async () => {
+  loading.value = true;
+  try {
+    const initial = `${moment().year()}-${
+      Number(localStorage.getItem("month_transaction") || moment().month()) + 1
+    }-01`;
+
+    const initialDate = moment(initial).startOf("month").format("YYYY-MM-DD");
+    const finalDate = moment(initial).endOf("month").format("YYYY-MM-DD");
+
+    await transactionStore.index({
+      initialDate,
+      finalDate,
+      //status: "A",
+    });
+  } finally {
+    loading.value = false;
+  }
+};
 </script>
