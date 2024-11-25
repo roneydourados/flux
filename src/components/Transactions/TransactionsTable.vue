@@ -37,7 +37,7 @@
                     icon
                     variant="text"
                     size="small"
-                    @click="dialogQuestion = true"
+                    @click="getDeleteItem(item)"
                   >
                     <DeleteSVG />
                   </v-btn>
@@ -108,7 +108,7 @@
                 icon
                 variant="text"
                 size="x-small"
-                @click="dialogQuestion = true"
+                @click="getDeleteItem(item)"
               >
                 <DeleteSVG />
               </v-btn>
@@ -125,8 +125,9 @@
       color-confirm="red"
       text-confirm="Deletar"
       @cancel="dialogQuestion = false"
-      @confirm="dialogQuestion = false"
+      @confirm="handleDeleteTransaction"
     />
+    <ApplicationOverlay :overlay="loading" />
     <!-- <pre>{{ $transactions }}</pre> -->
   </div>
 </template>
@@ -141,6 +142,7 @@ const transactionStore = useTransactionStore();
 
 const showForm = ref(false);
 const dialogQuestion = ref(false);
+const loading = ref(false);
 const selectedItem = ref<TransactionProps>();
 
 const $transactions = computed(() => transactionStore.$all);
@@ -190,5 +192,40 @@ const getPaymentFormName = (type: string) => {
 const getEditItem = (item: TransactionProps) => {
   selectedItem.value = item;
   showForm.value = true;
+};
+
+const getDeleteItem = (item: TransactionProps) => {
+  selectedItem.value = item;
+  dialogQuestion.value = true;
+};
+
+const handleDeleteTransaction = async () => {
+  if (selectedItem.value?.publicId) {
+    loading.value = true;
+    try {
+      await transactionStore.destroy(selectedItem.value.publicId);
+      await getTransactions();
+    } catch (error) {
+      console.error(error);
+    } finally {
+      loading.value = false;
+      dialogQuestion.value = false;
+    }
+  }
+};
+
+const getTransactions = async () => {
+  const initial = `${moment().year()}-${
+    Number(localStorage.getItem("month_transaction") || moment().month()) + 1
+  }-01`;
+
+  const initialDate = moment(initial).startOf("month").format("YYYY-MM-DD");
+  const finalDate = moment(initial).endOf("month").format("YYYY-MM-DD");
+
+  await transactionStore.index({
+    initialDate,
+    finalDate,
+    //status: "A",
+  });
 };
 </script>
