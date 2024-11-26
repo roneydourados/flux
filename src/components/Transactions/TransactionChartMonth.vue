@@ -16,17 +16,17 @@ const chartOptions = computed(() => {
     series: [
       {
         name: "Receita",
-        data: Array.from({ length: 30 }, () => Math.floor(Math.random() * 100)),
+        data: months.map(() => Math.floor(Math.random() * 100)), //Array.from({ length: 30 }, () => Math.floor(Math.random() * 100)),
       },
       {
         name: "Despesas",
-        data: Array.from({ length: 30 }, () => Math.floor(Math.random() * 100)),
+        data: months.map(() => Math.floor(Math.random() * 100)), //Array.from({ length: 30 }, () => Math.floor(Math.random() * 100)),
       },
     ],
 
     options: {
       chart: {
-        height: "250",
+        height: "300",
         type: "line",
         zoom: {
           enabled: false,
@@ -41,7 +41,7 @@ const chartOptions = computed(() => {
         width: 2,
       },
       title: {
-        text: "Fluxo do mês Novembro",
+        text: "Fluxo financeiro",
         align: "left",
         style: {
           color: "#fff",
@@ -67,7 +67,7 @@ const chartOptions = computed(() => {
         labels: {
           show: true,
           style: {
-            colors: Array(30).fill("#B8B8B8"),
+            colors: months.map(() => "#B8B8B8"),
           },
           formatter: function (val: any) {
             return amountFormated(val, true);
@@ -75,11 +75,11 @@ const chartOptions = computed(() => {
         },
       },
       xaxis: {
-        categories: Array.from({ length: 30 }, (_, i) => i + 1),
+        categories: months.map((month) => month.month),
         labels: {
           show: true,
           style: {
-            colors: Array(30).fill("#B8B8B8"),
+            colors: months.map(() => "#B8B8B8"),
           },
         },
       },

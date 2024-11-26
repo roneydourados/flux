@@ -214,6 +214,23 @@ export const useUtils = () => {
     return color;
   };
 
+  const getTransactions = async () => {
+    const transactionStore = useTransactionStore();
+    const initial = `${moment().year()}-${
+      Number(localStorage.getItem("month_transaction") || moment().month()) + 1
+    }-01`;
+    const status = localStorage.getItem("status_transaction") || undefined;
+
+    const initialDate = moment(initial).startOf("month").format("YYYY-MM-DD");
+    const finalDate = moment(initial).endOf("month").format("YYYY-MM-DD");
+
+    await transactionStore.index({
+      initialDate,
+      finalDate,
+      status,
+    });
+  };
+
   return {
     amountFormated,
     cardInvoices,
@@ -231,5 +248,6 @@ export const useUtils = () => {
     formatCPFOrCNPJ,
     stringToHandlePDF,
     generateRandomColor,
+    getTransactions,
   };
 };

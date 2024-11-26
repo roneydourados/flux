@@ -2,17 +2,6 @@
   <div class="py-4">
     <v-row dense>
       <v-col cols="12" class="d-flex align-center justify-space-between">
-        <!--
-        <h3 style="font-weight: 100">{{ title }}</h3>
-         <MenuButton
-          :block="mobile"
-          :items="menuMonthItems"
-          variant="outlined"
-          color="greylight"
-          size="small"
-        >
-          Selcionar Mês
-        </MenuButton> -->
         <Months class="w-50" @month="setLocalStorageMonth($event)" />
         <Button
           color="green"
@@ -26,18 +15,6 @@
           <v-icon icon="mdi-swap-vertical" end />
         </Button>
       </v-col>
-      <!-- <v-col cols="12">
-        <Button
-          color="green"
-          :block="mobile"
-          @click="showForm = true"
-          size="small"
-          rounded="lg"
-        >
-          Adicionar Transação
-          <v-icon icon="mdi-swap-vertical" end />
-        </Button>
-      </v-col> -->
     </v-row>
     <v-row dense>
       <v-col cols="12" lg="6">
@@ -66,18 +43,27 @@
       </v-col>
     </v-row>
     <v-row dense>
-      <v-col cols="12">
+      <v-col cols="12" lg="6">
         <TransactionChartMonth />
       </v-col>
+      <v-col cols="12" lg="2">
+        <TransactionCardResale />
+      </v-col>
+      <v-col cols="12" lg="2">
+        <TransactionCardExpense />
+      </v-col>
+      <v-col cols="12" lg="2">
+        <TransactionCardSalt />
+      </v-col>
     </v-row>
-    <v-row dense>
+    <!-- <v-row dense>
       <v-col cols="12" lg="6">
         <TransactionChartPaymentMethod />
       </v-col>
       <v-col cols="12" lg="6">
         <TransactionChartStatus />
       </v-col>
-    </v-row>
+    </v-row> -->
     <TransactionForm v-model="showForm" />
     <ApplicationOverlay :overlay="loading" />
   </div>
@@ -95,7 +81,7 @@ defineProps({
 });
 
 const { mobile } = useDisplay();
-const transactionStore = useTransactionStore();
+const { getTransactions } = useUtils();
 const showForm = ref(false);
 const loading = ref(false);
 const filter = ref({
@@ -129,24 +115,11 @@ const $transactionPaymentForms = computed(() => {
 
 const setLocalStorageMonth = async (month: number) => {
   localStorage.setItem("month_transaction", month.toString());
-  await getTransactions();
-};
-
-const getTransactions = async () => {
-  loading.value = true;
   try {
-    const initial = `${moment().year()}-${
-      Number(localStorage.getItem("month_transaction") || moment().month()) + 1
-    }-01`;
-
-    const initialDate = moment(initial).startOf("month").format("YYYY-MM-DD");
-    const finalDate = moment(initial).endOf("month").format("YYYY-MM-DD");
-
-    await transactionStore.index({
-      initialDate,
-      finalDate,
-      //status: "A",
-    });
+    loading.value = true;
+    await getTransactions();
+  } catch (error) {
+    console.error(error);
   } finally {
     loading.value = false;
   }

@@ -137,7 +137,7 @@ import { useDisplay } from "vuetify";
 import moment from "moment";
 
 const { mobile } = useDisplay();
-const { amountFormated } = useUtils();
+const { amountFormated, getTransactions } = useUtils();
 const transactionStore = useTransactionStore();
 
 const showForm = ref(false);
@@ -212,20 +212,5 @@ const handleDeleteTransaction = async () => {
       dialogQuestion.value = false;
     }
   }
-};
-
-const getTransactions = async () => {
-  const initial = `${moment().year()}-${
-    Number(localStorage.getItem("month_transaction") || moment().month()) + 1
-  }-01`;
-
-  const initialDate = moment(initial).startOf("month").format("YYYY-MM-DD");
-  const finalDate = moment(initial).endOf("month").format("YYYY-MM-DD");
-
-  await transactionStore.index({
-    initialDate,
-    finalDate,
-    //status: "A",
-  });
 };
 </script>

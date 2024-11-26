@@ -67,7 +67,7 @@ import moment from "moment";
 import { useForm } from "vee-validate";
 
 const { handleReset } = useForm();
-const { amountFormated } = useUtils();
+const { amountFormated, getTransactions } = useUtils();
 const transactionStore = useTransactionStore();
 
 const props = defineProps({
@@ -176,18 +176,8 @@ const handleSubmit = async () => {
     } else {
       await create();
     }
-    const initial = `${moment().year()}-${
-      Number(localStorage.getItem("month_transaction") || moment().month()) + 1
-    }-01`;
 
-    const initialDate = moment(initial).startOf("month").format("YYYY-MM-DD");
-    const finalDate = moment(initial).endOf("month").format("YYYY-MM-DD");
-
-    await transactionStore.index({
-      initialDate,
-      finalDate,
-      //status: "A",
-    });
+    await getTransactions();
 
     clearModel();
     drawer.value = false;
