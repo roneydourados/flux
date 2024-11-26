@@ -16,11 +16,15 @@ const chartOptions = computed(() => {
     series: [
       {
         name: "Receita",
-        data: months.map(() => Math.floor(Math.random() * 100)), //Array.from({ length: 30 }, () => Math.floor(Math.random() * 100)),
+        data: months.map(() => Math.floor(Math.random() * 100)),
       },
       {
         name: "Despesas",
-        data: months.map(() => Math.floor(Math.random() * 100)), //Array.from({ length: 30 }, () => Math.floor(Math.random() * 100)),
+        data: months.map(() => Math.floor(Math.random() * 100)),
+      },
+      {
+        name: "Investimentos",
+        data: months.map(() => Math.floor(Math.random() * 100)),
       },
     ],
 
@@ -32,7 +36,7 @@ const chartOptions = computed(() => {
           enabled: false,
         },
       },
-      colors: ["#55B02E", "#e93030"],
+      colors: ["#55B02E", "#e93030", "#fff"],
       dataLabels: {
         enabled: false,
       },

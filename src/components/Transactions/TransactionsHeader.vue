@@ -1,13 +1,43 @@
 <template>
   <div class="py-4">
     <v-row dense>
-      <v-col cols="12" class="d-flex align-center justify-space-between">
-        <Months class="w-50" @month="setLocalStorageMonth($event)" />
+      <v-col cols="12" lg="9" class="d-flex flex-column">
+        <Months class="w-100" @month="setLocalStorageMonth($event)" />
+        <div class="d-flex flex-wrap align-center mt-4" style="gap: 0.5rem">
+          <SelectInput
+            v-model="filter.type"
+            label="Tipo Transação"
+            :items="$transactionTypes"
+            item-title="name"
+            item-value="type"
+            density="comfortable"
+            variant="outlined"
+          />
+          <SelectInput
+            v-model="filter.paymentForm"
+            label="Forma pagamento"
+            :items="$transactionPaymentForms"
+            item-title="name"
+            item-value="type"
+            density="comfortable"
+            variant="outlined"
+          />
+          <SelectInput
+            v-model="filter.status"
+            label="Situação"
+            :items="transactionStatusItens"
+            item-title="name"
+            item-value="type"
+            density="comfortable"
+            variant="outlined"
+          />
+        </div>
+      </v-col>
+      <v-col cols="12" lg="3" class="d-flex align-center justify-end">
         <Button
           color="green"
           :block="mobile"
           @click="showForm = true"
-          size="small"
           rounded="lg"
         >
           <strong class="mr-1" style="font-size: 0.8rem">+</strong> Adicionar
@@ -18,59 +48,23 @@
     </v-row>
     <v-row dense>
       <v-col cols="12" lg="6">
-        <SelectInput
-          class="mt-4"
-          v-model="filter.type"
-          label="Tipo Transação"
-          :items="$transactionTypes"
-          item-title="name"
-          item-value="type"
-          density="comfortable"
-          variant="outlined"
-        />
-      </v-col>
-      <v-col cols="12" lg="6">
-        <SelectInput
-          class="mt-4"
-          v-model="filter.paymentForm"
-          label="Forma pagamento"
-          :items="$transactionPaymentForms"
-          item-title="name"
-          item-value="type"
-          density="comfortable"
-          variant="outlined"
-        />
-      </v-col>
-    </v-row>
-    <v-row dense>
-      <v-col cols="12" lg="6">
         <TransactionChartMonth />
       </v-col>
-      <v-col cols="12" lg="2">
+      <v-col cols="12" lg="3" class="d-flex flex-column" style="gap: 0.5rem">
         <TransactionCardResale />
-      </v-col>
-      <v-col cols="12" lg="2">
         <TransactionCardExpense />
       </v-col>
-      <v-col cols="12" lg="2">
+      <v-col cols="12" lg="3" class="d-flex flex-column" style="gap: 0.5rem">
+        <TransactionCardInvestment />
         <TransactionCardSalt />
       </v-col>
     </v-row>
-    <!-- <v-row dense>
-      <v-col cols="12" lg="6">
-        <TransactionChartPaymentMethod />
-      </v-col>
-      <v-col cols="12" lg="6">
-        <TransactionChartStatus />
-      </v-col>
-    </v-row> -->
     <TransactionForm v-model="showForm" />
     <ApplicationOverlay :overlay="loading" />
   </div>
 </template>
 
 <script setup lang="ts">
-import moment from "moment";
 import { useDisplay } from "vuetify";
 
 defineProps({
@@ -86,14 +80,21 @@ const showForm = ref(false);
 const loading = ref(false);
 const filter = ref({
   month: "",
-  type: "ALL",
-  paymentForm: "ALL",
+  type: "all",
+  paymentForm: "all",
+  status: "all",
 });
+
+const transactionStatusItens = [
+  { name: "Todas", type: "all" },
+  { name: "Pendente", type: "A" },
+  { name: "Paga", type: "P" },
+];
 
 const $transactionTypes = computed(() => {
   const tp = [];
 
-  tp.push({ name: "Todas", type: "ALL" });
+  tp.push({ name: "Todas", type: "all" });
 
   transactionTypes.forEach((type) => {
     tp.push({ name: type.name, type: type.type });
@@ -104,7 +105,7 @@ const $transactionTypes = computed(() => {
 const $transactionPaymentForms = computed(() => {
   const tp = [];
 
-  tp.push({ name: "Todas", type: "ALL" });
+  tp.push({ name: "Todas", type: "all" });
 
   paymentForms.forEach((type) => {
     tp.push({ name: type.name, type: type.type });

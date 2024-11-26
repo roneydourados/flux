@@ -152,14 +152,10 @@ const headers = computed(() => {
     return [{ title: "Descrição", key: "mobile" }];
   }
   return [
-    // { title: "Emissão", key: "emissionDate" },
-    { title: "Vence em", key: "dueDate" },
+    { title: "Data", key: "dueDate" },
     { title: "Descrição", key: "title" },
     { title: "Tipo", key: "type" },
-    //{ title: "Forma Pagamento", key: "paymentForm" },
-    //{ title: "Parcela", key: "portion" },
     { title: "Valor", key: "amount" },
-    //{ title: "Situação", key: "status" },
     { title: "", key: "actions" },
   ];
 });

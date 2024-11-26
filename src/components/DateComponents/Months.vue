@@ -5,6 +5,7 @@
       hide-delimiters
       height="50"
       @update:modelValue="selectMonth"
+      v-if="mobile"
     >
       <template v-slot:prev="{ props }">
         <v-btn
@@ -32,19 +33,38 @@
         </v-sheet>
       </v-carousel-item>
     </v-carousel>
+    <v-sheet
+      rounded="lg"
+      color="background"
+      style="gap: 0.3rem"
+      class="d-flex align-center"
+      v-if="!mobile"
+    >
+      <v-chip
+        v-for="month in $monts"
+        :key="month.monthIndex"
+        :color="monthIndex === month.monthIndex ? 'green-accent-2' : ''"
+        @click="getMonthWithChip(month.monthIndex)"
+      >
+        <div dense class="d-flex align-center justify-center">
+          <span>{{ month.month }}</span>
+        </div>
+      </v-chip>
+    </v-sheet>
   </div>
 </template>
 
 <script setup lang="ts">
+import { useDisplay } from "vuetify";
 import moment from "moment";
 const monthIndex = ref(moment().month());
 
 const emit = defineEmits(["month"]);
-
+const { mobile } = useDisplay();
 const $monts = computed(() => months);
 
 const selectMonth = () => {
-  const monthSelected = $monts.value!.filter((y, index) => {
+  const monthSelected = $monts.value!.filter((y) => {
     if (y.monthIndex === monthIndex.value) {
       return y;
     }
@@ -54,6 +74,29 @@ const selectMonth = () => {
     emit("month", monthSelected[0].monthIndex);
   } else {
     const currentMonth = moment().month();
+    emit("month", currentMonth);
+  }
+};
+
+const getMonthWithChip = (month: number) => {
+  const monthSelected = $monts.value!.filter((y) => {
+    if (y.monthIndex === month) {
+      return y;
+    }
+  });
+
+  // if (monthSelected) {
+  //   return monthSelected[0].month;
+  // } else {
+  //   return moment().month();
+  // }
+
+  if (monthSelected) {
+    monthIndex.value = monthSelected[0].monthIndex;
+    emit("month", monthSelected[0].monthIndex);
+  } else {
+    const currentMonth = moment().month();
+    monthIndex.value = currentMonth;
     emit("month", currentMonth);
   }
 };
