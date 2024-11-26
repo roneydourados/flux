@@ -20,11 +20,33 @@
                 </span>
               </template>
               <template #subtitle>
-                {{ amountFormated(item.amount, true) }}
+                <div class="d-flex align-center justify-space-between pa-2">
+                  <div class="d-flex align-center">
+                    <v-icon
+                      :icon="
+                        item.status === 'A'
+                          ? 'mdi-circle-outline'
+                          : 'mdi-check-circle-outline'
+                      "
+                      :color="item.status === 'A' ? 'grey' : 'green'"
+                      start
+                    />
+                    <span>{{ item.status === "A" ? "Pendente" : "Pago" }}</span>
+                  </div>
+                  <span>{{ amountFormated(item.amount, true) }}</span>
+                </div>
               </template>
 
               <template #append>
                 <div class="d-flex align-center" style="gap: 0.5rem">
+                  <v-btn
+                    icon
+                    variant="text"
+                    size="small"
+                    @click="getDownItem(item)"
+                  >
+                    <DownTransactionSVG height="20" />
+                  </v-btn>
                   <v-btn
                     icon
                     variant="text"
@@ -55,16 +77,31 @@
         <template v-slot:item.dueDate="{ item }">
           {{ moment(item.dueDate).format("DD/MM/YYYY") }}
         </template>
-        <template v-slot:item.type="{ item }">
-          <v-chip
+        <template v-slot:item.Category="{ item }">
+          <div
             :color="returnTypeColor(item.type)"
             class="d-flex align-center px-4"
           >
-            <v-icon icon="mdi-circle" size="12" start />
+            <v-icon
+              icon="mdi-circle"
+              size="12"
+              start
+              :color="returnTypeColor(item.type)"
+            />
             <span>
-              {{ returnTypeName(item.type) }}
+              {{ item.Category.categoryName }}
             </span>
-          </v-chip>
+          </div>
+          <!-- <v-chip
+            :color="returnTypeColor(item.type)"
+            class="d-flex align-center px-4"
+          >
+            <v-icon icon="mdi-circle" size="12" start :color="returnTypeColor(item.type)" />
+            <span>
+              
+              {{ item.Category.categoryName }}
+            </span>
+          </v-chip> -->
         </template>
         <template v-slot:item.name="{ item }">
           <div class="d-flex flex-column" style="gap: 0.5rem">
@@ -99,7 +136,15 @@
               <v-btn
                 icon
                 variant="text"
-                size="x-small"
+                size="small"
+                @click="getDownItem(item)"
+              >
+                <DownTransactionSVG height="20" />
+              </v-btn>
+              <v-btn
+                icon
+                variant="text"
+                size="small"
                 @click="getEditItem(item)"
               >
                 <EditSVG />
@@ -107,7 +152,7 @@
               <v-btn
                 icon
                 variant="text"
-                size="x-small"
+                size="small"
                 @click="getDeleteItem(item)"
               >
                 <DeleteSVG />
@@ -127,6 +172,15 @@
       @cancel="dialogQuestion = false"
       @confirm="handleDeleteTransaction"
     />
+    <DialogQuestion
+      v-model="dialogDownQuestion"
+      title="Liquidar/Quitar transação"
+      text="Confirmar liquidação/quitação de transação!"
+      color-confirm="info"
+      text-confirm="Liquidar"
+      @cancel="dialogDownQuestion = false"
+      @confirm="handleDownTransaction"
+    />
     <ApplicationOverlay :overlay="loading" />
     <!-- <pre>{{ $transactions }}</pre> -->
   </div>
@@ -142,6 +196,7 @@ const transactionStore = useTransactionStore();
 
 const showForm = ref(false);
 const dialogQuestion = ref(false);
+const dialogDownQuestion = ref(false);
 const loading = ref(false);
 const selectedItem = ref<TransactionProps>();
 
@@ -154,18 +209,18 @@ const headers = computed(() => {
   return [
     { title: "Data", key: "dueDate" },
     { title: "Descrição", key: "title" },
-    { title: "Tipo", key: "type" },
+    { title: "Categoria", key: "Category" },
     { title: "Valor", key: "amount" },
     { title: "", key: "actions" },
   ];
 });
 
-const returnTypeName = (type: string) => {
-  if (type === "EXPENSE") return "Despesa";
-  else if (type === "CREDIT") return "Crédito";
-  else if (type === "INVESTMENT") return "Investimento";
-  return "Desconhecido";
-};
+// const returnTypeName = (type: string) => {
+//   if (type === "EXPENSE") return "Despesa";
+//   else if (type === "CREDIT") return "Crédito";
+//   else if (type === "INVESTMENT") return "Investimento";
+//   return "Desconhecido";
+// };
 
 const returnTypeColor = (type: string) => {
   if (type === "EXPENSE") return "red";
@@ -190,12 +245,25 @@ const getEditItem = (item: TransactionProps) => {
   showForm.value = true;
 };
 
+const getDownItem = (item: TransactionProps) => {
+  selectedItem.value = item;
+
+  if (selectedItem.value?.status === "P") {
+    useNuxtApp().$toast.warn("Transação já liquidada!");
+    selectedItem.value = {};
+    return;
+  }
+
+  dialogDownQuestion.value = true;
+};
+
 const getDeleteItem = (item: TransactionProps) => {
   selectedItem.value = item;
   dialogQuestion.value = true;
 };
 
 const handleDeleteTransaction = async () => {
+  dialogQuestion.value = false;
   if (selectedItem.value?.publicId) {
     loading.value = true;
     try {
@@ -205,7 +273,25 @@ const handleDeleteTransaction = async () => {
       console.error(error);
     } finally {
       loading.value = false;
-      dialogQuestion.value = false;
+    }
+  }
+};
+
+const handleDownTransaction = async () => {
+  dialogDownQuestion.value = false;
+  if (selectedItem.value?.publicId) {
+    loading.value = true;
+    try {
+      await transactionStore.update({
+        ...selectedItem.value,
+        status: "P",
+      });
+
+      await getTransactions();
+    } catch (error) {
+      console.error(error);
+    } finally {
+      loading.value = false;
     }
   }
 };

@@ -20,8 +20,18 @@ export const useCategoryStore = defineStore("category", () => {
     categories.value = data;
   };
 
+  const create = async (category: CategoryProps) => {
+    await api.post("/categories", category);
+  };
+
+  const update = async (category: CategoryProps) => {
+    await api.put("/categories", category);
+  };
+
   return {
     index,
+    create,
+    update,
     $all,
   };
 });

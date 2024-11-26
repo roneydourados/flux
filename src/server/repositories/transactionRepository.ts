@@ -103,6 +103,7 @@ export const update = async ({
   status,
 }: TransactionProps) => {
   const transaction = await exists(publicId!);
+
   try {
     await prisma.transaction.update({
       data: {
@@ -121,9 +122,10 @@ export const update = async ({
       },
     });
   } catch (error) {
+    console.error("🚀 ~ error:", error);
     throw createError({
       statusCode: 500,
-      statusMessage: "Transaction creation failed",
+      statusMessage: "Transaction update failed",
     });
   }
 };

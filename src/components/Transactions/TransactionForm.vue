@@ -5,7 +5,10 @@
     width="500"
     @update:drawer="handleDrawerModelValue($event)"
   >
-    <FormCrud :on-submit="handleSubmit" :show-submit-button="true">
+    <FormCrud
+      :on-submit="handleSubmit"
+      :show-submit-button="model.status !== 'P'"
+    >
       <v-row dense class="pa-4">
         <v-col cols="12">
           <TransactionTypeSelect v-model="model.type" required />
@@ -56,20 +59,18 @@
           />
         </v-col>
       </v-row>
-      <v-row dense class="pa-4">
-        <v-col cols="12" lg="4" class="d-flex align-center justify-end">
-          <Button
-            color="info"
-            variant="text"
-            @click="dialogQuestion = true"
-            rounded="lg"
-          >
-            <v-icon icon="mdi-cash" size="30" start />
-            <span style="font-size: 1.2rem"> Liquidar </span>
-          </Button>
-        </v-col>
-      </v-row>
-      <!-- <pre>{{ model }}</pre> -->
+
+      <template #button>
+        <Button
+          color="info"
+          @click="getTransactionDown"
+          rounded="xl"
+          class="ml-2"
+        >
+          <DownTransactionSVG height="20" color="#fff" class="mr-2" />
+          <span style="font-size: 1rem"> Liquidar </span>
+        </Button>
+      </template>
     </FormCrud>
     <ApplicationOverlay :overlay="loading" />
     <DialogQuestion
@@ -112,7 +113,7 @@ const model = ref({
   paymentMethod: "",
   Category: undefined as CategoryProps | undefined,
   emission: moment().format("YYYY-MM-DD"),
-  due: moment().add(30, "days").format("YYYY-MM-DD"),
+  due: moment().format("YYYY-MM-DD"),
   name: "",
   value: "",
   portions: "1",
@@ -154,11 +155,16 @@ const validations = () => {
     return false;
   }
 
-  if (moment(model.value.due).isBefore(model.value.emission)) {
-    useNuxtApp().$toast.warn(
-      "A Data de vencimento não pode ser inferior a data de emissão!"
-    );
+  // if (moment(model.value.due).isBefore(model.value.emission)) {
+  //   useNuxtApp().$toast.warn(
+  //     "A Data de vencimento não pode ser inferior a data de emissão!"
+  //   );
 
+  //   return false;
+  // }
+
+  if (parseFloat(model.value.value) < 0) {
+    useNuxtApp().$toast.warn("O valor não pode ser negativo!");
     return false;
   }
 
@@ -253,8 +259,6 @@ const handleLiquidTransaction = async () => {
         status: "P",
       };
 
-      console.log("🚀 ~ handleLiquidTransaction ~ model.value:", model.value);
-
       await update();
       await getTransactions();
     } catch (error) {
@@ -265,5 +269,13 @@ const handleLiquidTransaction = async () => {
       drawer.value = false;
     }
   }
+};
+
+const getTransactionDown = () => {
+  if (props.data.status === "P") {
+    useNuxtApp().$toast.warn("Transação já liquidada!");
+    return;
+  }
+  dialogQuestion.value = true;
 };
 </script>

@@ -61,6 +61,7 @@
         </template>
       </v-tooltip>
     </div>
+    <CategoryForm v-model="showForm" :data="selected" />
   </div>
 </template>
 
@@ -130,13 +131,22 @@ onMounted(async () => {
   await category.index("");
 });
 
+watch(
+  () => showForm.value,
+  (newValue) => {
+    if (!newValue) {
+      selected.value = undefined;
+    }
+  }
+);
+
 const handleEdit = async (item: CategoryProps) => {
   selected.value = item;
   showForm.value = true;
 };
 
-const handleCloseForm = async () => {
-  showForm.value = false;
-  selected.value = undefined;
-};
+// const handleCloseForm = async () => {
+//   showForm.value = false;
+//   selected.value = undefined;
+// };
 </script>

@@ -36,12 +36,12 @@ export const create = async (payload: CategoryProps) => {
 };
 
 export const update = async (payload: CategoryProps) => {
-  const { color, icon, categoryName, id } = payload;
+  const { color, icon, categoryName, publicId } = payload;
 
   try {
     const category = await prisma.category.findFirst({
       where: {
-        id: id!,
+        publicId,
       },
     });
 
