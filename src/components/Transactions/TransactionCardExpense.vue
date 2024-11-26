@@ -10,7 +10,9 @@
       <template #content>
         <v-row dense>
           <v-col cols="12">
-            <h2 style="font-weight: 400">R$ 2500,00</h2>
+            <h2 style="font-weight: 400">
+              {{ amountFormated($totals, true) }}
+            </h2>
           </v-col>
         </v-row>
       </template>
@@ -18,4 +20,16 @@
   </div>
 </template>
 
-<script setup lang="ts"></script>
+<script setup lang="ts">
+const transactions = useTransactionStore();
+const { amountFormated } = useUtils();
+const $totals = computed(() => {
+  return transactions.$all.reduce((acc, transaction) => {
+    if (transaction.type === "EXPENSE") {
+      acc += Number(transaction.amount!);
+    }
+
+    return acc;
+  }, 0);
+});
+</script>

@@ -11,20 +11,28 @@
 
 <script setup lang="ts">
 const { amountFormated } = useUtils();
+const transactionStore = useTransactionStore();
+
 const chartOptions = computed(() => {
   return {
     series: [
       {
         name: "Receita",
-        data: months.map(() => Math.floor(Math.random() * 100)),
+        data: transactionStore.$transactionMonthChart.map((chart) => {
+          return Number(chart.credit ?? 0) * 1;
+        }),
       },
       {
         name: "Despesas",
-        data: months.map(() => Math.floor(Math.random() * 100)),
+        data: transactionStore.$transactionMonthChart.map((chart) => {
+          return Number(chart.expense) * 1;
+        }),
       },
       {
         name: "Investimentos",
-        data: months.map(() => Math.floor(Math.random() * 100)),
+        data: transactionStore.$transactionMonthChart.map((chart) => {
+          return Number(chart.investment) * 1;
+        }),
       },
     ],
 
@@ -71,7 +79,9 @@ const chartOptions = computed(() => {
         labels: {
           show: true,
           style: {
-            colors: months.map(() => "#B8B8B8"),
+            colors: transactionStore.$transactionMonthChart.map(
+              () => "#B8B8B8"
+            ),
           },
           formatter: function (val: any) {
             return amountFormated(val, true);
@@ -79,11 +89,15 @@ const chartOptions = computed(() => {
         },
       },
       xaxis: {
-        categories: months.map((month) => month.month),
+        categories: transactionStore.$transactionMonthChart.map(
+          (chart) => chart.month
+        ),
         labels: {
           show: true,
           style: {
-            colors: months.map(() => "#B8B8B8"),
+            colors: transactionStore.$transactionMonthChart.map(
+              () => "#B8B8B8"
+            ),
           },
         },
       },

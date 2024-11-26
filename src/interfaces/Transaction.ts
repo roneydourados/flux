@@ -24,3 +24,10 @@ export interface TransactionsFilterProps {
   finalDate?: string;
   status?: string;
 }
+
+export interface TransactionChartMonthProps {
+  month?: string;
+  expense?: number;
+  investment?: number;
+  credit?: number;
+}

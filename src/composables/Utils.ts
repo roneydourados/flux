@@ -231,6 +231,8 @@ export const useUtils = () => {
       finalDate,
       status,
     });
+
+    await transactionStore.chartMonth(Number(year));
   };
 
   return {
