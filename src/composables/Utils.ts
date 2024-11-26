@@ -216,7 +216,9 @@ export const useUtils = () => {
 
   const getTransactions = async () => {
     const transactionStore = useTransactionStore();
-    const initial = `${moment().year()}-${
+    const year = localStorage.getItem("year_transaction") || moment().year();
+
+    const initial = `${year}-${
       Number(localStorage.getItem("month_transaction") || moment().month()) + 1
     }-01`;
     const status = localStorage.getItem("status_transaction") || undefined;

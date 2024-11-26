@@ -4,7 +4,7 @@
       v-model="yearIndex"
       hide-delimiters
       height="50"
-      @update:modelValue="selectMonth"
+      @update:modelValue="selectYear"
     >
       <template v-slot:prev="{ props }">
         <v-btn
@@ -22,11 +22,11 @@
           @click="props.onClick"
         />
       </template>
-      <v-carousel-item v-for="month in $years" :key="month.yearIndex">
+      <v-carousel-item v-for="item in $years" :key="item.year">
         <v-sheet border="md" rounded="lg">
           <v-card flat class="pa-2" rounded="lg" color="background">
             <div dense class="d-flex align-center justify-center">
-              <span>{{ month.monthFull }}</span>
+              <span>{{ item.year }}</span>
             </div>
           </v-card>
         </v-sheet>
@@ -39,33 +39,28 @@
 import moment from "moment";
 const yearIndex = ref(moment().year());
 
-const emit = defineEmits(["month"]);
+const emit = defineEmits(["year"]);
 
 const $years = computed(() => {
   const years = [];
   const currentYear = moment().year();
-  for (let i = currentYear - 20; i <= currentYear + 20; i++) {
+
+  for (let i = 1970; i <= currentYear + 20; i++) {
     years.push({
       year: i,
-      yearIndex: i - (currentYear - 20),
-      monthFull: moment().year(i).format("YYYY"),
     });
   }
   return years;
 });
 
-const selectMonth = () => {
-  const monthSelected = $years.value!.filter((y, index) => {
-    if (y.yearIndex === yearIndex.value) {
-      return y;
-    }
-  });
+onMounted(() => {
+  const currentYear = moment().year();
+  const index = $years.value.findIndex((year) => year.year === currentYear);
+  yearIndex.value = index;
+});
 
-  if (monthSelected) {
-    emit("month", monthSelected[0].yearIndex);
-  } else {
-    const currentMonth = moment().month();
-    emit("month", currentMonth);
-  }
+const selectYear = (index: number) => {
+  yearIndex.value = index;
+  emit("year", $years.value[index].year);
 };
 </script>

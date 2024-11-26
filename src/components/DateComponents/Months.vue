@@ -1,5 +1,9 @@
 <template>
-  <div>
+  <div class="d-flex align-center flex-wrap" style="gap: 0.5rem">
+    <Years
+      :style="`${mobile ? 'width: 100%' : 'width: 15%'}`"
+      @year="$emit('year', $event)"
+    />
     <v-carousel
       v-model="monthIndex"
       hide-delimiters
@@ -57,9 +61,10 @@
 <script setup lang="ts">
 import { useDisplay } from "vuetify";
 import moment from "moment";
+
 const monthIndex = ref(moment().month());
 
-const emit = defineEmits(["month"]);
+const emit = defineEmits(["month", "year"]);
 const { mobile } = useDisplay();
 const $monts = computed(() => months);
 

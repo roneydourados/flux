@@ -2,7 +2,11 @@
   <div class="py-4">
     <v-row dense>
       <v-col cols="12" lg="9" class="d-flex flex-column">
-        <Months class="w-100" @month="setLocalStorageMonth($event)" />
+        <Months
+          class="w-100"
+          @month="setLocalStorageMonth($event)"
+          @year="setLocalStorageYear($event)"
+        />
         <div class="d-flex flex-wrap align-center mt-4" style="gap: 0.5rem">
           <SelectInput
             v-model="filter.type"
@@ -116,6 +120,18 @@ const $transactionPaymentForms = computed(() => {
 
 const setLocalStorageMonth = async (month: number) => {
   localStorage.setItem("month_transaction", month.toString());
+  try {
+    loading.value = true;
+    await getTransactions();
+  } catch (error) {
+    console.error(error);
+  } finally {
+    loading.value = false;
+  }
+};
+
+const setLocalStorageYear = async (year: number) => {
+  localStorage.setItem("year_transaction", year.toString());
   try {
     loading.value = true;
     await getTransactions();
