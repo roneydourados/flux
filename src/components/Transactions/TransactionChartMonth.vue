@@ -53,7 +53,7 @@ const chartOptions = computed(() => {
         width: 2,
       },
       title: {
-        text: "Fluxo financeiro",
+        text: "Fluxo financeiro do mês",
         align: "left",
         style: {
           color: "#fff",
@@ -90,7 +90,7 @@ const chartOptions = computed(() => {
       },
       xaxis: {
         categories: transactionStore.$transactionMonthChart.map(
-          (chart) => chart.month
+          (chart) => chart.day
         ),
         labels: {
           show: true,

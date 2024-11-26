@@ -25,8 +25,8 @@ export interface TransactionsFilterProps {
   status?: string;
 }
 
-export interface TransactionChartMonthProps {
-  month?: string;
+export interface TransactionChartMonthDayProps {
+  day?: string;
   expense?: number;
   investment?: number;
   credit?: number;

@@ -1,12 +1,14 @@
 import prisma from "@/lib/prisma";
 import { TransactionPaymentMethod, TransactionType } from "@prisma/client";
+import moment from "moment";
 import { TransactionProps } from "~/interfaces/Transaction";
 
 interface ChartMonthProps {
-  month_abbr: string;
+  month_abbr?: string;
   total_expense: number;
   total_investment: number;
   total_credit: number;
+  day_of_month?: string;
 }
 
 export const index = async (input: {
@@ -217,6 +219,66 @@ export const chartMonthTransactions = async (input: {
   return data.map((item: ChartMonthProps) => {
     return {
       month: item.month_abbr,
+      expense: item.total_expense,
+      investment: item.total_investment,
+      credit: item.total_credit,
+    };
+  });
+};
+
+export const chartMonthDays = async (input: {
+  month?: number;
+  year?: number;
+  userId: number;
+}) => {
+  const { month, year, userId } = input;
+
+  const currentYear = year || new Date().getFullYear();
+  const currentMonth = month || new Date().getMonth() + 1;
+
+  const inititalDate = moment(`${currentYear}-${currentMonth}-01`)
+    .startOf("month")
+    .format("YYYY-MM-DD");
+
+  const finalDate = moment(`${currentYear}-${currentMonth}-01`)
+    .endOf("month")
+    .format("YYYY-MM-DD");
+
+  const data = await prisma.$queryRaw<ChartMonthProps[]>`
+    WITH transaction_fin AS (
+        SELECT
+            EXTRACT(DAY FROM t.due_date) AS day_num,
+            CASE
+                WHEN t.type = 'EXPENSE' THEN t.amount
+                ELSE 0
+            END AS expense,
+            CASE
+                WHEN t.type = 'INVESTMENT' THEN t.amount
+                ELSE 0
+            END AS investment,
+            CASE
+                WHEN t.type = 'CREDIT' THEN t.amount
+                ELSE 0
+            END AS credit
+        FROM transactions t
+        WHERE t.user_id = ${userId}
+          AND t.due_date BETWEEN ${new Date(inititalDate)} AND ${new Date(
+    finalDate
+  )}
+    )
+    SELECT
+        LPAD(day_num::TEXT, 2, '0') AS day_of_month,
+        SUM(expense) AS total_expense,
+        SUM(investment) AS total_investment,
+        SUM(credit) AS total_credit
+    FROM transaction_fin
+    GROUP BY day_num
+    ORDER BY day_num;
+  `;
+
+  return data.map((item: ChartMonthProps) => {
+    return {
+      day: item.day_of_month,
       expense: item.total_expense,
       investment: item.total_investment,
       credit: item.total_credit,

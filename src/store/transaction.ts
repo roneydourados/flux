@@ -4,7 +4,7 @@ export const useTransactionStore = defineStore("transaction", () => {
   const { api } = useAxios();
   const transactions = ref<TransactionProps[]>([]);
   const transaction = ref<TransactionProps>({});
-  const transactionMonthChart = ref<TransactionChartMonthProps[]>([]);
+  const transactionMonthChart = ref<TransactionChartMonthDayProps[]>([]);
 
   const $all = computed(() => transactions.value);
   const $single = computed(() => transaction.value);
@@ -52,15 +52,17 @@ export const useTransactionStore = defineStore("transaction", () => {
     await api.delete(`/transaction/${publicId}`);
   };
 
-  const chartMonth = async (year?: number) => {
+  const chartMonth = async (input: { year?: number; month?: number }) => {
+    const { year, month } = input;
     const config = {
       params: {
         year,
+        month,
       },
     };
 
-    const { data } = await api.get<TransactionChartMonthProps[]>(
-      "/transaction/chart-month",
+    const { data } = await api.get<TransactionChartMonthDayProps[]>(
+      "/transaction/chart-month-days",
       config
     );
 

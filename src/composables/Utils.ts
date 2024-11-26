@@ -1,3 +1,4 @@
+import { Years } from "./../.nuxt/components.d";
 import moment from "moment";
 import { formatCNPJ, formatCPF } from "@brazilian-utils/brazilian-utils";
 type CompactDisplayType = "short" | "long" | undefined;
@@ -232,7 +233,10 @@ export const useUtils = () => {
       status,
     });
 
-    await transactionStore.chartMonth(Number(year));
+    await transactionStore.chartMonth({
+      year: Number(year),
+      month: moment(finalDate).month() + 1,
+    });
   };
 
   return {
