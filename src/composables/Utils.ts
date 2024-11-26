@@ -217,6 +217,7 @@ export const useUtils = () => {
 
   const getTransactions = async () => {
     const transactionStore = useTransactionStore();
+
     const year = localStorage.getItem("year_transaction") || moment().year();
 
     const initial = `${year}-${

@@ -95,11 +95,11 @@
         <div v-if="tabItem.id === 4"><Signature /></div>
       </v-tabs-window-item>
     </v-tabs-window>
+    <ApplicationOverlay :overlay="loading" />
   </div>
 </template>
 
 <script setup lang="ts">
-import moment from "moment";
 import { useDisplay } from "vuetify";
 const route = useRouter();
 const { user, clear } = useUserSession();
@@ -113,7 +113,7 @@ const menuItens = ref([
   { title: "Serviços", icon: "mdi-account-wrench-outline", id: 3 },
   { title: "Assinatura", icon: "mdi-vector-arrange-below", id: 4 },
 ]);
-
+const loading = ref(false);
 const tab = ref(1);
 
 const handleLogout = async () => {
@@ -128,19 +128,12 @@ const handleLogout = async () => {
 
 const handleTabs = async () => {
   if (tab.value === 2) {
-    await getTransactions();
-    // const initial = `${moment().year()}-${
-    //   Number(localStorage.getItem("month_transaction") || moment().month()) + 1
-    // }-01`;
-
-    // const initialDate = moment(initial).startOf("month").format("YYYY-MM-DD");
-    // const finalDate = moment(initial).endOf("month").format("YYYY-MM-DD");
-
-    // await transactionStore.index({
-    //   initialDate,
-    //   finalDate,
-    //   status: "A",
-    // });
+    loading.value = true;
+    try {
+      await getTransactions();
+    } finally {
+      loading.value = false;
+    }
   }
 };
 </script>

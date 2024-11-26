@@ -79,7 +79,7 @@ const selectMonth = () => {
     emit("month", monthSelected[0].monthIndex);
   } else {
     const currentMonth = moment().month();
-    emit("month", currentMonth);
+    //emit("month", currentMonth);
   }
 };
 

@@ -134,7 +134,7 @@ const setLocalStorageYear = async (year: number) => {
   localStorage.setItem("year_transaction", year.toString());
   try {
     loading.value = true;
-    await getTransactions();
+    //await getTransactions();
   } catch (error) {
     console.error(error);
   } finally {
