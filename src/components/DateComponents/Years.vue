@@ -57,6 +57,8 @@ onMounted(() => {
   const currentYear = moment().year();
   const index = $years.value.findIndex((year) => year.year === currentYear);
   yearIndex.value = index;
+
+  emit("year", currentYear);
 });
 
 const selectYear = (index: number) => {

@@ -105,7 +105,7 @@ const route = useRouter();
 const { user, clear } = useUserSession();
 const { api } = useAxios();
 const { mobile } = useDisplay();
-const transactionStore = useTransactionStore();
+const { getTransactions } = useUtils();
 
 const menuItens = ref([
   { title: "Dashboard", icon: "mdi-view-dashboard", id: 1 },
@@ -128,18 +128,19 @@ const handleLogout = async () => {
 
 const handleTabs = async () => {
   if (tab.value === 2) {
-    const initial = `${moment().year()}-${
-      Number(localStorage.getItem("month_transaction") || moment().month()) + 1
-    }-01`;
+    await getTransactions();
+    // const initial = `${moment().year()}-${
+    //   Number(localStorage.getItem("month_transaction") || moment().month()) + 1
+    // }-01`;
 
-    const initialDate = moment(initial).startOf("month").format("YYYY-MM-DD");
-    const finalDate = moment(initial).endOf("month").format("YYYY-MM-DD");
+    // const initialDate = moment(initial).startOf("month").format("YYYY-MM-DD");
+    // const finalDate = moment(initial).endOf("month").format("YYYY-MM-DD");
 
-    await transactionStore.index({
-      initialDate,
-      finalDate,
-      status: "A",
-    });
+    // await transactionStore.index({
+    //   initialDate,
+    //   finalDate,
+    //   status: "A",
+    // });
   }
 };
 </script>

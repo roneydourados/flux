@@ -17,20 +17,20 @@
             required
           />
         </v-col>
-        <v-col cols="6">
+        <!-- <v-col cols="6">
           <DatePicker v-model="model.emission" label="Emissão" required />
-        </v-col>
+        </v-col> -->
         <v-col cols="6">
-          <DatePicker v-model="model.due" label="Vencimento" required />
+          <DatePicker v-model="model.due" label="Data" required />
+        </v-col>
+        <v-col cols="12" lg="6">
+          <PaymentMethodSelect v-model="model.paymentMethod" required />
         </v-col>
         <v-col cols="12">
           <StringInput v-model="model.name" label="Título" required />
         </v-col>
         <v-col cols="12" lg="6">
           <CurrencyInput v-model="model.value" label="Valor" required />
-        </v-col>
-        <v-col cols="12" lg="6">
-          <PaymentMethodSelect v-model="model.paymentMethod" required />
         </v-col>
         <v-col cols="12" lg="6">
           <v-checkbox
@@ -56,9 +56,31 @@
           />
         </v-col>
       </v-row>
+      <v-row dense class="pa-4">
+        <v-col cols="12" lg="4" class="d-flex align-center justify-end">
+          <Button
+            color="info"
+            variant="text"
+            @click="dialogQuestion = true"
+            rounded="lg"
+          >
+            <v-icon icon="mdi-cash" size="30" start />
+            <span style="font-size: 1.2rem"> Liquidar </span>
+          </Button>
+        </v-col>
+      </v-row>
       <!-- <pre>{{ model }}</pre> -->
     </FormCrud>
     <ApplicationOverlay :overlay="loading" />
+    <DialogQuestion
+      v-model="dialogQuestion"
+      title="Liquidar/Quitar transação"
+      text="Confirmar liquidação/quitação de transação!"
+      color-confirm="info"
+      text-confirm="Liquidar"
+      @cancel="dialogQuestion = false"
+      @confirm="handleLiquidTransaction"
+    />
   </DrawerForm>
 </template>
 
@@ -79,6 +101,7 @@ const props = defineProps({
 
 const emit = defineEmits(["submit"]);
 const loading = ref(false);
+const dialogQuestion = ref(false);
 const drawer = defineModel({
   default: false,
 });
@@ -148,7 +171,7 @@ const clearModel = () => {
     type: "",
     Category: undefined,
     emission: moment().format("YYYY-MM-DD"),
-    due: moment().add(30, "days").format("YYYY-MM-DD"),
+    due: moment().format("YYYY-MM-DD"),
     name: "",
     value: "",
     portions: "1",
@@ -219,5 +242,28 @@ const update = async () => {
     // portionTotal: parseInt(model.value.portions),
     // portion: 1,
   });
+};
+
+const handleLiquidTransaction = async () => {
+  if (props.data.publicId) {
+    loading.value = true;
+    try {
+      model.value = {
+        ...model.value,
+        status: "P",
+      };
+
+      console.log("🚀 ~ handleLiquidTransaction ~ model.value:", model.value);
+
+      await update();
+      await getTransactions();
+    } catch (error) {
+      console.error(error);
+    } finally {
+      loading.value = false;
+      dialogQuestion.value = false;
+      drawer.value = false;
+    }
+  }
 };
 </script>

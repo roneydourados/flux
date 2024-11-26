@@ -9,7 +9,6 @@ export const index = async (input: {
   status?: string;
 }) => {
   const { finalDate, initialDate, userId, status } = input;
-  console.log("🚀 ~ input:", input);
 
   const gte = initialDate ? new Date(String(initialDate)) : new Date();
   const lte = finalDate ? new Date(String(finalDate)) : new Date();
@@ -45,6 +44,9 @@ export const index = async (input: {
         gte,
         lte,
       },
+    },
+    orderBy: {
+      dueDate: "asc",
     },
   });
 
@@ -98,6 +100,7 @@ export const update = async ({
   title,
   paymentMethod,
   type,
+  status,
 }: TransactionProps) => {
   const transaction = await exists(publicId!);
   try {
@@ -111,6 +114,7 @@ export const update = async ({
         title: String(title),
         type: type as TransactionType,
         paymentMethod: paymentMethod as TransactionPaymentMethod,
+        status,
       },
       where: {
         id: transaction.id,

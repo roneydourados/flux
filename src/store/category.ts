@@ -7,7 +7,6 @@ export const useCategoryStore = defineStore("category", () => {
   const $all = computed(() => categories.value);
 
   const index = async (name: string) => {
-    console.log("🚀 ~ index ~ name:", name);
     categories.value = [];
 
     const config = {
