@@ -2,7 +2,7 @@
   <v-app>
     <v-app-bar color="background" elevation="">
       <template #title>
-        <Logo height="30" />
+        <Logo height="40" />
       </template>
 
       <v-app-bar-nav-icon
@@ -73,7 +73,7 @@
     />
 
     <v-main class="d-flex align-center justify-center full-height">
-      <div class="w-100 pa-4 full-height no-scroll">
+      <div class="d-flex w-100 pa-4 full-height no-scroll">
         <slot />
       </div>
     </v-main>

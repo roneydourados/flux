@@ -79,7 +79,7 @@ export default defineOAuthGoogleEventHandler({
       },
     });
 
-    return sendRedirect(event, "/principal");
+    return sendRedirect(event, "/dashboard");
   },
 
   onError(event, error) {

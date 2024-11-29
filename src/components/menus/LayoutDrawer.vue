@@ -35,7 +35,7 @@
       </v-list-item>
     </v-list>
 
-    <template v-slot:append>
+    <!-- <template v-slot:append>
       <v-divider />
 
       <div class="pa-2">
@@ -49,7 +49,7 @@
           Sair
         </v-btn>
       </div>
-    </template>
+    </template> -->
   </v-navigation-drawer>
 </template>
 
