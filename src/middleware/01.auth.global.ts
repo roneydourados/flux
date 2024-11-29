@@ -4,8 +4,10 @@ export default defineNuxtRouteMiddleware((to) => {
   if (!loggedIn.value && to.path !== "/") {
     return navigateTo("/");
   }
-
-  if (loggedIn.value && to.path !== "/principal" && to.path !== "/site") {
-    return navigateTo("/principal");
+  if (to.path === "/") {
+    return navigateTo("/dashboard");
+    // if (loggedIn.value && to.path !== "/dashboard" && to.path !== "/site") {
+    //   return navigateTo("/dashboard");
+    // }
   }
 });
