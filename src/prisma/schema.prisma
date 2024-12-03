@@ -29,7 +29,7 @@ model User {
   Categoy                  Category[]
   Address                  Address[]
   Client                   Client[]
-  Task                     Task[]
+  Services                 Service[]
 
   @@index([email], name: "user_email_idx")
   @@map("users")
@@ -72,7 +72,7 @@ model Client {
   createdAt        DateTime?       @default(now()) @map("created_at") @db.Timestamptz(6)
   updatedAt        DateTime?       @default(now()) @map("updated_at") @db.Timestamptz(6)
   User             User            @relation(fields: [userId], references: [id], onDelete: Cascade)
-  Task             Task[]
+  Services         Service[]
   ClientProject    ClientProject[]
 
   @@index([name], map: "client_idx_name")
@@ -81,60 +81,60 @@ model Client {
 }
 
 model ClientProject {
-  id       Int    @id @default(autoincrement())
-  clientId Int    @map("client_id")
-  publicId String @unique @default(dbgenerated("gen_random_uuid()")) @map("public_id") @db.Uuid
-  name     String @db.VarChar(100)
-  color    String @db.VarChar(20)
-  Client   Client @relation(fields: [clientId], references: [id], onDelete: Cascade)
-  Task     Task[]
+  id       Int       @id @default(autoincrement())
+  clientId Int       @map("client_id")
+  publicId String    @unique @default(dbgenerated("gen_random_uuid()")) @map("public_id") @db.Uuid
+  name     String    @db.VarChar(100)
+  color    String    @db.VarChar(20)
+  Client   Client    @relation(fields: [clientId], references: [id], onDelete: Cascade)
+  Services Service[]
 
   @@index([name], map: "client_projects_idx_name")
   @@map("clients_projects")
 }
 
-model Task {
-  id              Int              @id @default(autoincrement())
-  publicId        String           @unique @default(dbgenerated("gen_random_uuid()")) @map("public_id") @db.Uuid
-  userId          Int              @map("user_id")
-  clientId        Int              @map("client_id")
-  clientProjectId Int              @map("client_project_id")
-  title           String           @db.Text
-  hourValue       Decimal          @map("hour_value") @db.Decimal(18, 2)
-  totalValue      Decimal          @default(0) @map("total_value") @db.Decimal(18, 2)
-  status          String?          @db.VarChar(20)
-  taskDate        DateTime?        @default(now()) @map("task_date") @db.Date
-  taskEndDate     DateTime?        @map("task_end_date") @db.Date
-  isInvoiced      Boolean          @default(false) @map("is_invoiced")
-  createdAt       DateTime?        @default(now()) @map("created_at") @db.Timestamptz
-  updatedAt       DateTime?        @default(now()) @map("updated_at") @db.Timestamptz
-  User            User             @relation(fields: [userId], references: [id], onDelete: Cascade)
-  Client          Client           @relation(fields: [clientId], references: [id], onDelete: Cascade)
-  TaskOccurrence  TaskOccurrence[]
-  ClientProject   ClientProject    @relation(fields: [clientProjectId], references: [id])
+model Service {
+  id                Int                 @id @default(autoincrement())
+  publicId          String              @unique @default(dbgenerated("gen_random_uuid()")) @map("public_id") @db.Uuid
+  userId            Int                 @map("user_id")
+  clientId          Int                 @map("client_id")
+  clientProjectId   Int                 @map("client_project_id")
+  title             String              @db.Text
+  hourValue         Decimal             @map("hour_value") @db.Decimal(18, 2)
+  totalValue        Decimal             @default(0) @map("total_value") @db.Decimal(18, 2)
+  status            String?             @db.VarChar(20)
+  serviceDate       DateTime?           @default(now()) @map("service_date") @db.Date
+  serviceEndDate    DateTime?           @map("service_end_date") @db.Date
+  isInvoiced        Boolean             @default(false) @map("is_invoiced")
+  createdAt         DateTime?           @default(now()) @map("created_at") @db.Timestamptz
+  updatedAt         DateTime?           @default(now()) @map("updated_at") @db.Timestamptz
+  User              User                @relation(fields: [userId], references: [id], onDelete: Cascade)
+  Client            Client              @relation(fields: [clientId], references: [id], onDelete: Cascade)
+  ServiceOccurrence ServiceOccurrence[]
+  ClientProject     ClientProject       @relation(fields: [clientProjectId], references: [id])
 
-  @@index([title], map: "task_idx_task_title")
-  @@index([taskDate], map: "task_idx_task_date")
-  @@index([taskEndDate], map: "task_idx_task_end_date")
-  @@index([clientId], map: "task_idx_client_id")
-  @@index([userId], map: "task_idx_user_id")
-  @@map("tasks")
+  @@index([title], map: "service_idx_service_title")
+  @@index([serviceDate], map: "service_idx_service_date")
+  @@index([serviceEndDate], map: "service_idx_service_end_date")
+  @@index([clientId], map: "service_idx_client_id")
+  @@index([userId], map: "service_idx_user_id")
+  @@map("services")
 }
 
-model TaskOccurrence {
+model ServiceOccurrence {
   id        Int       @id @default(autoincrement())
   publicId  String    @unique @default(dbgenerated("gen_random_uuid()")) @map("public_id") @db.Uuid
-  taskId    Int       @map("task_id")
+  serviceId Int       @map("service_id")
   started   String    @db.VarChar(20)
   ended     String?   @db.VarChar(20)
   createdAt DateTime? @default(now()) @map("created_at") @db.Timestamptz
   updatedAt DateTime? @default(now()) @map("updated_at") @db.Timestamptz
-  Task      Task      @relation(fields: [taskId], references: [id], onDelete: Cascade)
+  Service   Service   @relation(fields: [serviceId], references: [id], onDelete: Cascade)
 
-  @@index([taskId], map: "task_ocorrence_idx_task_id")
-  @@index([started], map: "task_ocorrence_idx_started")
-  @@index([ended], map: "task_ocorrence_idx_ended")
-  @@map("tasks_occurrences")
+  @@index([serviceId], map: "service_ocorrence_idx_service_id")
+  @@index([started], map: "service_ocorrence_idx_started")
+  @@index([ended], map: "service_ocorrence_idx_ended")
+  @@map("services_occurrences")
 }
 
 model Category {

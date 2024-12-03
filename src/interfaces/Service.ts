@@ -29,23 +29,7 @@ export interface ServiceProps {
 export interface ServiceOccurrenceProps {
   id?: number;
   taskId?: number;
-  ocStart: string;
-  ocEnd?: string;
-  createdAt?: string;
   started?: string;
   ended?: string;
-}
-
-export interface TaskPlanFreeQuotaProps {
-  countTasks: number;
-  quota: number;
-  message: string;
-}
-
-export interface TaskFiltersProps {
-  ClientProject?: ClientProjectProps;
-  Client?: ClientProps;
-  initialDate: string;
-  finalDate: string;
-  invoiced: string;
+  createdAt?: string;
 }
