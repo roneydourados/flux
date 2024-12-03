@@ -1,14 +1,18 @@
 export interface AddressProps {
   id?: number;
-  addressZipcode?: string;
-  addressStreet?: string;
-  addressNumber?: string;
-  addressDistrict?: string;
-  addressCity?: string;
-  addressState?: string;
-  addressComplement?: string;
+  publicId?: string;
+  userId?: number;
+  zipCode?: string;
+  street?: string;
+  number?: string;
+  complement?: string;
+  district?: string;
+  city?: string;
+  state?: string;
+  category?: string;
   ownerId?: number;
-  addressType?: string;
+  createdAt?: string;
+  updatedAt?: string;
 }
 
 export const ADDRESS_USER = "USER";

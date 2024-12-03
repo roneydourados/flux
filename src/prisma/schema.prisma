@@ -47,6 +47,7 @@ model Address {
   city       String    @db.VarChar(100)
   state      String    @db.VarChar(2)
   category   String    @db.VarChar(20)
+  ownerId    Int       @map("owner_id") @db.Integer
   createdAt  DateTime? @default(now()) @map("created_at") @db.Timestamptz
   updatedAt  DateTime? @default(now()) @map("updated_at") @db.Timestamptz
   User       User      @relation(fields: [userId], references: [id], onDelete: Cascade)
@@ -82,6 +83,7 @@ model Client {
 model ClientProject {
   id       Int    @id @default(autoincrement())
   clientId Int    @map("client_id")
+  publicId String @unique @default(dbgenerated("gen_random_uuid()")) @map("public_id") @db.Uuid
   name     String @db.VarChar(100)
   color    String @db.VarChar(20)
   Client   Client @relation(fields: [clientId], references: [id], onDelete: Cascade)
