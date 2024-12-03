@@ -1,5 +1,5 @@
 <template>
-  <div class="px-4">
+  <div class="px-4 w-100">
     <v-row dense>
       <v-col cols="12">
         <h2>Assinatura</h2>

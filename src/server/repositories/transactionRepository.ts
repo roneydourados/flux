@@ -35,6 +35,7 @@ export const index = async (input: {
       createdAt: true,
       fixed: true,
       portion: true,
+      portionTotal: true,
       status: true,
       paymentMethod: true,
       Category: {
@@ -76,21 +77,49 @@ export const create = async ({
   userId,
 }: TransactionProps) => {
   try {
-    await prisma.transaction.create({
-      data: {
-        categoryId: categoryId!,
-        amount: Number(amount),
-        dueDate: new Date(dueDate!),
-        emisstionDate: new Date(emisstionDate!),
-        fixed: fixed!,
-        title: String(title),
-        portion: portion!,
-        portionTotal: portionTotal!,
-        type: type as TransactionType,
-        userId: userId!,
-        paymentMethod: paymentMethod as TransactionPaymentMethod,
-      },
-    });
+    if (portionTotal! === 1) {
+      //parcela única
+      await prisma.transaction.create({
+        data: {
+          categoryId: categoryId!,
+          amount: Number(amount),
+          dueDate: new Date(dueDate!),
+          emisstionDate: new Date(emisstionDate!),
+          fixed: fixed!,
+          title: String(title),
+          portion: portion!,
+          portionTotal: portionTotal!,
+          type: type as TransactionType,
+          userId: userId!,
+          paymentMethod: paymentMethod as TransactionPaymentMethod,
+        },
+      });
+    } else {
+      // parcelado
+      let currentDue = dueDate!;
+
+      for (let i = 1; i <= portionTotal!; i++) {
+        if (i > 1) {
+          currentDue = moment(currentDue).add(1, "months").format("YYYY-MM-DD");
+        }
+
+        await prisma.transaction.create({
+          data: {
+            categoryId: categoryId!,
+            amount: Number(amount),
+            dueDate: new Date(currentDue),
+            emisstionDate: new Date(emisstionDate!),
+            fixed: fixed!,
+            title: String(title),
+            portion: i,
+            portionTotal: portionTotal!,
+            type: type as TransactionType,
+            userId: userId!,
+            paymentMethod: paymentMethod as TransactionPaymentMethod,
+          },
+        });
+      }
+    }
   } catch (error) {
     throw createError({
       statusCode: 500,

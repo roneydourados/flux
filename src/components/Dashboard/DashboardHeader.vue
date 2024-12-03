@@ -1,17 +1,17 @@
 <template>
   <div class="mb-4">
     <v-row dense>
-      <v-col cols="12" lg="7">
+      <v-col cols="12" lg="2">
         <h2>{{ title }}</h2>
       </v-col>
-      <v-col cols="12" lg="5" class="d-flex align-center justify-end">
+      <v-col cols="12" lg="10" class="d-flex align-center justify-end">
+        <Months />
         <Button color="background">
           <span style="font-weight: 100" class="text-greylight">
             Relatório de IA
           </span>
           <v-icon icon="mdi-file-table-outline" end />
         </Button>
-        <Months style="width: 30%" />
       </v-col>
     </v-row>
   </div>

@@ -20,20 +20,29 @@
                 </span>
               </template>
               <template #subtitle>
-                <div class="d-flex align-center justify-space-between pa-2">
-                  <div class="d-flex align-center">
-                    <v-icon
-                      :icon="
-                        item.status === 'A'
-                          ? 'mdi-circle-outline'
-                          : 'mdi-check-circle-outline'
-                      "
-                      :color="item.status === 'A' ? 'grey' : 'green'"
-                      start
-                    />
-                    <span>{{ item.status === "A" ? "Pendente" : "Pago" }}</span>
+                <div class="d-flex flex-column">
+                  <span class="mr-2">
+                    Parc. {{ item.portion }}/{{ item.portionTotal }}
+                  </span>
+                  <div
+                    class="d-flex align-center justify-space-between w-100 mt-4"
+                  >
+                    <div class="d-flex align-center">
+                      <v-icon
+                        :icon="
+                          item.status === 'A'
+                            ? 'mdi-circle-outline'
+                            : 'mdi-check-circle-outline'
+                        "
+                        :color="item.status === 'A' ? 'grey' : 'green'"
+                        start
+                      />
+                      <span>
+                        {{ item.status === "A" ? "Pendente" : "Pago" }}
+                      </span>
+                    </div>
+                    <span>{{ amountFormated(item.amount, true) }}</span>
                   </div>
-                  <span>{{ amountFormated(item.amount, true) }}</span>
                 </div>
               </template>
 
@@ -92,16 +101,9 @@
               {{ item.Category.categoryName }}
             </span>
           </div>
-          <!-- <v-chip
-            :color="returnTypeColor(item.type)"
-            class="d-flex align-center px-4"
-          >
-            <v-icon icon="mdi-circle" size="12" start :color="returnTypeColor(item.type)" />
-            <span>
-              
-              {{ item.Category.categoryName }}
-            </span>
-          </v-chip> -->
+        </template>
+        <template v-slot:item.portion="{ item }">
+          {{ item.portion }}/{{ item.portionTotal }}
         </template>
         <template v-slot:item.name="{ item }">
           <div class="d-flex flex-column" style="gap: 0.5rem">
@@ -209,6 +211,7 @@ const headers = computed(() => {
   return [
     { title: "Data", key: "dueDate" },
     { title: "Descrição", key: "title" },
+    { title: "Parc.", key: "portion" },
     { title: "Categoria", key: "Category" },
     { title: "Valor", key: "amount" },
     { title: "", key: "actions" },

@@ -1,5 +1,5 @@
 <template>
-  <div class="d-flex align-center flex-wrap" style="gap: 0.5rem">
+  <div class="d-flex align-center flex-wrap w-100" style="gap: 0.5rem">
     <Years
       :style="`${mobile ? 'width: 100%' : 'width: 15%'}`"
       @year="$emit('year', $event)"
