@@ -52,15 +52,16 @@
     </v-row>
     <v-row dense>
       <v-col cols="12" lg="6">
-        <TransactionChartMonth />
+        <ServiceChartMonth />
       </v-col>
-      <v-col cols="12" lg="3" class="d-flex flex-column" style="gap: 0.5rem">
-        <TransactionCardResale />
-        <TransactionCardExpense />
+      <v-col cols="12" lg="2">
+        <ServiceTotalCard />
       </v-col>
-      <v-col cols="12" lg="3" class="d-flex flex-column" style="gap: 0.5rem">
-        <TransactionCardInvestment />
-        <TransactionCardSalt />
+      <v-col cols="12" lg="2">
+        <ServiceChartStatus />
+      </v-col>
+      <v-col cols="12" lg="2">
+        <ServiceChartProject />
       </v-col>
     </v-row>
     <TransactionForm v-model="showForm" />

@@ -15,11 +15,7 @@ const chartOptions = computed(() => {
   return {
     series: [
       {
-        name: "Receita",
-        data: Array.from({ length: 30 }, () => Math.floor(Math.random() * 100)),
-      },
-      {
-        name: "Despesas",
+        name: "Tarefas",
         data: Array.from({ length: 30 }, () => Math.floor(Math.random() * 100)),
       },
     ],
@@ -32,7 +28,7 @@ const chartOptions = computed(() => {
           enabled: false,
         },
       },
-      colors: ["#55B02E", "#e93030"],
+      colors: ["#FB8C00"],
       dataLabels: {
         enabled: false,
       },
@@ -41,7 +37,7 @@ const chartOptions = computed(() => {
         width: 2,
       },
       title: {
-        text: "Fluxo do mês Novembro",
+        text: "Fluxo de serviços do mês",
         align: "left",
         style: {
           color: "#fff",

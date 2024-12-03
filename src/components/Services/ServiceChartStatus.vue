@@ -1,5 +1,5 @@
 <template>
-  <div>
+  <div class="w-100">
     <Chart
       :chart-options="chartOptions.options"
       :series="chartOptions.series"
@@ -15,7 +15,7 @@ const chartOptions = computed(() => {
     series: [30, 20, 18],
     options: {
       chart: {
-        height: "250",
+        height: "200",
         type: "donut",
       },
       stroke: {
