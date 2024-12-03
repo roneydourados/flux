@@ -3,6 +3,7 @@
     <v-menu>
       <template v-slot:activator="{ props }">
         <v-btn
+          :icon="isIcon"
           :variant="variant"
           :color="color"
           :disabled="disabled"
@@ -36,6 +37,7 @@
 
 <script setup lang="ts">
 import { type MenuButtonProps } from "@/interfaces/MenuButton";
+import { boolean } from "zod";
 type VariantProps =
   | "flat"
   | "text"
@@ -67,6 +69,10 @@ defineProps({
     default: false,
   },
   block: {
+    type: Boolean,
+    default: false,
+  },
+  isIcon: {
     type: Boolean,
     default: false,
   },

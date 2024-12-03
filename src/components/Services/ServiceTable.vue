@@ -76,14 +76,39 @@
             </div>
 
             <div class="d-flex align-center" style="gap: 0.5rem">
+              <ServiceAnimedTimerSVG
+                height="20"
+                v-if="item.status === 'STARTED'"
+              />
               <v-btn
                 icon
+                color="blue-grey-lighten-2"
+                variant="text"
+                type="submit"
+                size="x-small"
+                :disabled="item.status === 'FINISHED'"
+              >
+                <ServiceTimerPlaySVG
+                  height="30"
+                  v-if="item.status === 'STOPPED'"
+                />
+                <ServiceTimerStopSVG height="20" v-else />
+                <v-tooltip
+                  activator="parent"
+                  location="top center"
+                  content-class="tooltip-background"
+                >
+                  {{ item.status === "STOPPED" ? "Iniciar" : "Parar" }}
+                </v-tooltip>
+              </v-btn>
+              <MenuButton
+                :items="itemsMenu(item)"
                 variant="text"
                 size="x-small"
-                @click="showForm = true"
+                is-icon
               >
                 <EditSVG />
-              </v-btn>
+              </MenuButton>
               <v-btn
                 icon
                 variant="text"
@@ -113,6 +138,7 @@
 <script setup lang="ts">
 import { useDisplay } from "vuetify";
 import moment from "moment";
+//import type { TaskProps } from "~/interfaces/Task";
 
 const { mobile } = useDisplay();
 const { amountFormated } = useUtils();
@@ -130,28 +156,6 @@ const headers = computed(() => {
     { title: "Valor", key: "amount" },
     { title: "", key: "actions" },
   ];
-});
-
-const fixedData = ref({
-  id: 1,
-  type: "CREDIT",
-  Category: {
-    id: 1,
-    userId: 1,
-    name: "Hospedagem",
-    icon: "mdi-home-outline",
-    color: "",
-    createdAt: "2024-11-12T20:48:31.629Z",
-    updatedAt: "2024-11-12T20:48:31.629Z",
-  },
-  emissionDate: "2024-11-14",
-  dueDate: "2024-12-14",
-  name: "Teste",
-  paymentForm: "PIX",
-  amount: 1.23,
-  portionTotal: 1,
-  isPortions: false,
-  fixed: false,
 });
 
 const returnTypeName = (type: string) => {
@@ -180,6 +184,77 @@ const getStatusToolTip = (status: string) => {
 const getEditItem = (item: TransactionProps) => {
   showForm.value = true;
   selectedItem.value = item;
+};
+
+const itemsMenu = (service: ServiceProps) => {
+  if (service.status !== "FINISHED") {
+    return [
+      {
+        title: "Editar",
+        icon: "mdi-pencil-outline",
+        iconColor: "blue-grey-lighten-1",
+      },
+      {
+        title: "Finalizar tarefa",
+        icon: "mdi-text-box-check-outline",
+        iconColor: "blue-grey",
+      },
+      {
+        title: "Excluir",
+        icon: "mdi-delete-outline",
+        iconColor: "blue-grey",
+      },
+    ];
+  } else if (service.status === "FINISHED" && !service.isInvoiced) {
+    return [
+      {
+        title: "Reabrir tarefa",
+        icon: "mdi-file-document-refresh-outline",
+        iconColor: "blue-grey",
+      },
+      {
+        title: "Faturar",
+        icon: "mdi-alert-circle-outline",
+        iconColor: "blue-grey",
+      },
+      {
+        title: "Excluir",
+        icon: "mdi-delete-outline",
+        iconColor: "blue-grey",
+      },
+    ];
+  } else if (service.status === "FINISHED" && service.isInvoiced) {
+    return [
+      {
+        title: "Estornar faturamento",
+        icon: "mdi-alert-circle-outline",
+        iconColor: "blue-grey",
+      },
+      {
+        title: "Excluir",
+        icon: "mdi-delete-outline",
+        iconColor: "blue-grey",
+      },
+    ];
+  }
+
+  return [
+    {
+      title: "Editar",
+      icon: "mdi-pencil-outline",
+      iconColor: "blue-grey-lighten-1",
+    },
+    {
+      title: "Reabrir tarefa",
+      icon: "mdi-file-document-refresh-outline",
+      iconColor: "blue-grey",
+    },
+    {
+      title: "Excluir",
+      icon: "mdi-delete-outline",
+      iconColor: "blue-grey",
+    },
+  ];
 };
 
 const items = ref([

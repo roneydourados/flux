@@ -7,35 +7,30 @@
           @month="setLocalStorageMonth($event)"
           @year="setLocalStorageYear($event)"
         />
-        <div class="d-flex flex-wrap align-center mt-4" style="gap: 0.5rem">
-          <SelectInput
-            v-model="filter.type"
-            label="Tipo Transação"
-            :items="$transactionTypes"
-            item-title="name"
-            item-value="type"
-            density="comfortable"
-            variant="outlined"
-          />
-          <SelectInput
-            v-model="filter.paymentForm"
-            label="Forma pagamento"
-            :items="$transactionPaymentForms"
-            item-title="name"
-            item-value="type"
-            density="comfortable"
-            variant="outlined"
-          />
-          <SelectInput
-            v-model="filter.status"
-            label="Situação"
-            :items="transactionStatusItens"
-            item-title="name"
-            item-value="type"
-            density="comfortable"
-            variant="outlined"
-          />
-        </div>
+      </v-col>
+    </v-row>
+    <v-row>
+      <v-col cols="12" lg="7">
+        <SelectInput
+          v-model="filter.paymentForm"
+          label="Cliente"
+          :items="$transactionPaymentForms"
+          item-title="name"
+          item-value="type"
+          density="comfortable"
+          variant="outlined"
+        />
+      </v-col>
+      <v-col cols="12" lg="2">
+        <SelectInput
+          v-model="filter.status"
+          label="Situação"
+          :items="transactionStatusItens"
+          item-title="name"
+          item-value="type"
+          density="comfortable"
+          variant="outlined"
+        />
       </v-col>
       <v-col cols="12" lg="3" class="d-flex align-center justify-end">
         <Button
@@ -54,8 +49,17 @@
       <v-col cols="12" lg="6">
         <ServiceChartMonth />
       </v-col>
-      <v-col cols="12" lg="2">
+      <v-col cols="12" lg="2" class="d-flex flex-column" style="gap: 0.5rem">
         <ServiceTotalCard />
+        <v-btn
+          class="text-none"
+          variant="flat"
+          color="deep-purple"
+          size="small"
+        >
+          <ServicePDFExportSVG class="mr-2" />
+          Exportar serviços
+        </v-btn>
       </v-col>
       <v-col cols="12" lg="2">
         <ServiceChartStatus />
@@ -92,8 +96,8 @@ const filter = ref({
 
 const transactionStatusItens = [
   { name: "Todas", type: "all" },
-  { name: "Pendente", type: "A" },
-  { name: "Paga", type: "P" },
+  { name: "Faturado", type: "fat" },
+  { name: "Não Faturado", type: "not_fat" },
 ];
 
 const $transactionTypes = computed(() => {
