@@ -137,8 +137,6 @@
 
 <script setup lang="ts">
 import { useDisplay } from "vuetify";
-import moment from "moment";
-//import type { TaskProps } from "~/interfaces/Task";
 
 const { mobile } = useDisplay();
 const { amountFormated } = useUtils();

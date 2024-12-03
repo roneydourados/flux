@@ -1,5 +1,6 @@
 import { ServiceProps } from "~/interfaces/Service";
 import prisma from "~/lib/prisma";
+import { useServiceApiUtils } from "../utils/ApiUtils";
 
 interface FiltersProps {
   initialDate?: string;
@@ -11,7 +12,7 @@ interface FiltersProps {
   ownerId?: number;
 }
 
-export const getTasks = async ({
+export const index = async ({
   clientId,
   clientProjectId,
   finalDate,
@@ -86,8 +87,6 @@ export const getTasks = async ({
       },
       clientProjectId: clientProjectId ? Number(clientProjectId) : undefined,
       clientId: clientId ? Number(clientId) : undefined,
-      //ownerId: ownerId ? Number(ownerId) : Number(userId),
-
       isInvoiced,
       userId: Number(userId),
     },
@@ -125,7 +124,7 @@ const getLastOpenOcurrence = async (serviceId: number) => {
   });
 };
 
-export const createTask = async ({
+export const create = async ({
   title,
   hourValue,
   clientProjectId,
@@ -151,6 +150,143 @@ export const createTask = async ({
     throw createError({
       statusCode: 400,
       statusMessage: `Erro ao criar: ${error}`,
+    });
+  }
+};
+
+export const update = async ({
+  publicId,
+  status,
+  clientProjectId,
+  hourValue,
+  title,
+  serviceDate,
+  serviceEndDate,
+  updateOccorrence,
+  totalValue,
+  isInvoiced,
+  occurrenceStartDate,
+  occurrenceEndDate,
+}: ServiceProps) => {
+  const { calculeServiceTotals } = useServiceApiUtils();
+
+  try {
+    const exists = await prisma.service.findFirst({
+      where: {
+        publicId,
+      },
+    });
+
+    if (exists) {
+      const data = {
+        status,
+        clientProjectId, // Add the missing property
+        hourValue,
+        totalValue,
+        title,
+        taskDate: serviceDate ? new Date(String(serviceDate)) : undefined,
+        taskEndDate: serviceEndDate ? new Date(String(serviceEndDate)) : null,
+        isInvoiced,
+      };
+
+      // aqui significa que vou reabrir a task então setar null na data final
+      if (status === "STOPPED") {
+        data.taskEndDate = null;
+      }
+
+      const service = await prisma.service.update({
+        where: { id: exists.id },
+        data,
+      });
+
+      if (updateOccorrence) {
+        if (status === "STOPPED") {
+          const lastOccurrence = await prisma.serviceOccurrence.findFirst({
+            where: {
+              serviceId: exists.id,
+              ended: null,
+            },
+            orderBy: {
+              started: "desc",
+            },
+          });
+
+          if (lastOccurrence) {
+            await prisma.serviceOccurrence.update({
+              where: { id: lastOccurrence.id },
+              data: {
+                ended: occurrenceEndDate,
+              },
+            });
+
+            const taskUpdateTotal = await prisma.service.findFirst({
+              select: {
+                id: true,
+                hourValue: true,
+                status: true,
+                createdAt: true,
+                serviceDate: true,
+                title: true,
+                serviceEndDate: true,
+                totalValue: true,
+                userId: true,
+                ServiceOccurrence: {
+                  select: {
+                    id: true,
+                    createdAt: true,
+                    ended: true,
+                    started: true,
+                  },
+                },
+              },
+              where: { id: exists.id },
+            });
+
+            //@ts-ignore calcular o total da task sempre que finalizar um evento de tempo
+            const totaltask = calculeTaskTotals(taskUpdateTotal);
+
+            await prisma.service.update({
+              data: {
+                totalValue: totaltask.valorNumber.toFixed(2),
+              },
+              where: { id: taskUpdateTotal?.id },
+            });
+          }
+        } else {
+          await prisma.serviceOccurrence.create({
+            data: {
+              serviceId: exists.id,
+              started: occurrenceStartDate!,
+            },
+          });
+        }
+      }
+
+      return service;
+    }
+  } catch (error) {
+    throw createError({
+      statusCode: 400,
+      statusMessage: `Erro ao atualizar: ${error}`,
+    });
+  }
+};
+
+export const destroy = async (publicId: string) => {
+  try {
+    const exists = await prisma.service.findFirst({
+      where: { publicId },
+    });
+
+    if (exists) {
+      await prisma.service.delete({
+        where: { id: exists.id },
+      });
+    }
+  } catch (error) {
+    throw createError({
+      statusCode: 400,
+      statusMessage: `Erro ao apagar: ${error}`,
     });
   }
 };

@@ -3,22 +3,23 @@ import { type ClientProjectProps } from "./ClientProjects";
 
 export interface ServiceProps {
   id?: number;
+  publicId?: string;
   userId?: number;
   clientId?: number;
   title: string;
   hourValue: number;
   totalValue?: number;
   clientProjectId: number;
-  taskDate?: string;
+  serviceDate?: string;
   ownerId?: number;
-  taskEndDate?: string;
+  serviceEndDate?: string;
   createdAt?: string;
   status?: string;
   isInvoiced?: boolean;
   ClientProject?: ClientProjectProps;
-  TaskOccurrence?: ServiceOccurrenceProps[];
+  ServiceOccurrence?: ServiceOccurrenceProps[];
   _count?: {
-    TaskOccurrence: number;
+    serviceOccurrence: number;
   };
   updateOccorrence?: boolean;
   lastOpenOccurence?: string;
@@ -28,7 +29,8 @@ export interface ServiceProps {
 
 export interface ServiceOccurrenceProps {
   id?: number;
-  taskId?: number;
+  publicId?: string;
+  serviceId?: number;
   started?: string;
   ended?: string;
   createdAt?: string;
