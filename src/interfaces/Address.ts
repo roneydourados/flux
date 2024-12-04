@@ -15,5 +15,18 @@ export interface AddressProps {
   updatedAt?: string;
 }
 
+export interface CepAdderssProps {
+  cep?: string;
+  logradouro?: string;
+  complemento?: string;
+  bairro?: string;
+  localidade?: string;
+  uf?: string;
+  ibge?: string;
+  gia?: string;
+  ddd?: string;
+  siafi?: string;
+}
+
 export const ADDRESS_USER = "USER";
 export const ADDRESS_CLIENT = "CLIENT";

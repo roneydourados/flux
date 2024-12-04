@@ -34,7 +34,7 @@
           <div class="d-flex align-center" style="gap: 0.5rem">
             <v-btn
               variant="flat"
-              color="info"
+              color="surface"
               class="text-none"
               size="small"
               @click="router.back()"
@@ -44,7 +44,7 @@
             </v-btn>
             <v-btn
               variant="flat"
-              color="primary"
+              color="green"
               class="text-none"
               size="small"
               @click="$emit('add')"

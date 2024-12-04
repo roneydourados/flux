@@ -11,15 +11,7 @@
     </v-row>
     <v-row>
       <v-col cols="12" lg="7">
-        <SelectInput
-          v-model="filter.paymentForm"
-          label="Cliente"
-          :items="$transactionPaymentForms"
-          item-title="name"
-          item-value="type"
-          density="comfortable"
-          variant="outlined"
-        />
+        <ClientSelectSearch />
       </v-col>
       <v-col cols="12" lg="2">
         <SelectInput
