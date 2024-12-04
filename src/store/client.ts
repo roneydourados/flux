@@ -34,7 +34,7 @@ export const useClientStore = defineStore("client", () => {
   };
 
   const update = async (payload: ClientProps) => {
-    const resp = await api.put(`/clients/${payload.id}`, payload);
+    const resp = await api.put(`/clients/${payload.publicId}`, payload);
 
     client.value = resp.data;
   };

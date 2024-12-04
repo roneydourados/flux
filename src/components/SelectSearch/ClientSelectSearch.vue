@@ -18,6 +18,16 @@
     >
       <template #items="{ item, props }">
         <v-list-item v-bind="props" :title="item.raw.name" density="compact">
+          <template #append>
+            <v-btn
+              icon
+              variant="text"
+              size="small"
+              @click="handleEdit(item.raw)"
+            >
+              <EditSVG />
+            </v-btn>
+          </template>
         </v-list-item>
       </template>
 
@@ -38,12 +48,12 @@
             size="small"
             color="green"
             flat
-            @click="showForm = true"
+            @click="handleNew"
           />
         </template>
       </v-tooltip>
     </div>
-    <ClientForm v-model="showForm" />
+    <ClientForm v-model="showForm" :client="selected" />
   </div>
 </template>
 
@@ -75,8 +85,9 @@ const search = ref("");
 const loadingSearch = ref(false);
 const showForm = ref(false);
 const value = props.modelValue;
-
+const selected = ref<ClientProps>();
 const clients = computed(() => clientStore.$all);
+const $single = computed(() => clientStore.$single);
 
 watch(search, async () => {
   setTimeout(async () => {
@@ -97,4 +108,15 @@ watch(search, async () => {
     }
   }, 700);
 });
+
+const handleEdit = async (client: ClientProps) => {
+  await clientStore.show(client.publicId!);
+  selected.value = $single.value;
+  showForm.value = true;
+};
+
+const handleNew = () => {
+  selected.value = undefined;
+  showForm.value = true;
+};
 </script>

@@ -13,6 +13,7 @@ export const index = async (name?: string, userId?: number) => {
       cnpjCpf: true,
       isActive: true,
       type: true,
+      publicId: true,
     },
     where: {
       name: name ? { contains: String(name), mode: "insensitive" } : undefined,
@@ -36,6 +37,7 @@ export const index = async (name?: string, userId?: number) => {
           state: true,
           zipCode: true,
           ownerId: true,
+          publicId: true,
         },
         where: {
           ownerId: client.id,
@@ -59,6 +61,8 @@ export const show = async (publicId: string) => {
       cnpjCpf: true,
       isActive: true,
       type: true,
+      hourValueDefault: true,
+      publicId: true,
     },
     where: {
       publicId,
@@ -139,7 +143,6 @@ export const create = async ({
 };
 
 export const update = async ({
-  id,
   publicId,
   name,
   email,
@@ -148,6 +151,7 @@ export const update = async ({
   cnpjCpf,
   type,
   address,
+  hourValueDefault,
 }: ClientProps) => {
   try {
     const exists = await prisma.client.findFirst({
@@ -166,6 +170,7 @@ export const update = async ({
           email: email ? String(email) : undefined,
           observation: observation ? String(observation) : undefined,
           phone: phone ? String(phone) : undefined,
+          hourValueDefault,
         },
       });
 

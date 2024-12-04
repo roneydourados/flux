@@ -10,13 +10,6 @@ export interface ClientProps {
   email?: string;
   observation?: string;
   cnpjCpf?: string;
-  addressZipcode?: string;
-  addressCity?: string;
-  addressDistrict?: string;
-  addressStreet?: string;
-  addressNumber?: string;
-  addressState?: string;
-  addressComplement?: string;
   type?: string;
   address?: AddressProps;
 }

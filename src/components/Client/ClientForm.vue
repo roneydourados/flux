@@ -5,6 +5,7 @@
     @dialog="close"
     :width="mobile ? '100%' : '60%'"
   >
+    <!-- <pre>{{ model }}</pre> -->
     <v-tabs v-model="tab" color="green">
       <v-tab
         v-for="item in menuItens"
@@ -75,22 +76,18 @@
                 <CNPJInput
                   v-if="model.type === 'J'"
                   label="CNPJ"
-                  v-model="model.cnpjCpf.value"
+                  v-model="model.cnpjCpf"
                 />
                 <CPFInput
                   v-if="model.type === 'F'"
                   label="CPF"
-                  v-model="model.cnpjCpf.value"
+                  v-model="model.cnpjCpf"
                 />
               </v-col>
             </v-row>
             <v-row dense>
               <v-col cols="12" lg="3">
-                <TelefoneInput
-                  label="Whatsapp"
-                  v-model="model.phone.text"
-                  v-model:model-number="model.phone.value"
-                />
+                <TelefoneInput label="Whatsapp" v-model="model.phone" />
               </v-col>
               <v-col cols="12" lg="9">
                 <StringInput
@@ -108,9 +105,7 @@
                   label="Cep"
                   icon="mdi-map-marker-radius-outline"
                   :clearable="true"
-                  v-model:model-value="model.addressZipcode.text"
-                  v-model:model-number="model.addressZipcode.value"
-                  v-model:model-address="model.addressZipcode.address"
+                  v-model="model.addressZipcode.text"
                   @update:model-address="setAddress($event)"
                 />
               </v-col>
@@ -174,7 +169,7 @@
 </template>
 
 <script setup lang="ts">
-import { formatCPF, formatCEP } from "@brazilian-utils/brazilian-utils";
+import { formatCEP } from "@brazilian-utils/brazilian-utils";
 import { type ClientProps } from "@/interfaces/Client";
 import { type CepAdderssProps } from "@/interfaces/Address";
 import { useDisplay } from "vuetify";
@@ -194,7 +189,7 @@ const menuItens = ref([
 ]);
 const emit = defineEmits(["close"]);
 const clientStore = useClientStore();
-const { formatTelephoneNumber } = useUtils();
+const { formatTelephoneNumber, amountFormated } = useUtils();
 const { mobile } = useDisplay();
 
 const show = defineModel({
@@ -207,17 +202,10 @@ const model = ref({
   email: "",
   observation: "",
   hourValueDefault: "",
-  phone: {
-    text: "",
-    value: "",
-  },
-  cnpjCpf: {
-    text: "",
-    value: "",
-  },
+  phone: "",
+  cnpjCpf: "",
   addressZipcode: {
     text: undefined as string | undefined,
-    value: undefined as number | undefined,
     address: {} as CepAdderssProps,
   },
   address: {
@@ -243,9 +231,9 @@ watchEffect(() => {
 
 const onSubmit = async () => {
   try {
-    if (props.client.id) {
+    if (props.client.publicId) {
       await clientStore.update({
-        id: model.value.id,
+        publicId: props.client.publicId,
         name: model.value.name,
         hourValueDefault: Number(model.value.hourValueDefault ?? "0"),
         address: {
@@ -255,14 +243,12 @@ const onSubmit = async () => {
           number: model.value.address.addressNumber ?? undefined,
           state: model.value.address.addressState ?? undefined,
           street: model.value.address.addressStreet ?? undefined,
-          zipCode: model.value.addressZipcode.value
-            ? model.value.addressZipcode.value.toString()
-            : undefined,
+          zipCode: model.value.addressZipcode.text,
         },
-        cnpjCpf: model.value.cnpjCpf.value ?? undefined,
+        cnpjCpf: model.value.cnpjCpf ?? undefined,
         email: model.value.email,
         observation: model.value.observation ?? undefined,
-        phone: model.value.phone.value,
+        phone: model.value.phone,
         type: model.value.type,
       });
     } else {
@@ -276,20 +262,20 @@ const onSubmit = async () => {
           number: model.value.address.addressNumber ?? undefined,
           state: model.value.address.addressState ?? undefined,
           street: model.value.address.addressStreet ?? undefined,
-          zipCode: model.value.addressZipcode.value
-            ? model.value.addressZipcode.value.toString()
+          zipCode: model.value.addressZipcode.text
+            ? model.value.addressZipcode.text
             : undefined,
         },
-        cnpjCpf: model.value.cnpjCpf.value ?? undefined,
+        cnpjCpf: model.value.cnpjCpf ?? undefined,
         email: model.value.email,
         observation: model.value.observation ?? undefined,
-        phone: model.value.phone.value,
+        phone: model.value.phone,
         type: model.value.type,
       });
     }
 
     clearModel();
-    emit("close");
+    close();
   } catch (error) {
     console.error("🚀 ~ onSubmit ~ error:", error);
   }
@@ -305,19 +291,12 @@ const clearModel = () => {
     id: 0,
     name: "",
     email: "",
-    hourValueDefault: "",
     observation: "",
-    phone: {
-      text: "",
-      value: "",
-    },
-    cnpjCpf: {
-      text: "",
-      value: "",
-    },
+    hourValueDefault: "",
+    phone: "",
+    cnpjCpf: "",
     addressZipcode: {
       text: undefined as string | undefined,
-      value: undefined as number | undefined,
       address: {} as CepAdderssProps,
     },
     address: {
@@ -338,26 +317,28 @@ const loadModel = () => {
     name: props.client.name ?? "",
     email: props.client.email ?? "",
     observation: props.client.observation ?? "",
-    phone: {
-      text: formatTelephoneNumber(props.client.phone ? props.client.phone : ""),
-      value: props.client.phone ?? "",
-    },
-    cnpjCpf: {
-      text: formatCPF(props.client.cnpjCpf ?? ""),
-      value: props.client.cnpjCpf ?? "",
-    },
+    hourValueDefault: props.client.hourValueDefault
+      ? String(props.client.hourValueDefault * 100)
+      : "",
+    phone: props.client.phone ?? "",
+    cnpjCpf: props.client.cnpjCpf ?? "",
+
     addressZipcode: {
       text: props.client.address?.zipCode
         ? formatCEP(props.client.address?.zipCode)
-        : undefined,
-      value: props.client.addressZipcode
-        ? Number(props.client.addressZipcode)
         : undefined,
       address: {} as CepAdderssProps,
     },
     //@ts-ignore
     address: props.client.address
-      ? props.client.address
+      ? {
+          addressCity: props.client.address.city ?? "",
+          addressDistrict: props.client.address.district ?? "",
+          addressStreet: props.client.address.street ?? "",
+          addressNumber: props.client.address.number ?? "",
+          addressState: props.client.address.state ?? "",
+          addressComplement: props.client.address.complement ?? "",
+        }
       : {
           addressCity: "",
           addressDistrict: "",
