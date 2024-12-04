@@ -28,8 +28,15 @@
         <div v-if="tabItem.id === 1" class="py-4">
           <FormCrud :on-submit="onSubmit">
             <v-row dense>
-              <v-col cols="12">
+              <v-col cols="12" lg="8">
                 <StringInput label="Nome" v-model="model.name" required />
+              </v-col>
+              <v-col cols="12" lg="4">
+                <CurrencyInput
+                  label="Valor Hora"
+                  v-model="model.hourValueDefault"
+                  required
+                />
               </v-col>
             </v-row>
             <v-row dense>
@@ -199,6 +206,7 @@ const model = ref({
   name: "",
   email: "",
   observation: "",
+  hourValueDefault: "",
   phone: {
     text: "",
     value: "",
@@ -239,6 +247,7 @@ const onSubmit = async () => {
       await clientStore.update({
         id: model.value.id,
         name: model.value.name,
+        hourValueDefault: Number(model.value.hourValueDefault ?? "0"),
         address: {
           city: model.value.address.addressCity ?? undefined,
           complement: model.value.address.addressComplement ?? undefined,
@@ -259,6 +268,7 @@ const onSubmit = async () => {
     } else {
       await clientStore.store({
         name: model.value.name,
+        hourValueDefault: Number(model.value.hourValueDefault ?? "0"),
         address: {
           city: model.value.address.addressCity ?? undefined,
           complement: model.value.address.addressComplement ?? undefined,
@@ -295,6 +305,7 @@ const clearModel = () => {
     id: 0,
     name: "",
     email: "",
+    hourValueDefault: "",
     observation: "",
     phone: {
       text: "",
