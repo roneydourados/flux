@@ -134,6 +134,8 @@ export const create = async ({
         },
       });
     }
+
+    return client;
   } catch (error) {
     throw createError({
       statusCode: 400,

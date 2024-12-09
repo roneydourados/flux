@@ -60,7 +60,7 @@
         <ServiceChartProject />
       </v-col>
     </v-row>
-    <TransactionForm v-model="showForm" />
+    <ServiceForm v-model="showForm" />
     <ApplicationOverlay :overlay="loading" />
   </div>
 </template>

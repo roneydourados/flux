@@ -3,10 +3,21 @@
     title="Projetos"
     :headers="headers"
     :items="$projects"
-    @add="handleNew"
     @search="handleSearch($event)"
     :show-crud="false"
   >
+    <template #title-button>
+      <v-btn
+        variant="flat"
+        color="green"
+        class="text-none"
+        size="small"
+        @click="handleNew"
+      >
+        <v-icon icon="mdi-plus"> </v-icon>
+        Adicionar projeto
+      </v-btn>
+    </template>
     <template v-slot:item.name="{ item }">
       <div class="d-flex align-center" style="gap: 1rem">
         <v-icon icon="mdi-file-tree-outline" :color="item.color" />
@@ -74,7 +85,7 @@
       />
     </FormCrud>
   </DialogForm>
-  <Dialog
+  <DialogQuestion
     title="Apagar ?"
     :dialog="showDestroy"
     show-cancel
@@ -84,7 +95,7 @@
     <strong>
       {{ model.name }}
     </strong>
-  </Dialog>
+  </DialogQuestion>
   <DialogLoading :dialog="loading" />
 </template>
 

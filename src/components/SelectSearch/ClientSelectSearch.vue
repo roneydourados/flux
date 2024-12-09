@@ -53,7 +53,7 @@
         </template>
       </v-tooltip>
     </div>
-    <ClientForm v-model="showForm" :client="selected" />
+    <Client v-model="showForm" :client="selected" />
   </div>
 </template>
 

@@ -1,178 +1,143 @@
 <template>
-  <DialogForm
-    :show="show"
-    title="Cliente"
-    @dialog="close"
-    :width="mobile ? '100%' : '60%'"
-  >
-    <!-- <pre>{{ model }}</pre> -->
-    <v-tabs v-model="tab" color="green">
-      <v-tab
-        v-for="item in menuItens"
-        :key="item.id"
-        :value="item.id"
-        class="text-none"
-      >
-        <v-icon :icon="item.icon" start />
-        <span v-if="!mobile">
-          {{ item.title }}
-        </span>
-      </v-tab>
-    </v-tabs>
+  <FormCrud :on-submit="onSubmit">
+    <v-row dense>
+      <v-col cols="12" lg="8">
+        <StringInput label="Nome" v-model="model.name" required />
+      </v-col>
+      <v-col cols="12" lg="4">
+        <CurrencyInput
+          label="Valor Hora"
+          v-model="model.hourValueDefault"
+          required
+        />
+      </v-col>
+    </v-row>
+    <v-row dense>
+      <v-col cols="12" lg="3">
+        <SelectInput
+          label="Tipo de Cliente"
+          v-model="model.type"
+          :items="[
+            { code: 'F', name: 'Física' },
+            { code: 'J', name: 'Jurídica' },
+          ]"
+          item-title="name"
+          item-value="code"
+          density="comfortable"
+        >
+          <template #items="{ props, item }">
+            <v-list-item
+              v-bind="props"
+              :title="String((item as any).raw.name)"
+              density="compact"
+            >
+            </v-list-item>
+          </template>
 
-    <v-tabs-window v-model="tab">
-      <v-tabs-window-item
-        v-for="tabItem in menuItens"
-        :key="tabItem.id"
-        :value="tabItem.id"
-      >
-        <div v-if="tabItem.id === 1" class="py-4">
-          <FormCrud :on-submit="onSubmit">
-            <v-row dense>
-              <v-col cols="12" lg="8">
-                <StringInput label="Nome" v-model="model.name" required />
-              </v-col>
-              <v-col cols="12" lg="4">
-                <CurrencyInput
-                  label="Valor Hora"
-                  v-model="model.hourValueDefault"
-                  required
-                />
-              </v-col>
-            </v-row>
-            <v-row dense>
-              <v-col cols="12" lg="3">
-                <SelectInput
-                  label="Tipo de Cliente"
-                  v-model="model.type"
-                  :items="[
-                    { code: 'F', name: 'Física' },
-                    { code: 'J', name: 'Jurídica' },
-                  ]"
-                  item-title="name"
-                  item-value="code"
-                  density="comfortable"
-                >
-                  <template #items="{ props, item }">
-                    <v-list-item
-                      v-bind="props"
-                      :title="String((item as any).raw.name)"
-                      density="compact"
-                    >
-                    </v-list-item>
-                  </template>
+          <template #item-selection="{ item }">
+            <div class="d-flex align-center">
+              <span>
+                {{ (item as any).raw.name }}
+              </span>
+            </div>
+          </template>
+        </SelectInput>
+      </v-col>
 
-                  <template #item-selection="{ item }">
-                    <div class="d-flex align-center">
-                      <span>
-                        {{ (item as any).raw.name }}
-                      </span>
-                    </div>
-                  </template>
-                </SelectInput>
-              </v-col>
+      <v-col cols="12" lg="9">
+        <CNPJInput
+          v-if="model.type === 'J'"
+          label="CNPJ"
+          v-model="model.cnpjCpf"
+        />
+        <CPFInput
+          v-if="model.type === 'F'"
+          label="CPF"
+          v-model="model.cnpjCpf"
+        />
+      </v-col>
+    </v-row>
+    <v-row dense>
+      <v-col cols="12" lg="3">
+        <TelefoneInput label="Whatsapp" v-model="model.phone" />
+      </v-col>
+      <v-col cols="12" lg="9">
+        <StringInput
+          label="E-mail"
+          type="email"
+          v-model="model.email"
+          required
+        />
+      </v-col>
+    </v-row>
 
-              <v-col cols="12" lg="9">
-                <CNPJInput
-                  v-if="model.type === 'J'"
-                  label="CNPJ"
-                  v-model="model.cnpjCpf"
-                />
-                <CPFInput
-                  v-if="model.type === 'F'"
-                  label="CPF"
-                  v-model="model.cnpjCpf"
-                />
-              </v-col>
-            </v-row>
-            <v-row dense>
-              <v-col cols="12" lg="3">
-                <TelefoneInput label="Whatsapp" v-model="model.phone" />
-              </v-col>
-              <v-col cols="12" lg="9">
-                <StringInput
-                  label="E-mail"
-                  type="email"
-                  v-model="model.email"
-                  required
-                />
-              </v-col>
-            </v-row>
+    <v-row dense>
+      <v-col cols="12" lg="3">
+        <CepInput
+          label="Cep"
+          icon="mdi-map-marker-radius-outline"
+          :clearable="true"
+          v-model="model.addressZipcode.text"
+          @update:model-address="setAddress($event)"
+        />
+      </v-col>
+      <v-col cols="12" lg="7">
+        <StringInput
+          label="Rua"
+          :clearable="true"
+          v-model:model-value="model.address.addressStreet"
+        />
+      </v-col>
+      <v-col cols="12" lg="2">
+        <StringInput
+          label="Nº"
+          :clearable="true"
+          v-model:model-value="model.address.addressNumber"
+        />
+      </v-col>
+    </v-row>
+    <v-row dense>
+      <v-col cols="12" lg="5">
+        <StringInput
+          label="Bairro"
+          :clearable="true"
+          v-model:model-value="model.address.addressDistrict"
+        />
+      </v-col>
+      <v-col cols="12" lg="5">
+        <StringInput
+          label="Cidade"
+          :clearable="true"
+          v-model:model-value="model.address.addressCity"
+        />
+      </v-col>
+      <v-col cols="12" md="2">
+        <StatesSelectSearch v-model="model.address.addressState" />
+      </v-col>
+    </v-row>
+    <v-row dense>
+      <v-col cols="12">
+        <StringInput
+          label="Complemento"
+          :clearable="true"
+          v-model:model-value="model.address.addressComplement"
+        />
+      </v-col>
+    </v-row>
 
-            <v-row dense>
-              <v-col cols="12" lg="3">
-                <CepInput
-                  label="Cep"
-                  icon="mdi-map-marker-radius-outline"
-                  :clearable="true"
-                  v-model="model.addressZipcode.text"
-                  @update:model-address="setAddress($event)"
-                />
-              </v-col>
-              <v-col cols="12" lg="7">
-                <StringInput
-                  label="Rua"
-                  :clearable="true"
-                  v-model:model-value="model.address.addressStreet"
-                />
-              </v-col>
-              <v-col cols="12" lg="2">
-                <StringInput
-                  label="Nº"
-                  :clearable="true"
-                  v-model:model-value="model.address.addressNumber"
-                />
-              </v-col>
-            </v-row>
-            <v-row dense>
-              <v-col cols="12" lg="5">
-                <StringInput
-                  label="Bairro"
-                  :clearable="true"
-                  v-model:model-value="model.address.addressDistrict"
-                />
-              </v-col>
-              <v-col cols="12" lg="5">
-                <StringInput
-                  label="Cidade"
-                  :clearable="true"
-                  v-model:model-value="model.address.addressCity"
-                />
-              </v-col>
-              <v-col cols="12" md="2">
-                <StatesSelectSearch v-model="model.address.addressState" />
-              </v-col>
-            </v-row>
-            <v-row dense>
-              <v-col cols="12">
-                <StringInput
-                  label="Complemento"
-                  :clearable="true"
-                  v-model:model-value="model.address.addressComplement"
-                />
-              </v-col>
-            </v-row>
-
-            <v-row dense>
-              <v-col cols="12">
-                <TextInput label="Observações" v-model="model.observation" />
-              </v-col>
-            </v-row>
-          </FormCrud>
-        </div>
-        <div v-if="tabItem.id === 2" class="py-4">
-          <ClientProjectsTable />
-        </div>
-      </v-tabs-window-item>
-    </v-tabs-window>
-  </DialogForm>
+    <v-row dense>
+      <v-col cols="12">
+        <TextInput label="Observações" v-model="model.observation" />
+      </v-col>
+    </v-row>
+  </FormCrud>
 </template>
 
 <script setup lang="ts">
 import { formatCEP } from "@brazilian-utils/brazilian-utils";
 import { type ClientProps } from "@/interfaces/Client";
 import { type CepAdderssProps } from "@/interfaces/Address";
-import { useDisplay } from "vuetify";
+//import { useDisplay } from "vuetify";
 
 const props = defineProps({
   client: {
@@ -182,19 +147,19 @@ const props = defineProps({
 });
 
 // const projects = useProjectsStore();
-const tab = ref(1);
-const menuItens = ref([
-  { title: "Dados", icon: "mdi-account-outline", id: 1 },
-  { title: "Projetos", icon: "mdi-set-left", id: 2 },
-]);
+// const tab = ref(1);
+// const menuItens = ref([
+//   { title: "Dados", icon: "mdi-account-outline", id: 1 },
+//   { title: "Projetos", icon: "mdi-set-left", id: 2 },
+// ]);
 const emit = defineEmits(["close"]);
 const clientStore = useClientStore();
-const { formatTelephoneNumber, amountFormated } = useUtils();
-const { mobile } = useDisplay();
+//const { formatTelephoneNumber, amountFormated } = useUtils();
+//const { mobile } = useDisplay();
 
-const show = defineModel({
-  default: false,
-});
+// const show = defineModel({
+//   default: false,
+// });
 
 const model = ref({
   id: 0,
@@ -219,15 +184,21 @@ const model = ref({
   type: "F",
 });
 
-watchEffect(() => {
-  if (props.client.id && show.value) {
-    loadModel();
-  }
+const $single = computed(() => clientStore.$single);
 
-  if (show.value) {
-    tab.value = 1;
-  }
-});
+watch(
+  () => props.client,
+  async () => {
+    await nextTick(); // aqui apenas para não dar erro de inicialização
+
+    if (props.client.id && model.value.id === 0) {
+      loadModel();
+    } else {
+      clearModel();
+    }
+  },
+  { immediate: true }
+);
 
 const onSubmit = async () => {
   try {
@@ -251,6 +222,9 @@ const onSubmit = async () => {
         phone: model.value.phone,
         type: model.value.type,
       });
+
+      // clearModel();
+      // close();
     } else {
       await clientStore.store({
         name: model.value.name,
@@ -272,19 +246,19 @@ const onSubmit = async () => {
         phone: model.value.phone,
         type: model.value.type,
       });
-    }
 
-    clearModel();
-    close();
+      // se for um novo cliente então pegar o id retornada para possibilitar o cadastro de projetos
+      model.value.id = $single.value?.id!;
+    }
   } catch (error) {
     console.error("🚀 ~ onSubmit ~ error:", error);
   }
 };
 
-const close = () => {
-  clearModel();
-  show.value = false;
-};
+// const close = () => {
+//   clearModel();
+//   show.value = false;
+// };
 
 const clearModel = () => {
   model.value = {
