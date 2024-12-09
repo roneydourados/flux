@@ -16,13 +16,13 @@
             @update:model-value="getHourValue"
             required
           />
-          <pre>{{ model.ClientProject }}</pre>
         </v-col>
         <v-col cols="12" lg="6">
           <CurrencyInput v-model="model.value" label="Valor da hora" required />
         </v-col>
       </v-row>
     </FormCrud>
+    <ApplicationOverlay :overlay="loading" />
   </DrawerForm>
 </template>
 

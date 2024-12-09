@@ -45,10 +45,6 @@ const props = defineProps({
     type: String,
     default: "",
   },
-  // modelValue: {
-  //   type: Object,
-  //   default: undefined,
-  // },
   cleareable: {
     type: Boolean,
     default: false,
