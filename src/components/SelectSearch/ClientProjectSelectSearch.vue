@@ -45,10 +45,10 @@ const props = defineProps({
     type: String,
     default: "",
   },
-  modelValue: {
-    type: Object,
-    default: undefined,
-  },
+  // modelValue: {
+  //   type: Object,
+  //   default: undefined,
+  // },
   cleareable: {
     type: Boolean,
     default: false,
@@ -74,7 +74,9 @@ const projectStore = useProjectsStore();
 const search = ref("");
 const loadingSearch = ref(false);
 
-const value = props.modelValue;
+const value = defineModel<ClientProjectProps>({
+  default: undefined,
+});
 
 const projects = computed(() => projectStore.$all);
 

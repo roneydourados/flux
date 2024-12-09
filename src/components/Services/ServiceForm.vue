@@ -16,6 +16,7 @@
             @update:model-value="getHourValue"
             required
           />
+          <pre>{{ model.ClientProject }}</pre>
         </v-col>
         <v-col cols="12" lg="6">
           <CurrencyInput v-model="model.value" label="Valor da hora" required />
@@ -74,7 +75,7 @@ const clearModel = () => {
   model.value = {
     id: 0,
     title: "",
-    ClientProject: undefined as ClientProjectProps | undefined,
+    ClientProject: undefined,
     value: "",
     serviceDate: moment().format("YYYY-MM-DD"),
   };
@@ -129,6 +130,12 @@ const handleSubmit = async () => {
 
 const getHourValue = () => {
   model.value.value =
-    model.value.ClientProject?.Client?.hourValueDefault?.toFixed(2) ?? "";
+    model.value.ClientProject?.Client?.hourValueDefault?.toString()
+      ? (
+          Number(
+            model.value.ClientProject?.Client?.hourValueDefault?.toString()
+          ) * 100
+        ).toString()
+      : "";
 };
 </script>
