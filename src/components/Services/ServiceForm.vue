@@ -11,7 +11,11 @@
           <TextInput v-model="model.title" label="Título" required />
         </v-col>
         <v-col cols="12">
-          <ClientProjectSelectSearch v-model="model.ClientProject" required />
+          <ClientProjectSelectSearch
+            v-model="model.ClientProject"
+            @update:model-value="getHourValue"
+            required
+          />
         </v-col>
         <v-col cols="12" lg="6">
           <CurrencyInput v-model="model.value" label="Valor da hora" required />
@@ -26,6 +30,8 @@ import moment from "moment";
 import { useForm } from "vee-validate";
 
 const { handleReset } = useForm();
+const serviceStore = useServiceStore();
+
 const props = defineProps({
   data: {
     type: Object as PropType<ServiceProps>,
@@ -36,6 +42,7 @@ const drawer = defineModel({
   default: false,
 });
 
+const loading = ref(false);
 const model = ref({
   id: 0,
   title: "",
@@ -63,18 +70,6 @@ const loadModel = () => {
   };
 };
 
-// const validations = () => {
-//   if (moment(model.value.due).isBefore(model.value.emission)) {
-//     useNuxtApp().$toast.warn(
-//       "A Data de vencimento não pode ser inferior a data de emissão!"
-//     );
-
-//     return false;
-//   }
-
-//   return true;
-// };
-
 const clearModel = () => {
   model.value = {
     id: 0,
@@ -93,7 +88,47 @@ const handleDrawerModelValue = (value: boolean) => {
 };
 
 const handleSubmit = async () => {
-  clearModel();
-  drawer.value = false;
+  if (isNaN(Number(model.value.value))) {
+    useNuxtApp().$toast.error("Valor da hora inválido!");
+    return;
+  }
+
+  if (Number(model.value.value) <= 0) {
+    useNuxtApp().$toast.error("Valor da hora inválido!");
+    return;
+  }
+
+  loading.value = true;
+  try {
+    if (model.value.id > 0) {
+      await serviceStore.update({
+        id: model.value.id,
+        hourValue: Number(model.value.value),
+        title: model.value.title,
+        clientId: model.value.ClientProject?.clientId!,
+        clientProjectId: model.value.ClientProject?.id!,
+        serviceDate: moment().format("YYYY-MM-DD"),
+      });
+    } else {
+      await serviceStore.store({
+        hourValue: Number(model.value.value),
+        title: model.value.title,
+        clientId: model.value.ClientProject?.clientId!,
+        clientProjectId: model.value.ClientProject?.id!,
+        serviceDate: moment().format("YYYY-MM-DD"),
+      });
+    }
+  } catch (error) {
+  } finally {
+    handleReset();
+    clearModel();
+    drawer.value = false;
+    loading.value = false;
+  }
+};
+
+const getHourValue = () => {
+  model.value.value =
+    model.value.ClientProject?.Client?.hourValueDefault?.toFixed(2) ?? "";
 };
 </script>

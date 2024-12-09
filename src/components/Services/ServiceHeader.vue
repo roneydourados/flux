@@ -33,7 +33,7 @@
         >
           <strong class="mr-1" style="font-size: 0.8rem">+</strong>
           Adicionar serviço
-          <v-icon icon="mdi-swap-vertical" end />
+          <v-icon icon="mdi-account-wrench-outline" end />
         </Button>
       </v-col>
     </v-row>

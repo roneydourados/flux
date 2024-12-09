@@ -33,6 +33,7 @@ export const showClientProject = async (publicId: string) => {
         select: {
           id: true,
           name: true,
+          hourValueDefault: true,
         },
       },
     },
@@ -57,6 +58,7 @@ export const indexClientProjects = async (
         select: {
           id: true,
           name: true,
+          hourValueDefault: true,
         },
       },
     },

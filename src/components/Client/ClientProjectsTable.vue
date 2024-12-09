@@ -206,7 +206,6 @@ const handleEdit = async (item: ClientProjectProps) => {
 
 const onSubmit = async () => {
   dialogForm.value = false;
-
   loading.value = true;
   try {
     try {

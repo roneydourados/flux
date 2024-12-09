@@ -33,7 +33,7 @@ export const index = async ({
   const gte = initialDate ? new Date(String(initialDate)) : new Date();
   const lte = finalDate ? new Date(String(finalDate)) : new Date();
 
-  const tasks = await prisma.service.findMany({
+  const services = await prisma.service.findMany({
     select: {
       id: true,
       title: true,
@@ -92,19 +92,19 @@ export const index = async ({
     },
   });
 
-  const returnTasks = await Promise.all(
-    tasks.map(async (task) => {
-      const lastOpenOccurence = await getLastOpenOcurrence(task.id);
+  const returnServices = await Promise.all(
+    services.map(async (service) => {
+      const lastOpenOccurence = await getLastOpenOcurrence(service.id);
       return {
         lastOpenOccurence: lastOpenOccurence?.started
           ? lastOpenOccurence?.started
           : null,
-        ...task,
+        ...service,
       };
     })
   );
 
-  return returnTasks;
+  return returnServices;
 };
 
 const getLastOpenOcurrence = async (serviceId: number) => {
@@ -184,14 +184,16 @@ export const update = async ({
         hourValue,
         totalValue,
         title,
-        taskDate: serviceDate ? new Date(String(serviceDate)) : undefined,
-        taskEndDate: serviceEndDate ? new Date(String(serviceEndDate)) : null,
+        serviceDate: serviceDate ? new Date(String(serviceDate)) : undefined,
+        serviceEndDate: serviceEndDate
+          ? new Date(String(serviceEndDate))
+          : null,
         isInvoiced,
       };
 
-      // aqui significa que vou reabrir a task então setar null na data final
+      // aqui significa que vou reabrir o serviço então setar null na data final
       if (status === "STOPPED") {
-        data.taskEndDate = null;
+        data.serviceEndDate = null;
       }
 
       const service = await prisma.service.update({
@@ -219,7 +221,7 @@ export const update = async ({
               },
             });
 
-            const taskUpdateTotal = await prisma.service.findFirst({
+            const serviceUpdateTotal = await prisma.service.findFirst({
               select: {
                 id: true,
                 hourValue: true,
@@ -242,14 +244,14 @@ export const update = async ({
               where: { id: exists.id },
             });
 
-            //@ts-ignore calcular o total da task sempre que finalizar um evento de tempo
-            const totaltask = calculeTaskTotals(taskUpdateTotal);
+            //@ts-ignore calcular o total do serviço sempre que finalizar um evento de tempo
+            const totalService = calculeServiceTotals(serviceUpdateTotal);
 
             await prisma.service.update({
               data: {
-                totalValue: totaltask.valorNumber.toFixed(2),
+                totalValue: totalService.valorNumber.toFixed(2),
               },
-              where: { id: taskUpdateTotal?.id },
+              where: { id: serviceUpdateTotal?.id },
             });
           }
         } else {
