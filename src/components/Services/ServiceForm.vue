@@ -89,15 +89,15 @@ const handleDrawerModelValue = (value: boolean) => {
 };
 
 const handleSubmit = async () => {
-  if (isNaN(Number(model.value.value))) {
+  if (isNaN(Number(model.value.value)) || Number(model.value.value) <= 0) {
     useNuxtApp().$toast.error("Valor da hora inválido!");
     return;
   }
 
-  if (Number(model.value.value) <= 0) {
-    useNuxtApp().$toast.error("Valor da hora inválido!");
-    return;
-  }
+  // if (Number(model.value.value) <= 0) {
+  //   useNuxtApp().$toast.error("Valor da hora inválido!");
+  //   return;
+  // }
 
   loading.value = true;
   try {
