@@ -1,10 +1,11 @@
 <template>
   <div>
     <Card>
+      <!-- <pre>{{ $allServices }}</pre> -->
       <Table
         title=""
         :headers="headers"
-        :items="items"
+        :items="$allServices"
         :items-per-page="10"
         :show-select="false"
         :show-crud="false"
@@ -21,7 +22,7 @@
               </template>
               <template #subtitle>
                 <div class="d-flex flex-column" style="gap: 0.5rem">
-                  {{ amountFormated(item.amount, true) }}
+                  {{ amountFormated(item.totalValue, true) }}
                   <div class="d-flex align-center">
                     <v-icon
                       :icon="getStatusIcon(item.status).icon"
@@ -58,80 +59,11 @@
             </v-list-item>
           </v-list>
         </template>
-        <template v-slot:item.amount="{ item }">
-          {{ amountFormated(item.amount, true) }}
-        </template>
         <template v-slot:item.title="{ item }">
-          <span>{{ item.title }}</span>
-        </template>
-
-        <template v-slot:item.actions="{ item }">
-          <div class="d-flex align-center justify-space-between">
-            <div class="d-flex align-center" style="gap: 0.5rem">
-              <v-icon
-                :icon="getStatusIcon(item.status).icon"
-                :color="getStatusIcon(item.status).color"
-              />
-              {{ getStatusToolTip(item.status) }}
-            </div>
-
-            <div class="d-flex align-center" style="gap: 0.5rem">
-              <ServiceAnimedTimerSVG
-                height="20"
-                v-if="item.status === 'STARTED'"
-              />
-              <v-btn
-                icon
-                color="blue-grey-lighten-2"
-                variant="text"
-                type="submit"
-                size="x-small"
-                :disabled="item.status === 'FINISHED'"
-              >
-                <ServiceTimerPlaySVG
-                  height="30"
-                  v-if="item.status === 'STOPPED'"
-                />
-                <ServiceTimerStopSVG height="20" v-else />
-                <v-tooltip
-                  activator="parent"
-                  location="top center"
-                  content-class="tooltip-background"
-                >
-                  {{ item.status === "STOPPED" ? "Iniciar" : "Parar" }}
-                </v-tooltip>
-              </v-btn>
-              <MenuButton
-                :items="itemsMenu(item)"
-                variant="text"
-                size="small"
-                is-icon
-              >
-                <EditSVG />
-              </MenuButton>
-              <v-btn
-                icon
-                variant="text"
-                size="small"
-                @click="dialogQuestion = true"
-              >
-                <DeleteSVG />
-              </v-btn>
-            </div>
-          </div>
+          <ServiceTableItemExpantionPanel :item="item" />
         </template>
       </Table>
     </Card>
-    <!-- <ServiceForm v-model="showForm" :data="fixedData" /> -->
-    <DialogQuestion
-      v-model="dialogQuestion"
-      title="Apagar Serviço"
-      text="Uma vez deletada não poderá recuperá-la!"
-      color-confirm="red"
-      text-confirm="Deletar"
-      @cancel="dialogQuestion = false"
-      @confirm="dialogQuestion = false"
-    />
   </div>
 </template>
 
@@ -140,19 +72,22 @@ import { useDisplay } from "vuetify";
 
 const { mobile } = useDisplay();
 const { amountFormated } = useUtils();
+const serviceStore = useServiceStore();
 
 const showForm = ref(false);
 const dialogQuestion = ref(false);
 const selectedItem = ref<TransactionProps>();
 
+const $allServices = computed(() => serviceStore.$all);
+
 const headers = computed(() => {
   if (mobile.value) {
-    return [{ title: "Descrição", key: "mobile" }];
+    return [{ title: "", key: "mobile" }];
   }
   return [
-    { title: "Descrição", key: "title" },
-    { title: "Valor", key: "amount" },
-    { title: "", key: "actions" },
+    { title: "Serviços", key: "title" },
+    // { title: "Valor", key: "amount" },
+    // { title: "", key: "actions" },
   ];
 });
 
@@ -254,133 +189,4 @@ const itemsMenu = (service: ServiceProps) => {
     },
   ];
 };
-
-const items = ref([
-  {
-    id: 1,
-    title: "Implementação do componente da inpart",
-    status: "A",
-    amount: 1000,
-  },
-  {
-    id: 2,
-    title: "Desenvolvimento de API",
-    status: "F",
-    amount: 2000,
-  },
-  {
-    id: 3,
-    title: "Manutenção de Sistema",
-    status: "A",
-    amount: 1500,
-  },
-  {
-    id: 4,
-    title: "Consultoria Técnica",
-    status: "C",
-    amount: 3000,
-  },
-  {
-    id: 5,
-    title: "Treinamento de Equipe",
-    status: "A",
-    amount: 1200,
-  },
-  {
-    id: 6,
-    title: "Análise de Dados",
-    status: "F",
-    amount: 2500,
-  },
-  {
-    id: 7,
-    title: "Desenvolvimento de Frontend",
-    status: "A",
-    amount: 1800,
-  },
-  {
-    id: 8,
-    title: "Desenvolvimento de Backend",
-    status: "C",
-    amount: 2200,
-  },
-  {
-    id: 9,
-    title: "Integração de Sistemas",
-    status: "A",
-    amount: 2700,
-  },
-  {
-    id: 10,
-    title: "Suporte Técnico",
-    status: "F",
-    amount: 1300,
-  },
-  {
-    id: 11,
-    title: "Desenvolvimento de Mobile App",
-    status: "A",
-    amount: 3200,
-  },
-  {
-    id: 12,
-    title: "Otimização de Performance",
-    status: "C",
-    amount: 2100,
-  },
-  {
-    id: 13,
-    title: "Desenvolvimento de E-commerce",
-    status: "A",
-    amount: 2900,
-  },
-  {
-    id: 14,
-    title: "Migração de Dados",
-    status: "C",
-    amount: 1700,
-  },
-  {
-    id: 15,
-    title: "Auditoria de Segurança",
-    status: "A",
-    amount: 2600,
-  },
-  {
-    id: 16,
-    title: "Desenvolvimento de Chatbot",
-    status: "C",
-    amount: 2400,
-  },
-  {
-    id: 17,
-    title: "Automação de Processos",
-    status: "A",
-    amount: 2800,
-  },
-  {
-    id: 18,
-    title: "Desenvolvimento de CRM",
-    status: "C",
-    amount: 3100,
-  },
-  {
-    id: 19,
-    title: "Desenvolvimento de ERP",
-    status: "A",
-    amount: 3500,
-  },
-  {
-    id: 20,
-    title: "Desenvolvimento de CMS",
-    status: "C",
-    amount: 2300,
-  },
-  {
-    id: 21,
-    title: "Desenvolvimento de BI",
-    status: "A",
-    amount: 3300,
-  },
-]);
 </script>

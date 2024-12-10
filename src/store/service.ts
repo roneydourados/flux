@@ -5,7 +5,7 @@ interface FilterProps {
   finalDate?: string;
   clientProjectId?: number;
   clientId?: number;
-  invoiced?: string;
+  invoiced?: boolean;
 }
 
 export const useServiceStore = defineStore("service", () => {

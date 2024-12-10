@@ -4,8 +4,8 @@
       <v-col cols="12" lg="9" class="d-flex flex-column">
         <Months
           class="w-100"
-          @month="setLocalStorageMonth($event)"
-          @year="setLocalStorageYear($event)"
+          @month="getMonth($event)"
+          @year="getYear($event)"
         />
       </v-col>
     </v-row>
@@ -17,7 +17,7 @@
         <SelectInput
           v-model="filter.status"
           label="Situação"
-          :items="transactionStatusItens"
+          :items="serviceStatusItens"
           item-title="name"
           item-value="type"
           density="comfortable"
@@ -66,6 +66,7 @@
 </template>
 
 <script setup lang="ts">
+import moment from "moment";
 import { useDisplay } from "vuetify";
 
 defineProps({
@@ -76,62 +77,51 @@ defineProps({
 });
 
 const { mobile } = useDisplay();
-const { getTransactions } = useUtils();
+
+const serviceStore = useServiceStore();
 const showForm = ref(false);
 const loading = ref(false);
+
 const filter = ref({
-  month: "",
-  type: "all",
-  paymentForm: "all",
+  month: moment().month(),
+  year: moment().year(),
   status: "all",
+  client: undefined as ClientProps | undefined,
 });
 
-const transactionStatusItens = [
+const serviceStatusItens = [
   { name: "Todas", type: "all" },
   { name: "Faturado", type: "fat" },
   { name: "Não Faturado", type: "not_fat" },
 ];
 
-const $transactionTypes = computed(() => {
-  const tp = [];
-
-  tp.push({ name: "Todas", type: "all" });
-
-  transactionTypes.forEach((type) => {
-    tp.push({ name: type.name, type: type.type });
-  });
-
-  return tp;
-});
-const $transactionPaymentForms = computed(() => {
-  const tp = [];
-
-  tp.push({ name: "Todas", type: "all" });
-
-  paymentForms.forEach((type) => {
-    tp.push({ name: type.name, type: type.type });
-  });
-
-  return tp;
-});
-
-const setLocalStorageMonth = async (month: number) => {
-  localStorage.setItem("month_transaction", month.toString());
-  try {
-    loading.value = true;
-    await getTransactions();
-  } catch (error) {
-    console.error(error);
-  } finally {
-    loading.value = false;
-  }
+const getMonth = async (month: number) => {
+  filter.value.month = month;
+  await getServices();
 };
 
-const setLocalStorageYear = async (year: number) => {
-  localStorage.setItem("year_transaction", year.toString());
+const getYear = async (year: number) => {
+  filter.value.year = year;
+  await getServices();
+};
+
+const getServices = async () => {
   try {
     loading.value = true;
-    //await getTransactions();
+
+    const initialDate = `01-${filter.value.month + 1}-${filter.value.year}`;
+    const finalDate = moment(initialDate, "DD-MM-YYYY")
+      .endOf("month")
+      .format("YYYY-MM-DD");
+
+    const invoiced = filter.value.status === "fat";
+
+    await serviceStore.index({
+      initialDate,
+      finalDate,
+      clientId: filter.value.client?.id,
+      invoiced,
+    });
   } catch (error) {
     console.error(error);
   } finally {

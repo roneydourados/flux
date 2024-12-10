@@ -6,7 +6,7 @@
       x="5"
       y="5"
       fill="none"
-      stroke="currentColor"
+      stroke="#71717A"
       stroke-linecap="round"
       stroke-linejoin="round"
       rx="2"
