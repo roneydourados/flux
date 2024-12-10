@@ -240,6 +240,30 @@ export const useUtils = () => {
     });
   };
 
+  const getFiltersStoreServices = (): ServiceFilterProps => {
+    const f = localStorage.getItem("serviceFilters");
+
+    if (f) {
+      return JSON.parse(f);
+    }
+
+    return {
+      ClientProject: undefined,
+      Client: undefined,
+      initialDate: moment().startOf("month").format("YYYY-MM-DD"),
+      finalDate: moment().endOf("month").format("YYYY-MM-DD"),
+      invoiced: "Todas",
+    };
+  };
+
+  const saveServiceFilters = (filters: ServiceFilterProps) => {
+    localStorage.setItem("serviceFilters", JSON.stringify(filters));
+  };
+
+  const clearFilters = () => {
+    localStorage.removeItem("serviceFilters");
+  };
+
   return {
     amountFormated,
     cardInvoices,
@@ -258,5 +282,8 @@ export const useUtils = () => {
     stringToHandlePDF,
     generateRandomColor,
     getTransactions,
+    getFiltersStoreServices,
+    saveServiceFilters,
+    clearFilters,
   };
 };

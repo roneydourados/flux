@@ -19,7 +19,7 @@ export interface ServiceProps {
   ClientProject?: ClientProjectProps;
   ServiceOccurrence?: ServiceOccurrenceProps[];
   _count?: {
-    serviceOccurrence: number;
+    ServiceOccurrence: number;
   };
   updateOccorrence?: boolean;
   lastOpenOccurence?: string;
@@ -34,4 +34,12 @@ export interface ServiceOccurrenceProps {
   started?: string;
   ended?: string;
   createdAt?: string;
+}
+
+export interface ServiceFilterProps {
+  ClientProject?: ClientProjectProps;
+  Client?: ClientProps;
+  initialDate: string;
+  finalDate: string;
+  invoiced: string;
 }

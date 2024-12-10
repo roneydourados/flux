@@ -14,7 +14,9 @@
 </template>
 
 <script setup lang="ts">
-// import { useDisplay } from "vuetify";
+const { clearFilters } = useUtils();
 
-// const { mobile } = useDisplay();
+onMounted(() => {
+  clearFilters();
+});
 </script>

@@ -77,7 +77,7 @@ defineProps({
 });
 
 const { mobile } = useDisplay();
-
+const { saveServiceFilters } = useUtils();
 const serviceStore = useServiceStore();
 const showForm = ref(false);
 const loading = ref(false);
@@ -90,9 +90,9 @@ const filter = ref({
 });
 
 const serviceStatusItens = [
-  { name: "Todas", type: "all" },
-  { name: "Faturado", type: "fat" },
-  { name: "Não Faturado", type: "not_fat" },
+  { name: "Todas", type: "Todas" },
+  { name: "Faturado", type: "Faturadas" },
+  { name: "Não Faturado", type: "Não Faturadas" },
 ];
 
 const getMonth = async (month: number) => {
@@ -114,14 +114,17 @@ const getServices = async () => {
       .endOf("month")
       .format("YYYY-MM-DD");
 
-    const invoiced = filter.value.status === "fat";
-
-    await serviceStore.index({
+    const payloadFilters = {
       initialDate,
       finalDate,
-      clientId: filter.value.client?.id,
-      invoiced,
-    });
+      Client: filter.value.client,
+      invoiced: filter.value.status,
+    };
+
+    // salvar os filtros no localstorage
+    saveServiceFilters(payloadFilters);
+
+    await serviceStore.index(payloadFilters);
   } catch (error) {
     console.error(error);
   } finally {

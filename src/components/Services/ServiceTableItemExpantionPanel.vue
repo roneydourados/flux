@@ -1,6 +1,6 @@
 <template>
   <div>
-    <v-expansion-panels>
+    <v-expansion-panels :readonly="isUpdate">
       <v-expansion-panel>
         <v-expansion-panel-title disable-icon-rotate>
           <div
@@ -20,7 +20,7 @@
               </span>
               <v-icon icon="mdi-clock-outline"> </v-icon>
               <span>Total de ocorrências</span>
-              {{ item._count?.serviceOccurrence ?? 0 }}
+              {{ item._count?.ServiceOccurrence ?? 0 }}
 
               <span>Vlr Hora</span>
               {{ amountFormated(item.hourValue ?? 0, true) }}
@@ -32,17 +32,21 @@
             <div class="d-flex align-center mr-6">
               <div class="d-flex align-center" style="gap: 0.5rem">
                 <v-icon
-                  :icon="getStatusIcon(item.status!).icon"
-                  :color="getStatusIcon(item.status!).color"
+                  :icon="getStatus(item).icon"
+                  :color="getStatus(item).color"
                 />
-                {{ getStatusToolTip(item.status!) }}
+                {{ getStatus(item).title }}
               </div>
 
               <div class="d-flex align-center ml-4" style="gap: 0.5rem">
-                <ServiceAnimedTimerSVG
-                  height="20"
+                <div
                   v-if="item.status === 'STARTED'"
-                />
+                  class="d-flex align-center"
+                  style="gap: 0.5rem"
+                >
+                  <ServiceAnimedTimerSVG height="20" />
+                  <span>{{ currentHour }}</span>
+                </div>
                 <v-btn
                   icon
                   color="blue-grey-lighten-2"
@@ -50,6 +54,7 @@
                   type="submit"
                   size="small"
                   :disabled="item.status === 'FINISHED'"
+                  @click="updateStatusService(item)"
                 >
                   <ServiceTimerPlaySVG
                     height="30"
@@ -183,12 +188,12 @@
                     variant="text"
                     class="text-none"
                     size="small"
+                    icon
                     :disabled="
                       item.status === 'STARTED' || item.status === 'FINISHED'
                     "
                   >
                     <DeleteSVG />
-                    Apagar
                   </v-btn>
                 </div>
               </v-col>
@@ -213,18 +218,32 @@
 import moment from "moment";
 import { useDisplay } from "vuetify";
 
-defineProps({
+const props = defineProps({
   item: {
     type: Object as PropType<ServiceProps>,
     required: true,
   },
 });
-const { amountFormated } = useUtils();
+
+const { amountFormated, getFiltersStoreServices } = useUtils();
 const { mobile } = useDisplay();
 const { calculeServiceTotalsOccurence } = useServiceUtils();
+const serviceStore = useServiceStore();
 
+const isUpdate = ref(false);
+const loading = ref(false);
 const showForm = ref(false);
 const dialogQuestion = ref(false);
+const interval = ref();
+const valueTimer = ref(0);
+
+const editTask = ref(false);
+const showDestroy = ref(false);
+const showFinish = ref(false);
+const showReopen = ref(false);
+
+const currentHour = ref("");
+
 const selectedItem = ref<ServiceProps>();
 
 const $totalHours = (item: ServiceOccurrenceProps, hourValue: number) => {
@@ -235,20 +254,52 @@ const $totalHours = (item: ServiceOccurrenceProps, hourValue: number) => {
   );
 };
 
-const getStatusIcon = (status: string) => {
-  if (status === "A") return { icon: "mdi-circle-outline", color: "grey" };
-  else if (status === "F")
-    return { icon: "mdi-check-circle-outline", color: "green" };
-  else if (status === "C")
-    return { icon: "mdi-alert-circle-outline", color: "red" };
-  return { icon: "mdi-circle", color: "grey" };
-};
+onMounted(() => {
+  if (props.item.status === "STARTED") {
+    timerCount();
+  } else if (
+    props.item.status === "FINISHED" ||
+    props.item.status === "STOPPED"
+  ) {
+    if (interval.value) {
+      clearInterval(interval.value);
+    }
+  }
+});
 
-const getStatusToolTip = (status: string) => {
-  if (status === "A") return "Aberto";
-  else if (status === "F") return "Faturado";
-  else if (status === "C") return "Cancelado";
-  return "Pendente";
+const getStatus = (service: ServiceProps) => {
+  if (service.status === "STARTED") {
+    return {
+      title: "Trabalhando",
+      icon: "",
+      color: "",
+    };
+  }
+  if (service.status === "STOPPED") {
+    return {
+      title: "Em Pausa",
+      icon: "mdi-motion-pause-outline",
+      color: "info",
+    };
+  } else if (service.status === "FINISHED" && !service.isInvoiced) {
+    return {
+      title: "Finalizada",
+      icon: "mdi-alert-outline",
+      color: "purple",
+    };
+  } else if (service.status === "FINISHED" && service.isInvoiced) {
+    return {
+      title: "Faturada",
+      icon: "mdi-cash-multiple",
+      color: "success",
+    };
+  } else {
+    return {
+      title: "Pendente",
+      icon: "mdi-alert-circle-outline",
+      color: "warning",
+    };
+  }
 };
 
 const getEditItem = (item: ServiceProps) => {
@@ -325,5 +376,83 @@ const itemsMenu = (service: ServiceProps) => {
       iconColor: "blue-grey",
     },
   ];
+};
+
+const updateStatusService = async (service: ServiceProps) => {
+  loading.value = true;
+  isUpdate.value = true;
+  try {
+    await serviceStore.update({
+      publicId: service.publicId,
+      title: service.title,
+      clientProjectId: service.clientProjectId,
+      hourValue: service.hourValue,
+      serviceDate: service.serviceDate,
+      status: service.status === "STARTED" ? "STOPPED" : "STARTED",
+      updateOccorrence: true,
+      occurrenceStartDate: moment().format("YYYY-MM-DDTHH:mm:ss"),
+      occurrenceEndDate: moment().format("YYYY-MM-DDTHH:mm:ss"),
+    });
+
+    if (service.status === "STARTED" || service.status === "FINISHED") {
+      clearInterval(interval.value);
+    } else {
+      timerCount();
+    }
+
+    await loadServices();
+  } finally {
+    loading.value = false;
+    isUpdate.value = false;
+  }
+};
+
+const timerCount = () => {
+  currentHour.value = "calculando...";
+
+  // timer corrente
+  valueTimer.value = 0;
+
+  const ocStart = moment(
+    props.item.lastOpenOccurence ?? moment().format("YYYY-MM-DDTHH:mm:ss")
+  ); // substitua por sua primeira data
+
+  interval.value = setInterval(() => {
+    const final = moment(); // substitua por sua segunda data
+
+    const duration = moment.duration(final.diff(ocStart)).add(1, "second"); // calcula a duração entre as duas datas
+    const totalHours = String(Math.floor(duration.asHours())).padStart(2, "0");
+    const totalMinutes = String(Math.floor(duration.asMinutes()) % 60).padStart(
+      2,
+      "0"
+    );
+    const totalSeconds = String(Math.floor(duration.asSeconds()) % 60).padStart(
+      2,
+      "0"
+    );
+
+    currentHour.value = `${totalHours}:${totalMinutes}:${totalSeconds}`;
+
+    if (valueTimer.value === 100) {
+      return (valueTimer.value = 0);
+    }
+
+    valueTimer.value += 10;
+  }, 1000);
+};
+
+const loadServices = async () => {
+  const filters = getFiltersStoreServices();
+  try {
+    await serviceStore.index({
+      initialDate: filters.initialDate,
+      finalDate: filters.finalDate,
+      ClientProject: filters.ClientProject,
+      Client: filters.Client,
+      invoiced: filters.invoiced,
+    });
+  } catch (error) {
+    console.log("🚀 ~ handleDestroy ~ error:", error);
+  }
 };
 </script>

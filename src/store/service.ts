@@ -1,13 +1,5 @@
 import { defineStore } from "pinia";
 
-interface FilterProps {
-  initialDate?: string;
-  finalDate?: string;
-  clientProjectId?: number;
-  clientId?: number;
-  invoiced?: boolean;
-}
-
 export const useServiceStore = defineStore("service", () => {
   const { api } = useAxios();
 
@@ -20,18 +12,18 @@ export const useServiceStore = defineStore("service", () => {
   const $serviceOcurrence = computed(() => serviceOcurrence.value);
 
   const index = async ({
-    clientProjectId,
+    ClientProject,
     finalDate,
     initialDate,
-    clientId,
+    Client,
     invoiced,
-  }: FilterProps) => {
+  }: ServiceFilterProps) => {
     const config = {
       params: {
-        clientProjectId,
+        clientProjectId: ClientProject?.id,
         finalDate,
         initialDate,
-        clientId,
+        clientId: Client?.id,
         invoiced,
       },
     };
@@ -67,14 +59,6 @@ export const useServiceStore = defineStore("service", () => {
     await api.put(`/service-occurrences/${payload.publicId}`, payload);
   };
 
-  const saveServiceFilters = (filters: FilterProps) => {
-    localStorage.setItem("serviceFilters", JSON.stringify(filters));
-  };
-
-  const clearFilters = () => {
-    localStorage.removeItem("serviceFilters");
-  };
-
   return {
     index,
     show,
@@ -83,8 +67,6 @@ export const useServiceStore = defineStore("service", () => {
     destroy,
     destroyServiceOccurrence,
     updateServiceOccurrence,
-    saveServiceFilters,
-    clearFilters,
     $all,
     $single,
     $serviceOcurrence,

@@ -36,6 +36,7 @@ export const index = async ({
   const services = await prisma.service.findMany({
     select: {
       id: true,
+      publicId: true,
       title: true,
       hourValue: true,
       clientProjectId: true,
