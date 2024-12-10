@@ -89,13 +89,110 @@
             v-for="serviceOccorrence in item.ServiceOccurrence"
             :key="serviceOccorrence.id"
           >
-            <!-- <TaskOccorrenceForm
-                :task="task"
-                :task-occorrence="taskOccorrence"
-                :task-title="task.title"
-                :hideButtons="hideButtons"
-                class="mb-2"
-              /> -->
+            <v-row dense>
+              <v-col cols="12" lg="4">
+                <InfoLabel :show-divider="false" color-icon="primary">
+                  <div class="d-flex align-center" style="gap: 0.5rem">
+                    <v-icon icon="mdi-file-chart-outline" color="blue-grey" />
+                    <span
+                      class="d-inline-block text-truncate text-caption text-blue-grey font-weight-bold"
+                      :style="mobile ? 'width: 12rem' : 'width: 30rem'"
+                    >
+                      {{ item.title }}
+
+                      <v-tooltip
+                        activator="parent"
+                        location="top center"
+                        content-class="tooltip-background"
+                      >
+                        <v-card width="500" elevation="0" color="transparent">
+                          <v-card-text class="text-subtitle-1">
+                            {{ item.title }}
+                          </v-card-text>
+                        </v-card>
+                      </v-tooltip>
+                    </span>
+                  </div>
+                </InfoLabel>
+              </v-col>
+              <v-col cols="12" lg="2">
+                <InfoLabel
+                  title="Início"
+                  font-size="0.9"
+                  font-size-content="0.8"
+                  :show-divider="false"
+                  icon="mdi-calendar-multiselect-outline"
+                  color-icon="primary"
+                  :content="
+                    moment(serviceOccorrence?.started).format(
+                      'DD/MM/YYYY HH:mm:ss'
+                    )
+                  "
+                />
+              </v-col>
+              <v-col cols="12" lg="2">
+                <InfoLabel
+                  title="Fim"
+                  font-size="0.9"
+                  font-size-content="0.8"
+                  :show-divider="false"
+                  icon="mdi-calendar-multiselect-outline"
+                  color-icon="primary"
+                  :content="
+                    serviceOccorrence?.ended
+                      ? moment(serviceOccorrence?.ended).format(
+                          'DD/MM/YYYY HH:mm:ss'
+                        )
+                      : 'Trabalhando'
+                  "
+                />
+              </v-col>
+              <v-col cols="12" lg="1">
+                <InfoLabel
+                  class="ml-2"
+                  title="Tempo"
+                  font-size="0.9"
+                  :show-divider="false"
+                  icon="mdi-clock-outline"
+                  color-icon="orange"
+                  font-size-content="0.9"
+                  :content="
+                    $totalHours(serviceOccorrence, item.hourValue).horas
+                  "
+                />
+              </v-col>
+              <v-col cols="12" lg="2">
+                <InfoLabel
+                  title="Valor"
+                  font-size="0.9"
+                  :show-divider="false"
+                  icon="mdi-cash-clock"
+                  color-icon="success"
+                  font-size-content="0.9"
+                  :content="
+                    $totalHours(serviceOccorrence, item.hourValue).valor
+                  "
+                />
+              </v-col>
+              <v-col cols="12" lg="1">
+                <div
+                  class="d-flex align-center justify-end w-100"
+                  style="gap: 0.5rem"
+                >
+                  <v-btn
+                    variant="text"
+                    class="text-none"
+                    size="small"
+                    :disabled="
+                      item.status === 'STARTED' || item.status === 'FINISHED'
+                    "
+                  >
+                    <DeleteSVG />
+                    Apagar
+                  </v-btn>
+                </div>
+              </v-col>
+            </v-row>
           </div>
         </v-expansion-panel-text>
       </v-expansion-panel>
@@ -113,6 +210,9 @@
 </template>
 
 <script setup lang="ts">
+import moment from "moment";
+import { useDisplay } from "vuetify";
+
 defineProps({
   item: {
     type: Object as PropType<ServiceProps>,
@@ -120,10 +220,20 @@ defineProps({
   },
 });
 const { amountFormated } = useUtils();
+const { mobile } = useDisplay();
+const { calculeServiceTotalsOccurence } = useServiceUtils();
 
 const showForm = ref(false);
 const dialogQuestion = ref(false);
 const selectedItem = ref<ServiceProps>();
+
+const $totalHours = (item: ServiceOccurrenceProps, hourValue: number) => {
+  return calculeServiceTotalsOccurence(
+    moment(item.started).format("YYYY-MM-DD HH:mm:ss"),
+    item.ended ? moment(item.ended).format("YYYY-MM-DD HH:mm:ss") : undefined,
+    hourValue
+  );
+};
 
 const getStatusIcon = (status: string) => {
   if (status === "A") return { icon: "mdi-circle-outline", color: "grey" };
@@ -155,7 +265,7 @@ const itemsMenu = (service: ServiceProps) => {
         iconColor: "blue-grey-lighten-1",
       },
       {
-        title: "Finalizar tarefa",
+        title: "Finalizar serviço",
         icon: "mdi-text-box-check-outline",
         iconColor: "blue-grey",
       },
@@ -168,7 +278,7 @@ const itemsMenu = (service: ServiceProps) => {
   } else if (service.status === "FINISHED" && !service.isInvoiced) {
     return [
       {
-        title: "Reabrir tarefa",
+        title: "Reabrir serviço",
         icon: "mdi-file-document-refresh-outline",
         iconColor: "blue-grey",
       },
@@ -205,7 +315,7 @@ const itemsMenu = (service: ServiceProps) => {
       iconColor: "blue-grey-lighten-1",
     },
     {
-      title: "Reabrir tarefa",
+      title: "Reabrir serviço",
       icon: "mdi-file-document-refresh-outline",
       iconColor: "blue-grey",
     },
