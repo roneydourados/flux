@@ -104,7 +104,7 @@
               <MenuButton
                 :items="itemsMenu(item)"
                 variant="text"
-                size="x-small"
+                size="small"
                 is-icon
               >
                 <EditSVG />
@@ -112,7 +112,7 @@
               <v-btn
                 icon
                 variant="text"
-                size="x-small"
+                size="small"
                 @click="dialogQuestion = true"
               >
                 <DeleteSVG />

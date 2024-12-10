@@ -54,6 +54,7 @@ export const indexClientProjects = async (
       clientId: true,
       name: true,
       color: true,
+      publicId: true,
       Client: {
         select: {
           id: true,

@@ -33,9 +33,9 @@ export const useProjectsStore = defineStore("projects", () => {
     project.value = data;
   };
 
-  const show = async (id: number) => {
+  const show = async (publicId: string) => {
     const { data } = await api.get<ClientProjectProps>(
-      `/client-projects/${id}`
+      `/client-projects/${publicId}`
     );
 
     project.value = data;
@@ -43,7 +43,7 @@ export const useProjectsStore = defineStore("projects", () => {
 
   const update = async (payload: ClientProjectProps) => {
     const { data } = await api.put<ClientProjectProps>(
-      `/client-projects/${payload.id}`,
+      `/client-projects/${payload.publicId}`,
       payload
     );
 
@@ -55,8 +55,8 @@ export const useProjectsStore = defineStore("projects", () => {
     projects.value = [];
   };
 
-  const destroy = async (id: number) => {
-    await api.delete(`/client-projects/${id}`);
+  const destroy = async (publicId: string) => {
+    await api.delete(`/client-projects/${publicId}`);
   };
 
   return { index, show, store, update, destroy, clearStore, $all, $single };

@@ -31,37 +31,11 @@
       </div>
     </template>
     <template v-slot:item.actions="{ item }">
-      <v-btn
-        icon
-        color="orange"
-        variant="text"
-        size="small"
-        @click="handleEdit(item)"
-      >
-        <v-icon icon="mdi-pencil-outline" size="20"></v-icon>
-        <v-tooltip
-          activator="parent"
-          location="top center"
-          content-class="tooltip-background"
-        >
-          Editar
-        </v-tooltip>
+      <v-btn icon variant="text" size="small" @click="handleEdit(item)">
+        <EditSVG />
       </v-btn>
-      <v-btn
-        icon
-        color="error"
-        variant="text"
-        size="small"
-        @click="getItemDestroy(item)"
-      >
-        <v-icon icon="mdi-delete-outline" size="20"></v-icon>
-        <v-tooltip
-          activator="parent"
-          location="top center"
-          content-class="tooltip-background"
-        >
-          Apagar
-        </v-tooltip>
+      <v-btn icon variant="text" size="small" @click="getItemDestroy(item)">
+        <DeleteSVG />
       </v-btn>
     </template>
   </Table>
@@ -87,7 +61,7 @@
   </DialogForm>
   <DialogQuestion
     title="Apagar ?"
-    :dialog="showDestroy"
+    v-model="showDestroy"
     show-cancel
     @confirm="handleDestroy"
     @cancel="showDestroy = false"
@@ -187,7 +161,7 @@ const handleNew = () => {
 const handleEdit = async (item: ClientProjectProps) => {
   loading.value = true;
   try {
-    await projectStore.show(item.id!);
+    await projectStore.show(item.publicId!);
 
     model.value = {
       id: $single.value?.id ?? 0,
@@ -243,7 +217,7 @@ const handleDestroy = async () => {
   loading.value = true;
   try {
     try {
-      await projectStore.destroy(model.value.id!);
+      await projectStore.destroy(model.value.publicId!);
       await getProjects();
       clearModel();
     } catch (error) {
