@@ -78,6 +78,7 @@
       loading-text="Buscando dados aguarde..."
       class="bg-transparent"
       hide-default-footer
+      :density="density"
     >
       <template v-for="(_, name) in $slots" v-slot:[name]="slotProps">
         <slot v-if="slotProps" :name="name" v-bind="slotProps" />
@@ -113,6 +114,7 @@
       sticky
       :loading="loading"
       loading-text="Buscando dados aguarde..."
+      :density="density"
     >
       <template v-for="(_, name) in $slots" v-slot:[name]="slotProps">
         <slot v-if="slotProps" :name="name" v-bind="slotProps" />
@@ -129,6 +131,8 @@ import { uuidv7 } from "uuidv7";
 import { useField } from "vee-validate";
 import { toTypedSchema } from "@vee-validate/zod";
 import * as zod from "zod";
+
+type DensityType = "comfortable" | "compact" | "default";
 
 const props = defineProps({
   modelValue: {
@@ -186,6 +190,10 @@ const props = defineProps({
   showPagination: {
     type: Boolean,
     default: true,
+  },
+  density: {
+    type: String as PropType<DensityType>,
+    default: "default",
   },
 });
 const { mobile } = useDisplay();
