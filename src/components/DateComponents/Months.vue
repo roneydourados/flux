@@ -62,33 +62,12 @@ const emit = defineEmits(["month", "year", "click"]);
 const { mobile } = useDisplay();
 const $monts = computed(() => months);
 
-// const selectMonth = () => {
-//   const monthSelected = $monts.value!.filter((y) => {
-//     if (y.monthIndex === monthIndex.value) {
-//       return y;
-//     }
-//   });
-
-//   if (monthSelected) {
-//     emit("month", monthSelected[0].monthIndex);
-//   } else {
-//     const currentMonth = moment().month();
-//     //emit("month", currentMonth);
-//   }
-// };
-
 const getMonthWithChip = (month: number) => {
   const monthSelected = $monts.value!.filter((y) => {
     if (y.monthIndex === month) {
       return y;
     }
   });
-
-  // if (monthSelected) {
-  //   return monthSelected[0].month;
-  // } else {
-  //   return moment().month();
-  // }
 
   if (monthSelected) {
     monthIndex.value = monthSelected[0].monthIndex;
