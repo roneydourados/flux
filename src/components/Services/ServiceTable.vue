@@ -1,7 +1,29 @@
 <template>
   <div>
     <Card>
-      <!-- <pre>{{ $allServices }}</pre> -->
+      <div class="d-flex align-center justify-space-between px-4 mt-n12">
+        <span>Serviços</span>
+
+        <div
+          class="d-flex flex-wrap align-center justify-end w-100"
+          style="gap: 1rem"
+        >
+          <div class="d-flex align-center text-grey">
+            <v-icon icon="mdi-calendar-multiselect" start size="20" />
+            <span class="font-weight-bold">
+              Duração total: {{ $serviceTotals.totalDuration }}
+            </span>
+          </div>
+
+          <div class="d-flex align-center">
+            <v-icon icon="mdi-cash-clock" start size="20" color="grey" />
+            <span class="font-weight-bold text-grey">
+              Valor total: {{ $serviceTotals.valorTotal }}
+            </span>
+          </div>
+        </div>
+      </div>
+
       <Table
         title=""
         :headers="headers"
@@ -63,6 +85,7 @@
           <ServiceTableItemExpantionPanel :item="item" />
         </template>
       </Table>
+      <template #content> </template>
     </Card>
   </div>
 </template>
@@ -72,6 +95,7 @@ import { useDisplay } from "vuetify";
 
 const { mobile } = useDisplay();
 const { amountFormated } = useUtils();
+const { calculeServiceTotals } = useServiceUtils();
 const serviceStore = useServiceStore();
 
 const showForm = ref(false);
@@ -80,23 +104,36 @@ const selectedItem = ref<TransactionProps>();
 
 const $allServices = computed(() => serviceStore.$all);
 
+const $serviceTotals = computed(() => {
+  let totalValor = 0;
+  let totalDuration = 0;
+
+  serviceStore.$all.map((service) => {
+    const totals = calculeServiceTotals(service);
+    totalValor += totals.valorNumber;
+    totalDuration += totals.finalDuration.asSeconds();
+  });
+
+  const duracaoTotal = `${String(Math.floor(totalDuration / 3600)).padStart(
+    2,
+    "0"
+  )}:${String(Math.floor((totalDuration % 3600) / 60)).padStart(
+    2,
+    "0"
+  )}:${String(Math.floor(totalDuration) % 60).padStart(2, "0")}`;
+
+  return {
+    valorTotal: amountFormated(totalValor, false),
+    totalDuration: duracaoTotal,
+  };
+});
+
 const headers = computed(() => {
   if (mobile.value) {
     return [{ title: "", key: "mobile" }];
   }
-  return [
-    { title: "Serviços", key: "title" },
-    // { title: "Valor", key: "amount" },
-    // { title: "", key: "actions" },
-  ];
+  return [{ title: "", key: "title" }];
 });
-
-const returnTypeName = (type: string) => {
-  if (type === "EXPENSE") return "Despesa";
-  else if (type === "CREDIT") return "Crédito";
-  else if (type === "INVESTMENT") return "Investimento";
-  return "Desconhecido";
-};
 
 const getStatusIcon = (status: string) => {
   if (status === "A") return { icon: "mdi-circle-outline", color: "grey" };

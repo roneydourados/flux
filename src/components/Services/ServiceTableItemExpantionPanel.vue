@@ -255,10 +255,10 @@ const props = defineProps({
   },
 });
 
+const serviceStore = useServiceStore();
 const { amountFormated, getFiltersStoreServices } = useUtils();
 const { mobile } = useDisplay();
 const { calculeServiceTotalsOccurence } = useServiceUtils();
-const serviceStore = useServiceStore();
 
 const showDestroyOccurrence = ref(false);
 const isUpdate = ref(false);
@@ -267,13 +267,9 @@ const showForm = ref(false);
 const dialogQuestion = ref(false);
 const interval = ref();
 const valueTimer = ref(0);
-
-//const editService = ref(false);
-//const showDestroy = ref(false);
 const showFinish = ref(false);
 const showReopen = ref(false);
 const currentHour = ref("");
-
 const selectedItem = ref<ServiceProps>();
 const selectedServiceOccurrence = ref<ServiceOccurrenceProps>();
 
@@ -310,25 +306,25 @@ const getStatus = (service: ServiceProps) => {
     return {
       title: "Em Pausa",
       icon: "mdi-motion-pause-outline",
-      color: "info",
+      color: "",
     };
   } else if (service.status === "FINISHED" && !service.isInvoiced) {
     return {
       title: "Finalizado",
       icon: "mdi-alert-outline",
-      color: "purple",
+      color: "",
     };
   } else if (service.status === "FINISHED" && service.isInvoiced) {
     return {
       title: "Faturado",
       icon: "mdi-cash-multiple",
-      color: "success",
+      color: "green",
     };
   } else {
     return {
       title: "Pendente",
       icon: "mdi-alert-circle-outline",
-      color: "warning",
+      color: "",
     };
   }
 };

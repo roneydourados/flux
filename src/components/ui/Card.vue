@@ -8,7 +8,6 @@
         :min-height="minHeight"
         :height="height"
       >
-        <slot />
         <v-card-title>
           <div class="d-flex align-center" style="gap: 0.5rem">
             <slot name="title" />
@@ -17,6 +16,7 @@
         <v-card-text class="pa-6">
           <slot name="content" />
         </v-card-text>
+        <slot />
       </v-card>
     </v-sheet>
   </div>
