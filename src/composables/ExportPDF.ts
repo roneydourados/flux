@@ -45,21 +45,21 @@ export const useExportPDF = () => {
         alignment: "right",
       };
 
-      const taskHourValue = {
+      const serviceHourValue = {
         text: amountFormated(service.hourValue, false),
         italics: false,
         color: "gray",
         alignment: "right",
       };
 
-      const taskDuration = {
+      const serviceDuration = {
         text: totals.horas,
         italics: false,
         color: "gray",
         alignment: "right",
       };
 
-      const taskTotal = {
+      const serviceTotal = {
         text: totals.valor,
         italics: false,
         color: "gray",
@@ -74,9 +74,9 @@ export const useExportPDF = () => {
         title,
         serviceDate,
         serviceEndDate,
-        taskDuration,
-        taskHourValue,
-        taskTotal,
+        serviceDuration,
+        serviceHourValue,
+        serviceTotal,
       ];
     });
 
@@ -103,6 +103,7 @@ export const useExportPDF = () => {
       { text: "Vlr hora", alignment: "right", bold: true, fontSize: 14 },
       { text: "Total", alignment: "right", bold: true, fontSize: 14 },
     ];
+
     const bodyTableItems = [itemsHeader, ...serviceArray];
 
     const reportData = {
@@ -120,7 +121,7 @@ export const useExportPDF = () => {
             {
               svg: `
                     <svg
-                        height="340"
+                        height="400"
                         viewBox="0 0 1627 638"
                         fill="none"
                         xmlns="http://www.w3.org/2000/svg"
@@ -131,7 +132,7 @@ export const useExportPDF = () => {
                         />
                         <path
                           d="M424.384 359.518L277.569 506.299L195.901 424.601L342.716 277.82L277.361 212.531L64.6006 425.323L276.806 637.531L489.601 424.739L424.384 359.518Z"
-                          fill="#000"
+                          fill="#616161"
                         />
                         <path
                           d="M556 224.068L278.382 0L0 224.707L0.903501 329.736L277.166 106.696L555.514 331.376L556 224.068Z"
@@ -239,16 +240,21 @@ const totalHoursService = (service: ServiceProps) => {
   const valor = amountFormated(
     finalDuration.asHours() * service.hourValue,
     false
-  ); // obtém o valor em horas
+  );
+
+  // obtém o valor em horas
   const valorTotal = finalDuration.asHours() * service.hourValue;
 
+  // formata a duração para HH:mm:ss
   const totalHours = String(Math.floor(finalDuration.asHours())).padStart(
     2,
     "0"
   );
+
   const totalMinutes = String(
     Math.floor(finalDuration.asMinutes()) % 60
   ).padStart(2, "0");
+
   const totalSeconds = String(
     Math.floor(finalDuration.asSeconds()) % 60
   ).padStart(2, "0");
