@@ -10,9 +10,21 @@
       <template #content>
         <v-row dense>
           <v-col cols="12">
-            <h2 style="font-weight: 400">
-              {{ amountFormated($totals, true) }}
-            </h2>
+            <div class="d-flex align-center justify-space-between">
+              <CurrencyIconSVG height="25" />
+              <h2 style="font-weight: 400">
+                {{ $serviceTotals.valorTotal }}
+              </h2>
+            </div>
+            <v-divider class="mt-2" />
+          </v-col>
+          <v-col cols="12">
+            <div class="d-flex align-center justify-space-between">
+              <TimerIconSVG height="25" />
+              <h2 style="font-weight: 400">
+                {{ $serviceTotals.totalDuration }}
+              </h2>
+            </div>
           </v-col>
         </v-row>
       </template>
@@ -21,15 +33,31 @@
 </template>
 
 <script setup lang="ts">
-const transactions = useTransactionStore();
 const { amountFormated } = useUtils();
-const $totals = computed(() => {
-  return transactions.$all.reduce((acc, transaction) => {
-    if (transaction.type === "CREDIT") {
-      acc += Number(transaction.amount!);
-    }
+const { calculeServiceTotals } = useServiceUtils();
+const serviceStore = useServiceStore();
 
-    return acc;
-  }, 0);
+const $serviceTotals = computed(() => {
+  let totalValor = 0;
+  let totalDuration = 0;
+
+  serviceStore.$all.map((service) => {
+    const totals = calculeServiceTotals(service);
+    totalValor += totals.valorNumber;
+    totalDuration += totals.finalDuration.asSeconds();
+  });
+
+  const duracaoTotal = `${String(Math.floor(totalDuration / 3600)).padStart(
+    2,
+    "0"
+  )}:${String(Math.floor((totalDuration % 3600) / 60)).padStart(
+    2,
+    "0"
+  )}:${String(Math.floor(totalDuration) % 60).padStart(2, "0")}`;
+
+  return {
+    valorTotal: amountFormated(totalValor, false),
+    totalDuration: duracaoTotal,
+  };
 });
 </script>

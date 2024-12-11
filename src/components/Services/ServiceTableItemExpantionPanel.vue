@@ -1,5 +1,5 @@
 <template>
-  <div class="mt-1">
+  <div class="mb-4">
     <v-expansion-panels :readonly="isUpdate">
       <v-expansion-panel>
         <v-expansion-panel-title disable-icon-rotate>
@@ -82,7 +82,7 @@
                   icon
                   variant="text"
                   size="small"
-                  @click="dialogQuestion = true"
+                  @click="getServiceDelete(item)"
                 >
                   <DeleteSVG />
                 </v-btn>
@@ -478,9 +478,19 @@ const loadServices = async () => {
   }
 };
 
-const handleEditTask = (service: ServiceProps) => {
+const handleEditService = (service: ServiceProps) => {
   selectedItem.value = service;
   showForm.value = true;
+};
+
+const getServiceDelete = (service: ServiceProps) => {
+  isUpdate.value = true;
+  try {
+    selectedItem.value = service;
+    dialogQuestion.value = true;
+  } finally {
+    isUpdate.value = false;
+  }
 };
 
 const handleGetServiceOccurrence = (
@@ -500,7 +510,7 @@ const handleClickMenuButton = async (title: string, service: ServiceProps) => {
         );
         return;
       }
-      handleEditTask(service);
+      handleEditService(service);
     } else if (title === "Excluir") {
       selectedItem.value = service;
       dialogQuestion.value = true;
