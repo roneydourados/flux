@@ -193,6 +193,7 @@
                     :disabled="
                       item.status === 'STARTED' || item.status === 'FINISHED'
                     "
+                    @click="handleGetServiceOccurrence(serviceOccorrence)"
                   >
                     <DeleteSVG />
                   </v-btn>
@@ -230,6 +231,15 @@
       @cancel="showReopen = false"
       @confirm="handleReopenService"
     />
+    <DialogQuestion
+      v-model="showDestroyOccurrence"
+      title="Apagar ocorrência de serviço"
+      text="A operação uma vez realizada não poderá ser desfeita."
+      color-confirm="error"
+      text-confirm="Apagar"
+      @cancel="showDestroyOccurrence = false"
+      @confirm="handleDestroyOccurrence"
+    />
     <ServiceForm v-model="showForm" :data="selectedItem" />
   </div>
 </template>
@@ -250,6 +260,7 @@ const { mobile } = useDisplay();
 const { calculeServiceTotalsOccurence } = useServiceUtils();
 const serviceStore = useServiceStore();
 
+const showDestroyOccurrence = ref(false);
 const isUpdate = ref(false);
 const loading = ref(false);
 const showForm = ref(false);
@@ -261,10 +272,10 @@ const valueTimer = ref(0);
 //const showDestroy = ref(false);
 const showFinish = ref(false);
 const showReopen = ref(false);
-
 const currentHour = ref("");
 
 const selectedItem = ref<ServiceProps>();
+const selectedServiceOccurrence = ref<ServiceOccurrenceProps>();
 
 const $totalHours = (item: ServiceOccurrenceProps, hourValue: number) => {
   return calculeServiceTotalsOccurence(
@@ -473,9 +484,14 @@ const loadServices = async () => {
 
 const handleEditTask = (service: ServiceProps) => {
   selectedItem.value = service;
-  console.log("🚀 ~ handleEditTask ~ selectedItem.value:", selectedItem.value);
   showForm.value = true;
-  console.log("🚀 ~ handleEditTask ~ showForm.value:", showForm.value);
+};
+
+const handleGetServiceOccurrence = (
+  serviceOccurrence: ServiceOccurrenceProps
+) => {
+  selectedServiceOccurrence.value = serviceOccurrence;
+  showDestroyOccurrence.value = true;
 };
 
 const handleClickMenuButton = async (title: string, service: ServiceProps) => {
@@ -618,6 +634,22 @@ const handleReopenService = async () => {
       updateOccorrence: false,
     });
 
+    await loadServices();
+    selectedItem.value = {} as ServiceProps;
+  } finally {
+    loading.value = false;
+  }
+};
+
+const handleDestroyOccurrence = async () => {
+  showDestroyOccurrence.value = false;
+  if (!selectedServiceOccurrence.value?.publicId) return;
+
+  loading.value = true;
+  try {
+    await serviceStore.destroyServiceOccurrence(
+      selectedServiceOccurrence.value.publicId
+    );
     await loadServices();
     selectedItem.value = {} as ServiceProps;
   } finally {

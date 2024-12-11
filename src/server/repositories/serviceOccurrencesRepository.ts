@@ -28,18 +28,18 @@ export const createTaskOccurrence = async ({
 };
 
 export const updateTaskOccurrence = async ({
-  id,
+  publicId,
   started,
   ended,
 }: ServiceOccurrenceProps) => {
   try {
     const exists = await prisma.serviceOccurrence.findUnique({
-      where: { id },
+      where: { publicId },
     });
 
     if (exists) {
       return prisma.serviceOccurrence.update({
-        where: { id },
+        where: { id: exists.id },
         data: {
           started,
           ended,
@@ -54,17 +54,17 @@ export const updateTaskOccurrence = async ({
   }
 };
 
-export const deleteTaskOccurrence = async (id: number) => {
+export const deleteTaskOccurrence = async (publicId: string) => {
   const { calculeServiceTotals } = useServiceApiUtils();
 
   try {
     const exists = await prisma.serviceOccurrence.findUnique({
-      where: { id },
+      where: { publicId },
     });
 
     if (exists) {
       await prisma.serviceOccurrence.delete({
-        where: { id },
+        where: { id: exists.id },
       });
 
       const serviceUpdateTotal = await prisma.service.findFirst({

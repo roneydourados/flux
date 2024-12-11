@@ -56,6 +56,7 @@ export const index = async ({
       ServiceOccurrence: {
         select: {
           id: true,
+          publicId: true,
           started: true,
           ended: true,
         },
@@ -66,6 +67,7 @@ export const index = async ({
       ClientProject: {
         select: {
           id: true,
+          publicId: true,
           clientId: true,
           name: true,
           color: true,
