@@ -35,6 +35,6 @@
     "@types/jsonwebtoken": "^9.0.7",
     "prisma": "^5.22.0",
     "vite-plugin-vuetify": "^2.0.4",
-    "vuetify": "^3.7.4"
+    "vuetify": "^3.7.5"
   }
 }

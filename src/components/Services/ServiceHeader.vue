@@ -85,7 +85,7 @@ const loading = ref(false);
 const filter = ref({
   month: moment().month(),
   year: moment().year(),
-  status: "all",
+  status: "Todas",
   client: undefined as ClientProps | undefined,
 });
 
@@ -97,11 +97,13 @@ const serviceStatusItens = [
 
 const getMonth = async (month: number) => {
   filter.value.month = month;
+
   await getServices();
 };
 
 const getYear = async (year: number) => {
   filter.value.year = year;
+
   await getServices();
 };
 

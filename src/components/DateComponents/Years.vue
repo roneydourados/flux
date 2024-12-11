@@ -1,17 +1,12 @@
 <template>
   <div>
-    <v-carousel
-      v-model="yearIndex"
-      hide-delimiters
-      height="50"
-      @update:modelValue="selectYear"
-    >
+    <v-carousel v-model="yearIndex" hide-delimiters height="50">
       <template v-slot:prev="{ props }">
         <v-btn
           size="x-small"
           icon="mdi-chevron-left"
           variant="text"
-          @click="props.onClick"
+          @click="handlePrevClick(props)"
         />
       </template>
       <template v-slot:next="{ props }">
@@ -19,7 +14,7 @@
           size="x-small"
           icon="mdi-chevron-right"
           variant="text"
-          @click="props.onClick"
+          @click="handleNextClick(props)"
         />
       </template>
       <v-carousel-item v-for="item in $years" :key="item.year">
@@ -57,12 +52,26 @@ onMounted(() => {
   const currentYear = moment().year();
   const index = $years.value.findIndex((year) => year.year === currentYear);
   yearIndex.value = index;
-
-  emit("year", currentYear);
 });
 
-const selectYear = (index: number) => {
-  yearIndex.value = index;
-  emit("year", $years.value[index].year);
+const selectYear = () => {
+  emit("year", $years.value[yearIndex.value].year);
+};
+
+// Métodos para lidar com os cliques
+const handlePrevClick = (props: any) => {
+  if (props && props.onClick) {
+    props.onClick();
+  }
+
+  selectYear();
+};
+
+const handleNextClick = (props: any) => {
+  if (props && props.onClick) {
+    props.onClick();
+  }
+
+  selectYear();
 };
 </script>

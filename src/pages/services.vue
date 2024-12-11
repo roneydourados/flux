@@ -7,7 +7,7 @@ import moment from "moment";
 
 const serviceStore = useServiceStore();
 
-await useAsyncData(
+useAsyncData(
   async () =>
     await serviceStore.index({
       ClientProject: undefined,

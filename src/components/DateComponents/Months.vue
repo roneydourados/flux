@@ -4,13 +4,7 @@
       :style="`${mobile ? 'width: 100%' : 'width: 15%'}`"
       @year="$emit('year', $event)"
     />
-    <v-carousel
-      v-model="monthIndex"
-      hide-delimiters
-      height="50"
-      @update:modelValue="selectMonth"
-      v-if="mobile"
-    >
+    <v-carousel v-model="monthIndex" hide-delimiters height="50" v-if="mobile">
       <template v-slot:prev="{ props }">
         <v-btn
           size="x-small"
@@ -64,24 +58,24 @@ import moment from "moment";
 
 const monthIndex = ref(moment().month());
 
-const emit = defineEmits(["month", "year"]);
+const emit = defineEmits(["month", "year", "click"]);
 const { mobile } = useDisplay();
 const $monts = computed(() => months);
 
-const selectMonth = () => {
-  const monthSelected = $monts.value!.filter((y) => {
-    if (y.monthIndex === monthIndex.value) {
-      return y;
-    }
-  });
+// const selectMonth = () => {
+//   const monthSelected = $monts.value!.filter((y) => {
+//     if (y.monthIndex === monthIndex.value) {
+//       return y;
+//     }
+//   });
 
-  if (monthSelected) {
-    emit("month", monthSelected[0].monthIndex);
-  } else {
-    const currentMonth = moment().month();
-    //emit("month", currentMonth);
-  }
-};
+//   if (monthSelected) {
+//     emit("month", monthSelected[0].monthIndex);
+//   } else {
+//     const currentMonth = moment().month();
+//     //emit("month", currentMonth);
+//   }
+// };
 
 const getMonthWithChip = (month: number) => {
   const monthSelected = $monts.value!.filter((y) => {
@@ -104,5 +98,7 @@ const getMonthWithChip = (month: number) => {
     monthIndex.value = currentMonth;
     emit("month", currentMonth);
   }
+
+  emit("click");
 };
 </script>

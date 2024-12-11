@@ -2,7 +2,7 @@
   <div class="w-100">
     <v-row>
       <v-col cols="12">
-        <ServiceHeader title="Novembro" />
+        <ServiceHeader />
       </v-col>
     </v-row>
     <v-row>
@@ -17,6 +17,6 @@
 const { clearFilters } = useUtils();
 
 onMounted(() => {
-  clearFilters();
+  //clearFilters();
 });
 </script>
