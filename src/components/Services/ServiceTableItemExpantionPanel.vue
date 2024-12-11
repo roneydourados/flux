@@ -1,5 +1,5 @@
 <template>
-  <div>
+  <div class="mt-1">
     <v-expansion-panels :readonly="isUpdate">
       <v-expansion-panel>
         <v-expansion-panel-title disable-icon-rotate>
@@ -74,6 +74,7 @@
                   variant="text"
                   size="small"
                   is-icon
+                  @click="handleClickMenuButton($event, item)"
                 >
                   <EditSVG />
                 </MenuButton>
@@ -209,8 +210,27 @@
       color-confirm="red"
       text-confirm="Deletar"
       @cancel="dialogQuestion = false"
-      @confirm="dialogQuestion = false"
+      @confirm="handleDestroy"
     />
+    <DialogQuestion
+      v-model="showFinish"
+      title="Finalizar Serviço"
+      text="Confirma a finalização do serviço."
+      color-confirm="green"
+      text-confirm="Finalizar"
+      @cancel="showFinish = false"
+      @confirm="handleFinishService"
+    />
+    <DialogQuestion
+      v-model="showReopen"
+      title="Reabrir Serviço"
+      text="Confirma a reabertura do serviço."
+      color-confirm="warning"
+      text-confirm="Reabrir"
+      @cancel="showReopen = false"
+      @confirm="handleReopenService"
+    />
+    <ServiceForm v-model="showForm" :data="selectedItem" />
   </div>
 </template>
 
@@ -237,8 +257,8 @@ const dialogQuestion = ref(false);
 const interval = ref();
 const valueTimer = ref(0);
 
-const editTask = ref(false);
-const showDestroy = ref(false);
+//const editService = ref(false);
+//const showDestroy = ref(false);
 const showFinish = ref(false);
 const showReopen = ref(false);
 
@@ -283,13 +303,13 @@ const getStatus = (service: ServiceProps) => {
     };
   } else if (service.status === "FINISHED" && !service.isInvoiced) {
     return {
-      title: "Finalizada",
+      title: "Finalizado",
       icon: "mdi-alert-outline",
       color: "purple",
     };
   } else if (service.status === "FINISHED" && service.isInvoiced) {
     return {
-      title: "Faturada",
+      title: "Faturado",
       icon: "mdi-cash-multiple",
       color: "success",
     };
@@ -300,11 +320,6 @@ const getStatus = (service: ServiceProps) => {
       color: "warning",
     };
   }
-};
-
-const getEditItem = (item: ServiceProps) => {
-  showForm.value = true;
-  selectedItem.value = item;
 };
 
 const itemsMenu = (service: ServiceProps) => {
@@ -453,6 +468,160 @@ const loadServices = async () => {
     });
   } catch (error) {
     console.log("🚀 ~ handleDestroy ~ error:", error);
+  }
+};
+
+const handleEditTask = (service: ServiceProps) => {
+  selectedItem.value = service;
+  console.log("🚀 ~ handleEditTask ~ selectedItem.value:", selectedItem.value);
+  showForm.value = true;
+  console.log("🚀 ~ handleEditTask ~ showForm.value:", showForm.value);
+};
+
+const handleClickMenuButton = async (title: string, service: ServiceProps) => {
+  isUpdate.value = true;
+  try {
+    if (title === "Editar") {
+      if (service.status === "FINISHED") {
+        useNuxtApp().$toast.warning(
+          "Serviço finalizado, não é possível editar"
+        );
+        return;
+      }
+      handleEditTask(service);
+    } else if (title === "Excluir") {
+      selectedItem.value = service;
+      dialogQuestion.value = true;
+    } else if (title === "Finalizar serviço") {
+      if (service.status === "FINISHED") {
+        useNuxtApp().$toast.warning("Serviço já finalizado!");
+        return;
+      }
+      selectedItem.value = service;
+      showFinish.value = true;
+    } else if (title === "Reabrir serviço") {
+      if (service.status === "STARTED") {
+        useNuxtApp().$toast.warning("serviço já reiniciado!");
+        return;
+      }
+
+      if (service.isInvoiced) {
+        useNuxtApp().$toast.warning(
+          "serviço já faturado não é possível reabrir!"
+        );
+        return;
+      }
+
+      selectedItem.value = service;
+      showReopen.value = true;
+    } else if (title === "Estornar faturamento") {
+      if (!service.isInvoiced) {
+        useNuxtApp().$toast.warning("Serviço não faturado!");
+        return;
+      }
+
+      loading.value = true;
+      try {
+        await serviceStore.update({
+          publicId: service.publicId,
+          hourValue: service.hourValue,
+          title: service.title,
+          clientProjectId: service.clientProjectId,
+          serviceEndDate: service.serviceEndDate,
+          isInvoiced: false,
+        });
+        await loadServices();
+      } finally {
+        loading.value = false;
+      }
+    } else if (title === "Faturar") {
+      if (service.isInvoiced) {
+        useNuxtApp().$toast.warning("Serviço já faturado!");
+        return;
+      }
+
+      loading.value = true;
+      try {
+        await serviceStore.update({
+          publicId: service.publicId,
+          hourValue: service.hourValue,
+          title: service.title,
+          clientProjectId: service.clientProjectId,
+          serviceEndDate: service.serviceEndDate,
+          isInvoiced: true,
+        });
+        await loadServices();
+      } finally {
+        loading.value = false;
+      }
+    }
+  } finally {
+    isUpdate.value = false;
+  }
+};
+
+const handleFinishService = async () => {
+  showFinish.value = false;
+  if (!selectedItem.value?.publicId) return;
+
+  loading.value = true;
+  try {
+    await serviceStore.update({
+      publicId: selectedItem.value!.publicId,
+      title: selectedItem.value!.title,
+      clientProjectId: selectedItem.value!.clientProjectId,
+      hourValue: selectedItem.value!.hourValue,
+      serviceEndDate: moment().format("YYYY-MM-DD"),
+      status: "FINISHED",
+      updateOccorrence: false,
+    });
+
+    await loadServices();
+
+    selectedItem.value = {} as ServiceProps;
+  } finally {
+    loading.value = false;
+  }
+};
+
+const handleDestroy = async () => {
+  dialogQuestion.value = false;
+
+  if (!selectedItem.value?.publicId) return;
+
+  loading.value = true;
+  try {
+    try {
+      await serviceStore.destroy(selectedItem.value.publicId);
+      await loadServices();
+      selectedItem.value = {} as ServiceProps;
+    } catch (error) {
+      console.log("🚀 ~ handleDestroy ~ error:", error);
+    }
+  } finally {
+    loading.value = false;
+  }
+};
+
+const handleReopenService = async () => {
+  showReopen.value = false;
+  if (!selectedItem.value?.publicId) return;
+
+  loading.value = true;
+  try {
+    await serviceStore.update({
+      publicId: selectedItem.value!.publicId,
+      title: selectedItem.value!.title,
+      clientProjectId: selectedItem.value!.clientProjectId,
+      hourValue: selectedItem.value!.hourValue,
+      status: "STOPPED",
+      updateOccorrence: false,
+    });
+
+    await loadServices();
+    selectedItem.value = {} as ServiceProps;
+  } finally {
+    loading.value = false;
   }
 };
 </script>

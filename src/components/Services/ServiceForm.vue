@@ -32,6 +32,7 @@ import { useForm } from "vee-validate";
 
 const { handleReset } = useForm();
 const serviceStore = useServiceStore();
+const { getFiltersStoreServices } = useUtils();
 
 const props = defineProps({
   data: {
@@ -45,7 +46,7 @@ const drawer = defineModel({
 
 const loading = ref(false);
 const model = ref({
-  id: 0,
+  publicId: "",
   title: "",
   ClientProject: undefined as ClientProjectProps | undefined,
   serviceDate: moment().format("YYYY-MM-DD"),
@@ -63,17 +64,17 @@ watch(
 
 const loadModel = () => {
   model.value = {
-    id: props.data.id ?? 0,
+    publicId: props.data.publicId ?? "",
     title: props.data.title ?? "",
     ClientProject: props.data.ClientProject ?? undefined,
-    value: props.data.hourValue ? props.data.hourValue.toFixed(2) : "",
+    value: props.data.hourValue ? Number(props.data.hourValue).toFixed(2) : "",
     serviceDate: moment(props.data.serviceDate).format("YYYY-MM-DD"),
   };
 };
 
 const clearModel = () => {
   model.value = {
-    id: 0,
+    publicId: "",
     title: "",
     ClientProject: undefined,
     value: "",
@@ -101,9 +102,9 @@ const handleSubmit = async () => {
 
   loading.value = true;
   try {
-    if (model.value.id > 0) {
+    if (model.value.publicId) {
       await serviceStore.update({
-        id: model.value.id,
+        publicId: model.value.publicId,
         hourValue: Number(model.value.value),
         title: model.value.title,
         clientId: model.value.ClientProject?.clientId!,
@@ -119,6 +120,8 @@ const handleSubmit = async () => {
         serviceDate: moment().format("YYYY-MM-DD"),
       });
     }
+
+    await loadServices();
   } catch (error) {
   } finally {
     handleReset();
@@ -137,5 +140,20 @@ const getHourValue = () => {
           ) * 100
         ).toString()
       : "";
+};
+
+const loadServices = async () => {
+  const filters = getFiltersStoreServices();
+  try {
+    await serviceStore.index({
+      initialDate: filters.initialDate,
+      finalDate: filters.finalDate,
+      ClientProject: filters.ClientProject,
+      Client: filters.Client,
+      invoiced: filters.invoiced,
+    });
+  } catch (error) {
+    console.log("🚀 ~ handleDestroy ~ error:", error);
+  }
 };
 </script>
