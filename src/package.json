@@ -34,6 +34,7 @@
   "packageManager": "yarn@1.22.22",
   "devDependencies": {
     "@types/jsonwebtoken": "^9.0.7",
+    "@types/pdfmake": "^0.2.10",
     "prisma": "^5.22.0",
     "vite-plugin-vuetify": "^2.0.4",
     "vuetify": "^3.7.5"

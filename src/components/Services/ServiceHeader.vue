@@ -52,6 +52,7 @@
           variant="flat"
           color="deep-purple"
           size="small"
+          @click="handleExportServicesToPDF"
         >
           <ServicePDFExportSVG class="mr-2" />
           Exportar serviços
@@ -73,6 +74,9 @@
 import moment from "moment";
 import { useDisplay } from "vuetify";
 
+import { pdfMakeFonts } from "@/utils/pdfMakeFonts";
+import pdfMake from "pdfmake/build/pdfmake";
+
 defineProps({
   title: {
     type: String,
@@ -82,6 +86,8 @@ defineProps({
 
 const { mobile } = useDisplay();
 const { saveServiceFilters } = useUtils();
+const { serviceReport } = useExportPDF();
+const { user } = useUserSession();
 const serviceStore = useServiceStore();
 const showForm = ref(false);
 const loading = ref(false);
@@ -98,6 +104,8 @@ const serviceStatusItens = [
   { name: "Faturado", type: "Faturadas" },
   { name: "Não Faturado", type: "Não Faturadas" },
 ];
+
+const $services = computed(() => serviceStore.$all);
 
 const getMonth = async (month: number) => {
   filter.value.month = month;
@@ -119,6 +127,32 @@ const handleChangeClient = async () => {
 
 const handleChangeStatus = async () => {
   await getServices();
+};
+
+const handleExportServicesToPDF = () => {
+  const initialDate = `01-${filter.value.month + 1}-${filter.value.year}`;
+  const finalDate = moment(initialDate, "DD-MM-YYYY")
+    .endOf("month")
+    .format("YYYY-MM-DD");
+
+  const payloadFilters = {
+    initialDate,
+    finalDate,
+    Client: filter.value.client,
+    invoiced: filter.value.status,
+  } as ServiceFilterProps;
+
+  const report = serviceReport($services.value, payloadFilters);
+
+  pdfMake.vfs = pdfMakeFonts.vfs;
+  pdfMake
+    //@ts-ignore
+    .createPdf(report)
+    .download(
+      `Relatorio_${user.value?.name?.replaceAll(" ", "_")}_horas_${
+        payloadFilters.initialDate
+      }_${payloadFilters.finalDate}`
+    );
 };
 
 const getServices = async () => {
