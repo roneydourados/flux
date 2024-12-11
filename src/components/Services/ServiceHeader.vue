@@ -45,7 +45,7 @@
       <v-col cols="12" lg="6">
         <ServiceChartMonth />
       </v-col>
-      <v-col cols="12" lg="2" class="d-flex flex-column" style="gap: 0.5rem">
+      <v-col cols="12" lg="3" class="d-flex flex-column" style="gap: 0.5rem">
         <ServiceTotalCard />
         <v-btn
           class="text-none"
@@ -57,12 +57,12 @@
           Exportar serviços
         </v-btn>
       </v-col>
-      <v-col cols="12" lg="2">
+      <v-col cols="12" lg="3">
         <ServiceChartStatus />
       </v-col>
-      <v-col cols="12" lg="2">
+      <!-- <v-col cols="12" lg="2">
         <ServiceChartProject />
-      </v-col>
+      </v-col> -->
     </v-row>
     <ServiceForm v-model="showForm" />
     <ApplicationOverlay :overlay="loading" />
@@ -112,7 +112,7 @@ const getYear = async (year: number) => {
 };
 
 const handleChangeClient = async () => {
-  if (filter.value.client) {
+  if (filter.value.client?.id) {
     await getServices();
   }
 };

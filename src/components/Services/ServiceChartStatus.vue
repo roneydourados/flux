@@ -15,7 +15,7 @@ const chartOptions = computed(() => {
     series: [30, 20, 18],
     options: {
       chart: {
-        height: "200",
+        height: "250",
         type: "donut",
       },
       stroke: {
