@@ -1,169 +1,158 @@
 <template>
   <div>
-    <Card>
-      <Table
-        title=""
-        :headers="headers"
-        :items="$transactions"
-        :items-per-page="10"
-        :show-select="false"
-        :show-crud="false"
-        :loading="false"
-        :show-pagination="true"
-      >
-        <template v-if="mobile" v-slot:item.mobile="{ item }">
-          <v-list density="compact" rounded="lg">
-            <v-list-item density="compact">
-              <template #title>
-                <span style="width: 0.5rem">
-                  {{ item.title }}
+    <Table
+      title="Transações"
+      :headers="headers"
+      :items="$transactions"
+      :items-per-page="10"
+      :show-select="false"
+      :show-crud="false"
+      :loading="false"
+      :show-pagination="true"
+    >
+      <template v-if="mobile" v-slot:item.mobile="{ item }">
+        <v-list density="compact" rounded="lg">
+          <v-list-item density="compact">
+            <template #title>
+              <span style="width: 0.5rem">
+                {{ item.title }}
+              </span>
+            </template>
+            <template #subtitle>
+              <div class="d-flex flex-column">
+                <span class="mr-2">
+                  Parc. {{ item.portion }}/{{ item.portionTotal }}
                 </span>
-              </template>
-              <template #subtitle>
-                <div class="d-flex flex-column">
-                  <span class="mr-2">
-                    Parc. {{ item.portion }}/{{ item.portionTotal }}
-                  </span>
-                  <div
-                    class="d-flex align-center justify-space-between w-100 mt-4"
-                  >
-                    <div class="d-flex align-center">
-                      <v-icon
-                        :icon="
-                          item.status === 'A'
-                            ? 'mdi-circle-outline'
-                            : 'mdi-check-circle-outline'
-                        "
-                        :color="item.status === 'A' ? 'grey' : 'green'"
-                        start
-                      />
-                      <span>
-                        {{ item.status === "A" ? "Pendente" : "Pago" }}
-                      </span>
-                    </div>
-                    <span>{{ amountFormated(item.amount, true) }}</span>
+                <div
+                  class="d-flex align-center justify-space-between w-100 mt-4"
+                >
+                  <div class="d-flex align-center">
+                    <v-icon
+                      :icon="
+                        item.status === 'A'
+                          ? 'mdi-circle-outline'
+                          : 'mdi-check-circle-outline'
+                      "
+                      :color="item.status === 'A' ? 'grey' : 'green'"
+                      start
+                    />
+                    <span>
+                      {{ item.status === "A" ? "Pendente" : "Pago" }}
+                    </span>
                   </div>
+                  <span>{{ amountFormated(item.amount, true) }}</span>
                 </div>
-              </template>
+              </div>
+            </template>
 
-              <template #append>
-                <div class="d-flex align-center" style="gap: 0.5rem">
-                  <v-btn
-                    icon
-                    variant="text"
-                    size="small"
-                    @click="getDownItem(item)"
-                  >
-                    <DownTransactionSVG height="20" />
-                  </v-btn>
-                  <v-btn
-                    icon
-                    variant="text"
-                    size="small"
-                    @click="getEditItem(item)"
-                  >
-                    <EditSVG />
-                  </v-btn>
-                  <v-btn
-                    icon
-                    variant="text"
-                    size="small"
-                    @click="getDeleteItem(item)"
-                  >
-                    <DeleteSVG />
-                  </v-btn>
-                </div>
-              </template>
-            </v-list-item>
-          </v-list>
-        </template>
-        <template v-slot:item.amount="{ item }">
-          {{ amountFormated(item.amount, true) }}
-        </template>
-        <!-- <template v-slot:item.emissionDate="{ item }">
+            <template #append>
+              <div class="d-flex align-center" style="gap: 0.5rem">
+                <v-btn
+                  icon
+                  variant="text"
+                  size="small"
+                  @click="getDownItem(item)"
+                >
+                  <DownTransactionSVG height="20" />
+                </v-btn>
+                <v-btn
+                  icon
+                  variant="text"
+                  size="small"
+                  @click="getEditItem(item)"
+                >
+                  <EditSVG />
+                </v-btn>
+                <v-btn
+                  icon
+                  variant="text"
+                  size="small"
+                  @click="getDeleteItem(item)"
+                >
+                  <DeleteSVG />
+                </v-btn>
+              </div>
+            </template>
+          </v-list-item>
+        </v-list>
+      </template>
+      <template v-slot:item.amount="{ item }">
+        {{ amountFormated(item.amount, true) }}
+      </template>
+      <!-- <template v-slot:item.emissionDate="{ item }">
           {{ moment(item.emissonDate).format("DD/MM/YYYY") }}
         </template> -->
-        <template v-slot:item.dueDate="{ item }">
-          {{ moment(item.dueDate).format("DD/MM/YYYY") }}
-        </template>
-        <template v-slot:item.Category="{ item }">
-          <div
+      <template v-slot:item.dueDate="{ item }">
+        {{ moment(item.dueDate).format("DD/MM/YYYY") }}
+      </template>
+      <template v-slot:item.Category="{ item }">
+        <div
+          :color="returnTypeColor(item.type)"
+          class="d-flex align-center px-4"
+        >
+          <v-icon
+            icon="mdi-circle"
+            size="12"
+            start
             :color="returnTypeColor(item.type)"
-            class="d-flex align-center px-4"
-          >
-            <v-icon
-              icon="mdi-circle"
-              size="12"
-              start
-              :color="returnTypeColor(item.type)"
-            />
-            <span>
-              {{ item.Category.categoryName }}
+          />
+          <span>
+            {{ item.Category.categoryName }}
+          </span>
+        </div>
+      </template>
+      <template v-slot:item.portion="{ item }">
+        {{ item.portion }}/{{ item.portionTotal }}
+      </template>
+      <template v-slot:item.name="{ item }">
+        <div class="d-flex flex-column" style="gap: 0.5rem">
+          <span>{{ item.name }}</span>
+          <div class="d-flex align-center" style="font-size: 0.7rem">
+            <v-icon :icon="getPaymentFormName(item.paymentForm).icon" start />
+            <span style="color: #e0e0e0">
+              {{ getPaymentFormName(item.paymentMethod).name }}
             </span>
           </div>
-        </template>
-        <template v-slot:item.portion="{ item }">
-          {{ item.portion }}/{{ item.portionTotal }}
-        </template>
-        <template v-slot:item.name="{ item }">
-          <div class="d-flex flex-column" style="gap: 0.5rem">
-            <span>{{ item.name }}</span>
-            <div class="d-flex align-center" style="font-size: 0.7rem">
-              <v-icon :icon="getPaymentFormName(item.paymentForm).icon" start />
-              <span style="color: #e0e0e0">
-                {{ getPaymentFormName(item.paymentMethod).name }}
-              </span>
-            </div>
+        </div>
+      </template>
+      <template v-slot:item.actions="{ item }">
+        <div
+          class="d-flex align-center justify-space-between"
+          style="gap: 0.5rem"
+        >
+          <div class="d-flex align-center">
+            <v-icon
+              :icon="
+                item.status === 'A'
+                  ? 'mdi-circle-outline'
+                  : 'mdi-check-circle-outline'
+              "
+              :color="item.status === 'A' ? 'grey' : 'green'"
+              start
+            />
+            <span>{{ item.status === "A" ? "Pendente" : "Pago" }}</span>
           </div>
-        </template>
-        <template v-slot:item.actions="{ item }">
-          <div
-            class="d-flex align-center justify-space-between"
-            style="gap: 0.5rem"
-          >
-            <div class="d-flex align-center">
-              <v-icon
-                :icon="
-                  item.status === 'A'
-                    ? 'mdi-circle-outline'
-                    : 'mdi-check-circle-outline'
-                "
-                :color="item.status === 'A' ? 'grey' : 'green'"
-                start
-              />
-              <span>{{ item.status === "A" ? "Pendente" : "Pago" }}</span>
-            </div>
 
-            <div class="d-flex align-center">
-              <v-btn
-                icon
-                variant="text"
-                size="small"
-                @click="getDownItem(item)"
-              >
-                <DownTransactionSVG height="20" />
-              </v-btn>
-              <v-btn
-                icon
-                variant="text"
-                size="small"
-                @click="getEditItem(item)"
-              >
-                <EditSVG />
-              </v-btn>
-              <v-btn
-                icon
-                variant="text"
-                size="small"
-                @click="getDeleteItem(item)"
-              >
-                <DeleteSVG />
-              </v-btn>
-            </div>
+          <div class="d-flex align-center">
+            <v-btn icon variant="text" size="small" @click="getDownItem(item)">
+              <DownTransactionSVG height="20" />
+            </v-btn>
+            <v-btn icon variant="text" size="small" @click="getEditItem(item)">
+              <EditSVG />
+            </v-btn>
+            <v-btn
+              icon
+              variant="text"
+              size="small"
+              @click="getDeleteItem(item)"
+            >
+              <DeleteSVG />
+            </v-btn>
           </div>
-        </template>
-      </Table>
-    </Card>
+        </div>
+      </template>
+    </Table>
+
     <TransactionForm v-model="showForm" :data="selectedItem" />
     <DialogQuestion
       v-model="dialogQuestion"

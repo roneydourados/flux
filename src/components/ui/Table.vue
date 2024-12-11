@@ -60,7 +60,6 @@
         <slot name="filters" />
       </v-row>
     </v-card-title>
-    <!-- <v-card-text> -->
     <v-data-table
       v-if="!isVirtual"
       v-model="value"
@@ -121,7 +120,6 @@
         <slot v-else :name="name" v-bind="slotProps" />
       </template>
     </v-data-table-virtual>
-    <!-- </v-card-text> -->
   </v-card>
 </template>
 

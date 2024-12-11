@@ -11,7 +11,10 @@
     </v-row>
     <v-row>
       <v-col cols="12" lg="7">
-        <ClientSelectSearch />
+        <ClientSelectSearch
+          v-model="filter.client"
+          @update:model-value="handleChangeClient"
+        />
       </v-col>
       <v-col cols="12" lg="2">
         <SelectInput
@@ -22,6 +25,7 @@
           item-value="type"
           density="comfortable"
           variant="outlined"
+          @update:model-value="handleChangeStatus"
         />
       </v-col>
       <v-col cols="12" lg="3" class="d-flex align-center justify-end">
@@ -104,6 +108,16 @@ const getMonth = async (month: number) => {
 const getYear = async (year: number) => {
   filter.value.year = year;
 
+  await getServices();
+};
+
+const handleChangeClient = async () => {
+  if (filter.value.client) {
+    await getServices();
+  }
+};
+
+const handleChangeStatus = async () => {
   await getServices();
 };
 

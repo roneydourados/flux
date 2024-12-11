@@ -1,17 +1,16 @@
 <template>
   <div>
-    <Card>
-      <Table
-        title="Serviços"
-        :headers="headers"
-        :items="$allServices"
-        :items-per-page="10"
-        :show-select="false"
-        :show-crud="false"
-        :loading="false"
-        :show-pagination="true"
-      >
-        <!-- <template v-if="mobile" v-slot:item.mobile="{ item }">
+    <Table
+      title="Serviços"
+      :headers="headers"
+      :items="$allServices"
+      :items-per-page="10"
+      :show-select="false"
+      :show-crud="false"
+      :loading="false"
+      :show-pagination="true"
+    >
+      <!-- <template v-if="mobile" v-slot:item.mobile="{ item }">
           <v-list density="compact" rounded="lg">
             <v-list-item density="compact">
               <template #title>
@@ -50,52 +49,20 @@
             </v-list-item>
           </v-list>
         </template> -->
-        <template v-slot:item.title="{ item }">
-          <ServiceTableItemExpantionPanel :item="item" />
-        </template>
-      </Table>
-    </Card>
+      <template v-slot:item.title="{ item }">
+        <ServiceTableItemExpantionPanel :item="item" />
+      </template>
+    </Table>
   </div>
 </template>
 
 <script setup lang="ts">
-// import { useDisplay } from "vuetify";
-//const { mobile } = useDisplay();
-
-// const { amountFormated } = useUtils();
-// const { calculeServiceTotals } = useServiceUtils();
 const serviceStore = useServiceStore();
-
 const $allServices = computed(() => serviceStore.$all);
-
-// const $serviceTotals = computed(() => {
-//   let totalValor = 0;
-//   let totalDuration = 0;
-
-//   serviceStore.$all.map((service) => {
-//     const totals = calculeServiceTotals(service);
-//     totalValor += totals.valorNumber;
-//     totalDuration += totals.finalDuration.asSeconds();
-//   });
-
-//   const duracaoTotal = `${String(Math.floor(totalDuration / 3600)).padStart(
-//     2,
-//     "0"
-//   )}:${String(Math.floor((totalDuration % 3600) / 60)).padStart(
-//     2,
-//     "0"
-//   )}:${String(Math.floor(totalDuration) % 60).padStart(2, "0")}`;
-
-//   return {
-//     valorTotal: amountFormated(totalValor, false),
-//     totalDuration: duracaoTotal,
-//   };
-// });
-
-const headers = computed(() => {
-  // if (mobile.value) {
-  //   return [{ title: "", key: "mobile" }];
-  // }
-  return [{ title: "", key: "title" }];
-});
+const headers = [
+  {
+    title: "",
+    key: "title",
+  },
+];
 </script>
