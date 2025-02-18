@@ -86,15 +86,17 @@ const props = defineProps({
     type: Boolean,
     default: true,
   },
-  client: {
-    type: Object as PropType<ClientProps>,
-    default: () => ({}),
-  },
+  // client: {
+  //   type: Object as PropType<ClientProps>,
+  //   default: () => ({}),
+  // },
 });
 
 defineEmits(["close"]);
-
+const { $toast } = useNuxtApp();
 const projectStore = useProjectsStore();
+const clientStore = useClientStore();
+
 const loading = ref(false);
 const dialogForm = ref(false);
 const isEditing = ref(false);
@@ -119,18 +121,19 @@ const model = ref<ClientProjectProps>({
 
 const $projects = computed(() => projectStore.$all);
 const $single = computed(() => projectStore.$single);
+const $client = computed(() => clientStore.$single);
 
 watchEffect(() => {
-  if (props.client.id) {
-    model.value.clientId = props.client.id;
-    model.value.Client = props.client;
+  if ($client.value?.id) {
+    model.value.clientId = $client.value.id;
+    model.value.Client = $client.value;
   }
 });
 
 watch(
-  () => props.client.id,
+  () => $client.value,
   async () => {
-    if (props.client.id) {
+    if ($client.value?.id) {
       loading.value = true;
       try {
         await getProjects();
@@ -144,17 +147,6 @@ watch(
   }
 );
 
-// onMounted(async () => {
-//   if (props.loadOnInit) {
-//     loading.value = true;
-//     try {
-//       await getProjects();
-//     } finally {
-//       loading.value = false;
-//     }
-//   }
-// });
-
 const clearModel = () => {
   model.value = {
     id: 0,
@@ -166,10 +158,15 @@ const clearModel = () => {
 };
 
 const getProjects = async (query: string = "") => {
-  await projectStore.index(query, props.client.id);
+  await projectStore.index(query, $client.value?.id);
 };
 
 const handleNew = () => {
+  if (!$client.value?.id) {
+    $toast.warn("Cadastre um cliente para adicionar um projeto");
+    return;
+  }
+
   clearModel();
   dialogForm.value = true;
   isEditing.value = false;

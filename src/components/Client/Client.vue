@@ -29,7 +29,7 @@
           <ClientForm :client="client" />
         </div>
         <div v-if="tabItem.id === 2" class="py-4">
-          <ClientProjectsTable :client="client" />
+          <ClientProjectsTable />
         </div>
       </v-tabs-window-item>
     </v-tabs-window>
@@ -40,7 +40,7 @@
 import { type ClientProps } from "@/interfaces/Client";
 import { useDisplay } from "vuetify";
 
-const props = defineProps({
+/*const props = */ defineProps({
   client: {
     type: Object as PropType<ClientProps>,
     default: () => ({} as ClientProps),
@@ -57,8 +57,6 @@ const menuItens = computed(() => {
 });
 
 const emit = defineEmits(["close"]);
-// const clientStore = useClientStore();
-// const { formatTelephoneNumber, amountFormated } = useUtils();
 const { mobile } = useDisplay();
 
 const show = defineModel({

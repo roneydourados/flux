@@ -40,6 +40,10 @@ const props = defineProps({
     type: String,
     default: "Salvar",
   },
+  resetForm: {
+    type: Boolean,
+    default: true,
+  },
 });
 
 const formRef = ref();
@@ -50,7 +54,9 @@ const onSubmit = handleSubmit(async () => {
   loading.value = true;
   try {
     await props.onSubmit();
-    handleReset();
+    if (props.resetForm) {
+      handleReset();
+    }
   } finally {
     loading.value = false;
   }

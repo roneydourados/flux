@@ -1,5 +1,5 @@
 <template>
-  <FormCrud :on-submit="onSubmit">
+  <FormCrud :on-submit="onSubmit" :reset-form="false">
     <v-row dense>
       <v-col cols="12" lg="8">
         <StringInput label="Nome" v-model="model.name" required />
@@ -171,7 +171,7 @@ const model = ref({
   type: "F",
 });
 
-const $single = computed(() => clientStore.$single);
+//const $single = computed(() => clientStore.$single);
 
 watch(
   () => props.client,
@@ -186,6 +186,10 @@ watch(
   },
   { immediate: true }
 );
+
+onUnmounted(() => {
+  clearModel();
+});
 
 const onSubmit = async () => {
   try {
@@ -230,9 +234,6 @@ const onSubmit = async () => {
         phone: model.value.phone,
         type: model.value.type,
       });
-
-      // se for um novo cliente então pegar o id retornada para possibilitar o cadastro de projetos
-      model.value.id = $single.value?.id!;
     }
   } catch (error) {
     console.error("🚀 ~ onSubmit ~ error:", error);
@@ -240,6 +241,7 @@ const onSubmit = async () => {
 };
 
 const clearModel = () => {
+  console.log("clearModel");
   model.value = {
     id: 0,
     name: "",
@@ -265,6 +267,7 @@ const clearModel = () => {
 };
 
 const loadModel = () => {
+  console.log("props.client loading", props.client);
   model.value = {
     id: props.client.id ?? 0,
     name: props.client.name ?? "",
