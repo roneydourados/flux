@@ -5,7 +5,7 @@
     :model-value="show"
     :width="mobile ? '' : width"
   >
-    <Card>
+    <v-card rounded="lg">
       <v-toolbar density="default" color="background">
         <v-toolbar-title>
           <span
@@ -27,7 +27,7 @@
           <slot />
         </v-card-text>
       </v-card>
-    </Card>
+    </v-card>
   </v-dialog>
 </template>
 

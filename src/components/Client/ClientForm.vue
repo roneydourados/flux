@@ -137,7 +137,6 @@
 import { formatCEP } from "@brazilian-utils/brazilian-utils";
 import { type ClientProps } from "@/interfaces/Client";
 import { type CepAdderssProps } from "@/interfaces/Address";
-//import { useDisplay } from "vuetify";
 
 const props = defineProps({
   client: {
@@ -146,20 +145,8 @@ const props = defineProps({
   },
 });
 
-// const projects = useProjectsStore();
-// const tab = ref(1);
-// const menuItens = ref([
-//   { title: "Dados", icon: "mdi-account-outline", id: 1 },
-//   { title: "Projetos", icon: "mdi-set-left", id: 2 },
-// ]);
 const emit = defineEmits(["close"]);
 const clientStore = useClientStore();
-//const { formatTelephoneNumber, amountFormated } = useUtils();
-//const { mobile } = useDisplay();
-
-// const show = defineModel({
-//   default: false,
-// });
 
 const model = ref({
   id: 0,
@@ -222,9 +209,6 @@ const onSubmit = async () => {
         phone: model.value.phone,
         type: model.value.type,
       });
-
-      // clearModel();
-      // close();
     } else {
       await clientStore.store({
         name: model.value.name,
@@ -254,11 +238,6 @@ const onSubmit = async () => {
     console.error("🚀 ~ onSubmit ~ error:", error);
   }
 };
-
-// const close = () => {
-//   clearModel();
-//   show.value = false;
-// };
 
 const clearModel = () => {
   model.value = {
@@ -303,7 +282,7 @@ const loadModel = () => {
         : undefined,
       address: {} as CepAdderssProps,
     },
-    //@ts-ignore
+
     address: props.client.address
       ? {
           addressCity: props.client.address.city ?? "",

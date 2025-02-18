@@ -50,13 +50,10 @@ const props = defineProps({
 // const projects = useProjectsStore();
 const tab = ref(1);
 const menuItens = computed(() => {
-  if (props.client.id) {
-    return [
-      { title: "Dados", icon: "mdi-account-outline", id: 1 },
-      { title: "Projetos", icon: "mdi-set-left", id: 2 },
-    ];
-  }
-  return [{ title: "Dados", icon: "mdi-account-outline", id: 1 }];
+  return [
+    { title: "Dados", icon: "mdi-account-outline", id: 1 },
+    { title: "Projetos", icon: "mdi-set-left", id: 2 },
+  ];
 });
 
 const emit = defineEmits(["close"]);

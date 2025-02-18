@@ -127,16 +127,33 @@ watchEffect(() => {
   }
 });
 
-onMounted(async () => {
-  if (props.loadOnInit) {
-    loading.value = true;
-    try {
-      await getProjects();
-    } finally {
-      loading.value = false;
+watch(
+  () => props.client.id,
+  async () => {
+    if (props.client.id) {
+      loading.value = true;
+      try {
+        await getProjects();
+      } finally {
+        loading.value = false;
+      }
     }
+  },
+  {
+    immediate: true,
   }
-});
+);
+
+// onMounted(async () => {
+//   if (props.loadOnInit) {
+//     loading.value = true;
+//     try {
+//       await getProjects();
+//     } finally {
+//       loading.value = false;
+//     }
+//   }
+// });
 
 const clearModel = () => {
   model.value = {
