@@ -1,5 +1,28 @@
 <template>
   <div>
+    <pre>{{ $allServices[0] }}</pre>
+    <v-row>
+      <v-col cols="12" lg="3" class="d-flex flex-wrap" style="gap: 0.5rem">
+        <v-btn
+          variant="flat"
+          color="green"
+          class="text-none"
+          @click="showInvoice = true"
+        >
+          <v-icon icon="mdi-cash-check" start size="25" />
+          Faturar
+        </v-btn>
+        <v-btn
+          variant="flat"
+          color="deep-orange"
+          class="text-none"
+          @click="showCancelInvoice = true"
+        >
+          <v-icon icon="mdi-reload-alert" size="25" start />
+          Estornar
+        </v-btn>
+      </v-col>
+    </v-row>
     <Table
       title="Serviços"
       :headers="headers"
@@ -10,59 +33,105 @@
       :loading="false"
       :show-pagination="true"
     >
-      <!-- <template v-if="mobile" v-slot:item.mobile="{ item }">
-          <v-list density="compact" rounded="lg">
-            <v-list-item density="compact">
-              <template #title>
-                <span style="width: 0.5rem">
-                  {{ item.title }}
-                </span>
-              </template>
-              <template #subtitle>
-                <div class="d-flex flex-column" style="gap: 0.5rem">
-                  {{ amountFormated(item.totalValue, true) }}
-                  <div class="d-flex align-center">
-                    <v-icon
-                      :icon="getStatusIcon(item.status).icon"
-                      :color="getStatusIcon(item.status).color"
-                      start
-                    />
-                    <span>
-                      {{ getStatusIcon(item.status).title }}
-                    </span>
-                  </div>
-                </div>
-              </template>
-
-              <template #append>
-                <div class="d-flex align-center" style="gap: 0.5rem">
-                  <v-btn
-                    icon
-                    variant="text"
-                    size="small"
-                    @click="dialogQuestion = true"
-                  >
-                    <DeleteSVG />
-                  </v-btn>
-                </div>
-              </template>
-            </v-list-item>
-          </v-list>
-        </template> -->
       <template v-slot:item.title="{ item }">
         <ServiceTableItemExpantionPanel :item="item" />
       </template>
     </Table>
+    <DialogLoading :dialog="loading" />
+    <DialogQuestion
+      title="Confirma faturamento ?"
+      v-model="showInvoice"
+      show-cancel
+      @confirm="handleInvoice"
+      @cancel="showInvoice = false"
+    />
+
+    <DialogQuestion
+      title="Confirma estorno faturamento ?"
+      v-model="showCancelInvoice"
+      show-cancel
+      @confirm="handleCancelInvoice"
+      @cancel="showCancelInvoice = false"
+    />
   </div>
 </template>
 
 <script setup lang="ts">
 const serviceStore = useServiceStore();
+const { getFiltersStoreServices } = useUtils();
+const { $toast } = useNuxtApp();
+
 const $allServices = computed(() => serviceStore.$all);
+
+const showInvoice = ref(false);
+const showCancelInvoice = ref(false);
+const loading = ref(false);
 const headers = [
   {
     title: "",
     key: "title",
   },
 ];
+
+const handleInvoice = async () => {
+  showInvoice.value = false;
+  loading.value = true;
+  try {
+    const filters = getFiltersStoreServices();
+
+    if (!filters.Client) {
+      $toast.warn("Cliente não selecionado");
+      return;
+    }
+
+    await serviceStore.invoiceServices({
+      clientId: filters.Client?.id ?? 0,
+      initialDate: filters.initialDate ?? "",
+      finalDate: filters.finalDate ?? "",
+      invoiced: true,
+    });
+
+    await serviceStore.index({
+      initialDate: filters.initialDate ?? "",
+      finalDate: filters.finalDate ?? "",
+      Client: filters.Client,
+      invoiced: filters.invoiced,
+    });
+  } catch (error) {
+    console.log("🚀 ~ handleInvoice ~ error:", error);
+  } finally {
+    loading.value = false;
+  }
+};
+
+const handleCancelInvoice = async () => {
+  showCancelInvoice.value = false;
+  loading.value = true;
+  try {
+    const filters = getFiltersStoreServices();
+
+    if (!filters.Client) {
+      $toast.warn("Cliente não selecionado");
+      return;
+    }
+
+    await serviceStore.invoiceServices({
+      clientId: filters.Client?.id ?? 0,
+      initialDate: filters.initialDate ?? "",
+      finalDate: filters.finalDate ?? "",
+      invoiced: false,
+    });
+
+    await serviceStore.index({
+      initialDate: filters.initialDate ?? "",
+      finalDate: filters.finalDate ?? "",
+      Client: filters.Client,
+      invoiced: filters.invoiced,
+    });
+  } catch (error) {
+    console.log("🚀 ~ handleCancelInvoice ~ error:", error);
+  } finally {
+    loading.value = false;
+  }
+};
 </script>

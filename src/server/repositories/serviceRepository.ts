@@ -295,3 +295,36 @@ export const destroy = async (publicId: string) => {
     });
   }
 };
+
+export const invoiceServices = async (input: {
+  initialDate: string;
+  finalDate: string;
+  clientId: number;
+  invoiced: boolean;
+  userId: number;
+}) => {
+  const { clientId, finalDate, initialDate, invoiced, userId } = input;
+
+  try {
+    await prisma.service.updateMany({
+      where: {
+        clientId,
+        userId,
+        status: "FINISHED",
+        serviceDate: {
+          gte: new Date(String(initialDate)),
+          lte: new Date(String(finalDate)),
+        },
+      },
+      data: {
+        isInvoiced: invoiced,
+      },
+    });
+  } catch (error) {
+    console.log("🚀 ~ error invoice services:", error);
+    throw createError({
+      statusCode: 500,
+      statusMessage: "Erro ao faturar serviços",
+    });
+  }
+};
