@@ -36,6 +36,8 @@ export const updateTaskOccurrence = async ({
     const exists = await prisma.serviceOccurrence.findUnique({
       where: { publicId },
     });
+    console.log("🚀 ~ publicId:", publicId);
+    console.log("🚀 ~ exists:", exists);
 
     if (exists) {
       return prisma.serviceOccurrence.update({

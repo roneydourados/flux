@@ -6,7 +6,7 @@ export default defineEventHandler(async (event) => {
   const user = userLogged(event);
 
   if (user && user.id) {
-    const body = (await readBody(event)) as ClientProps;
+    const body = await readBody<ClientProps>(event);
 
     setResponseStatus(event, 200);
 

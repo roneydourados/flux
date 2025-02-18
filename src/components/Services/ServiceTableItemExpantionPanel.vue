@@ -96,7 +96,7 @@
             :key="serviceOccorrence.id"
           >
             <v-row dense>
-              <v-col cols="12" lg="4">
+              <!-- <v-col cols="12" lg="3">
                 <InfoLabel :show-divider="false" color-icon="primary">
                   <div class="d-flex align-center" style="gap: 0.5rem">
                     <v-icon icon="mdi-file-chart-outline" color="blue-grey" />
@@ -120,9 +120,10 @@
                     </span>
                   </div>
                 </InfoLabel>
-              </v-col>
-              <v-col cols="12" lg="2">
+              </v-col> -->
+              <v-col cols="12" lg="3">
                 <InfoLabel
+                  v-if="item.status === 'STARTED' || item.status === 'FINISHED'"
                   title="Início"
                   font-size="0.9"
                   font-size-content="0.8"
@@ -135,9 +136,16 @@
                     )
                   "
                 />
+                <DateTimePicker
+                  v-else
+                  v-model="serviceOccorrence.started"
+                  label="Início"
+                  variant="solo-filled"
+                />
               </v-col>
-              <v-col cols="12" lg="2">
+              <v-col cols="12" lg="3">
                 <InfoLabel
+                  v-if="item.status === 'STARTED' || item.status === 'FINISHED'"
                   title="Fim"
                   font-size="0.9"
                   font-size-content="0.8"
@@ -152,8 +160,14 @@
                       : 'Trabalhando'
                   "
                 />
+                <DateTimePicker
+                  v-else
+                  v-model="serviceOccorrence.ended"
+                  label="Início"
+                  variant="solo-filled"
+                />
               </v-col>
-              <v-col cols="12" lg="1">
+              <v-col cols="12" lg="2">
                 <InfoLabel
                   class="ml-2"
                   title="Tempo"
@@ -180,7 +194,7 @@
                   "
                 />
               </v-col>
-              <v-col cols="12" lg="1">
+              <v-col cols="12" lg="2">
                 <div
                   class="d-flex align-center justify-end w-100"
                   style="gap: 0.5rem"
@@ -189,13 +203,27 @@
                     variant="text"
                     class="text-none"
                     size="small"
+                    color="green"
+                    icon
+                    :disabled="
+                      item.status === 'STARTED' || item.status === 'FINISHED'
+                    "
+                    @click="handleUpdateOccorrence(serviceOccorrence)"
+                  >
+                    <v-icon icon="mdi-check-circle" />
+                  </v-btn>
+                  <v-btn
+                    variant="text"
+                    class="text-none"
+                    size="small"
+                    color="error"
                     icon
                     :disabled="
                       item.status === 'STARTED' || item.status === 'FINISHED'
                     "
                     @click="handleGetServiceOccurrence(serviceOccorrence)"
                   >
-                    <DeleteSVG />
+                    <DeleteSVG color="#EF5350" />
                   </v-btn>
                 </div>
               </v-col>
@@ -241,6 +269,7 @@
       @confirm="handleDestroyOccurrence"
     />
     <ServiceForm v-model="showForm" :data="selectedItem" />
+    <DialogLoading :dialog="loading" />
   </div>
 </template>
 
@@ -257,8 +286,9 @@ const props = defineProps({
 
 const serviceStore = useServiceStore();
 const { amountFormated, getFiltersStoreServices } = useUtils();
-const { mobile } = useDisplay();
+//const { mobile } = useDisplay();
 const { calculeServiceTotalsOccurence } = useServiceUtils();
+const { $toast } = useNuxtApp();
 
 const showDestroyOccurrence = ref(false);
 const isUpdate = ref(false);
@@ -658,6 +688,22 @@ const handleDestroyOccurrence = async () => {
     );
     await loadServices();
     selectedItem.value = {} as ServiceProps;
+  } finally {
+    loading.value = false;
+  }
+};
+
+const handleUpdateOccorrence = async (item: ServiceOccurrenceProps) => {
+  loading.value = true;
+  try {
+    await serviceStore.updateServiceOccurrence({
+      started: moment(item.started).format("YYYY-MM-DDTHH:mm:ss"),
+      ended: item.ended ? moment(item.ended).format("YYYY-MM-DDTHH:mm:ss") : "",
+      publicId: item.publicId,
+    });
+  } catch (error) {
+    console.log("🚀 ~ handleUpdateOccorrence ~ error:", error);
+    $toast.error("Erro ao atualizar ocorrência");
   } finally {
     loading.value = false;
   }
