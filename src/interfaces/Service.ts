@@ -25,6 +25,7 @@ export interface ServiceProps {
   lastOpenOccurence?: string;
   occurrenceStartDate?: string;
   occurrenceEndDate?: string;
+  financeOwner?: string;
 }
 
 export interface ServiceOccurrenceProps {

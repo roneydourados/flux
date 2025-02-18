@@ -306,20 +306,104 @@ export const invoiceServices = async (input: {
   const { clientId, finalDate, initialDate, invoiced, userId } = input;
 
   try {
-    await prisma.service.updateMany({
-      where: {
-        clientId,
-        userId,
-        status: "FINISHED",
-        serviceDate: {
-          gte: new Date(String(initialDate)),
-          lte: new Date(String(finalDate)),
+    // se for para faturar então criar uma transação
+    if (invoiced) {
+      const category = await prisma.category.findFirst({
+        where: {
+          categoryName: "Outros",
         },
-      },
-      data: {
-        isInvoiced: invoiced,
-      },
-    });
+      });
+
+      if (!category) {
+        throw createError({
+          statusCode: 500,
+          statusMessage: "Categoria não encontrada para faturamento de serviço",
+        });
+      }
+
+      const totalValue = await prisma.service.aggregate({
+        _sum: {
+          totalValue: true,
+        },
+        where: {
+          clientId,
+          userId,
+          status: "FINISHED",
+          serviceDate: {
+            gte: new Date(String(initialDate)),
+            lte: new Date(String(finalDate)),
+          },
+        },
+      });
+
+      const transaction = await prisma.transaction.create({
+        data: {
+          categoryId: category.id,
+          amount: Number(totalValue._sum.totalValue),
+          dueDate: new Date(),
+          emisstionDate: new Date(),
+          fixed: false,
+          title: `Faturamento de serviços, cliente: ${clientId}`,
+          portion: 1,
+          portionTotal: 1,
+          type: "CREDIT",
+          userId: userId,
+          paymentMethod: "OTHER",
+        },
+      });
+
+      await prisma.service.updateMany({
+        where: {
+          clientId,
+          userId,
+          financeOwner: transaction.publicId,
+          status: "FINISHED",
+          serviceDate: {
+            gte: new Date(String(initialDate)),
+            lte: new Date(String(finalDate)),
+          },
+        },
+        data: {
+          isInvoiced: invoiced,
+        },
+      });
+    } else {
+      //pegar um registro para apagar a transação
+      const service = await prisma.service.findFirst({
+        where: {
+          clientId,
+          userId,
+          status: "FINISHED",
+          serviceDate: {
+            gte: new Date(String(initialDate)),
+            lte: new Date(String(finalDate)),
+          },
+        },
+      });
+
+      // apagar transação caso exista
+      await prisma.transaction.delete({
+        where: {
+          publicId: service?.financeOwner ?? undefined,
+        },
+      });
+
+      await prisma.service.updateMany({
+        where: {
+          clientId,
+          userId,
+          financeOwner: null,
+          status: "FINISHED",
+          serviceDate: {
+            gte: new Date(String(initialDate)),
+            lte: new Date(String(finalDate)),
+          },
+        },
+        data: {
+          isInvoiced: invoiced,
+        },
+      });
+    }
   } catch (error) {
     console.log("🚀 ~ error invoice services:", error);
     throw createError({

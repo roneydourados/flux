@@ -108,6 +108,7 @@ model Service {
   isInvoiced        Boolean             @default(false) @map("is_invoiced")
   createdAt         DateTime?           @default(now()) @map("created_at") @db.Timestamptz
   updatedAt         DateTime?           @default(now()) @map("updated_at") @db.Timestamptz
+  financeOwner      String?             @map("finance_owner") @db.VarChar(40)
   User              User                @relation(fields: [userId], references: [id], onDelete: Cascade)
   Client            Client              @relation(fields: [clientId], references: [id], onDelete: Cascade)
   ServiceOccurrence ServiceOccurrence[]
@@ -118,6 +119,7 @@ model Service {
   @@index([serviceEndDate], map: "service_idx_service_end_date")
   @@index([clientId], map: "service_idx_client_id")
   @@index([userId], map: "service_idx_user_id")
+  @@index([financeOwner], map: "service_idx_finance_owner")
   @@map("services")
 }
 
