@@ -66,7 +66,7 @@
       </v-col> -->
     </v-row>
     <ServiceForm v-model="showForm" />
-    <ApplicationOverlay :overlay="loading" />
+    <DialogLoading :dialog="loading" />
   </div>
 </template>
 
@@ -85,7 +85,7 @@ defineProps({
 });
 
 const { mobile } = useDisplay();
-const { saveServiceFilters } = useUtils();
+const { saveServiceFilters, getFiltersStoreServices } = useUtils();
 const { serviceReport } = useExportPDF();
 const { user } = useUserSession();
 const serviceStore = useServiceStore();
@@ -106,6 +106,21 @@ const serviceStatusItens = [
 ];
 
 const $services = computed(() => serviceStore.$all);
+
+onMounted(() => {
+  const filtersStore = getFiltersStoreServices();
+
+  if (filtersStore) {
+    filter.value.client = filtersStore.Client;
+    filter.value.month = filtersStore.initialDate
+      ? moment(filtersStore.initialDate).month()
+      : moment().month();
+    filter.value.year = filtersStore.initialDate
+      ? moment(filtersStore.initialDate).year()
+      : moment().year();
+    filter.value.status = filtersStore.invoiced;
+  }
+});
 
 const getMonth = async (month: number) => {
   filter.value.month = month;
@@ -156,13 +171,14 @@ const handleExportServicesToPDF = () => {
 };
 
 const getServices = async () => {
-  try {
-    loading.value = true;
+  loading.value = true;
 
-    const initialDate = `01-${filter.value.month + 1}-${filter.value.year}`;
-    const finalDate = moment(initialDate, "DD-MM-YYYY")
-      .endOf("month")
-      .format("YYYY-MM-DD");
+  try {
+    const initialDate = moment(
+      `${filter.value.year}-${filter.value.month + 1}-01`
+    ).format("YYYY-MM-DD");
+
+    const finalDate = moment(initialDate).endOf("month").format("YYYY-MM-DD");
 
     const payloadFilters = {
       initialDate,

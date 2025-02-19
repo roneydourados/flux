@@ -1,5 +1,5 @@
 <template>
-  <v-dialog v-model="dialog" max-width="400" persistent>
+  <v-dialog v-model="dialog" :width="width" persistent>
     <v-card
       prepend-icon="mdi-chat-question-outline"
       :text="text"
@@ -11,6 +11,7 @@
       </template>
       <template #text>
         <span style="color: #b8b8b8; font-size: 0.9rem">{{ text }}</span>
+        <slot />
       </template>
       <template v-slot:actions>
         <v-spacer></v-spacer>
@@ -75,6 +76,10 @@ defineProps({
   textCancel: {
     type: String,
     default: "Cancelar",
+  },
+  width: {
+    type: String,
+    default: "400",
   },
 });
 const emit = defineEmits(["cancel", "confirm"]);

@@ -59,13 +59,15 @@ export const useServiceStore = defineStore("service", () => {
     await api.put(`/service-occurrences/${payload.publicId}`, payload);
   };
 
-  const invoiceServices = async (input: {
+  const invoiceServices = async (payload: {
     initialDate: string;
     finalDate: string;
     clientId: number;
+    categoryId?: number;
+    paymentMethod?: string;
     invoiced: boolean;
   }) => {
-    await api.put("/services/invoice", input);
+    await api.put("/services/invoice", payload);
   };
 
   return {

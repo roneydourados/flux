@@ -9,5 +9,3 @@ useAsyncData(async () => {
   await getTransactions();
 });
 </script>
-
-<style scoped></style>

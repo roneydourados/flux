@@ -1,6 +1,8 @@
 import { ServiceProps } from "~/interfaces/Service";
 import prisma from "~/lib/prisma";
 import { useServiceApiUtils } from "../utils/ApiUtils";
+import { TransactionPaymentMethod } from "@prisma/client";
+import { uuidv7 } from "uuidv7";
 
 interface FiltersProps {
   initialDate?: string;
@@ -302,25 +304,22 @@ export const invoiceServices = async (input: {
   clientId: number;
   invoiced: boolean;
   userId: number;
+  categoryId?: number;
+  paymentMethod?: string;
 }) => {
-  const { clientId, finalDate, initialDate, invoiced, userId } = input;
+  const {
+    clientId,
+    finalDate,
+    initialDate,
+    invoiced,
+    userId,
+    categoryId,
+    paymentMethod,
+  } = input;
 
   try {
     // se for para faturar então criar uma transação
     if (invoiced) {
-      const category = await prisma.category.findFirst({
-        where: {
-          categoryName: "Outros",
-        },
-      });
-
-      if (!category) {
-        throw createError({
-          statusCode: 500,
-          statusMessage: "Categoria não encontrada para faturamento de serviço",
-        });
-      }
-
       const totalValue = await prisma.service.aggregate({
         _sum: {
           totalValue: true,
@@ -330,25 +329,32 @@ export const invoiceServices = async (input: {
           userId,
           status: "FINISHED",
           serviceDate: {
-            gte: new Date(String(initialDate)),
-            lte: new Date(String(finalDate)),
+            gte: new Date(initialDate),
+            lte: new Date(finalDate),
           },
+        },
+      });
+
+      const client = await prisma.client.findFirst({
+        where: {
+          id: clientId,
         },
       });
 
       const transaction = await prisma.transaction.create({
         data: {
-          categoryId: category.id,
+          categoryId: categoryId!,
           amount: Number(totalValue._sum.totalValue),
           dueDate: new Date(),
           emisstionDate: new Date(),
           fixed: false,
-          title: `Faturamento de serviços, cliente: ${clientId}`,
+          title: `Faturamento de serviços, cliente: ${client?.name}`,
           portion: 1,
           portionTotal: 1,
           type: "CREDIT",
           userId: userId,
-          paymentMethod: "OTHER",
+          paymentMethod: paymentMethod as TransactionPaymentMethod,
+          publicId: uuidv7(),
         },
       });
 
@@ -356,15 +362,15 @@ export const invoiceServices = async (input: {
         where: {
           clientId,
           userId,
-          financeOwner: transaction.publicId,
           status: "FINISHED",
           serviceDate: {
-            gte: new Date(String(initialDate)),
-            lte: new Date(String(finalDate)),
+            gte: new Date(initialDate),
+            lte: new Date(finalDate),
           },
         },
         data: {
           isInvoiced: invoiced,
+          financeOwner: transaction.publicId,
         },
       });
     } else {
@@ -375,8 +381,8 @@ export const invoiceServices = async (input: {
           userId,
           status: "FINISHED",
           serviceDate: {
-            gte: new Date(String(initialDate)),
-            lte: new Date(String(finalDate)),
+            gte: new Date(initialDate),
+            lte: new Date(finalDate),
           },
         },
       });
@@ -384,7 +390,7 @@ export const invoiceServices = async (input: {
       // apagar transação caso exista
       await prisma.transaction.delete({
         where: {
-          publicId: service?.financeOwner ?? undefined,
+          publicId: service?.financeOwner!,
         },
       });
 
@@ -392,15 +398,15 @@ export const invoiceServices = async (input: {
         where: {
           clientId,
           userId,
-          financeOwner: null,
           status: "FINISHED",
           serviceDate: {
-            gte: new Date(String(initialDate)),
-            lte: new Date(String(finalDate)),
+            gte: new Date(initialDate),
+            lte: new Date(finalDate),
           },
         },
         data: {
           isInvoiced: invoiced,
+          financeOwner: null,
         },
       });
     }

@@ -1,6 +1,6 @@
 <template>
   <div>
-    <pre>{{ $allServices[0] }}</pre>
+    <!-- <pre>{{ $allServices[0] }}</pre> -->
     <v-row>
       <v-col cols="12" lg="3" class="d-flex flex-wrap" style="gap: 0.5rem">
         <v-btn
@@ -42,9 +42,22 @@
       title="Confirma faturamento ?"
       v-model="showInvoice"
       show-cancel
+      :width="mobile ? '100%' : '500'"
       @confirm="handleInvoice"
       @cancel="showInvoice = false"
-    />
+    >
+      <v-row dense>
+        <v-col cols="12">
+          <CategorySelectSearch label="Informe categoria" v-model="category" />
+        </v-col>
+        <v-col cols="12">
+          <PaymentMethodSelect
+            label="Forma de pagamento"
+            v-model="paymentMethod"
+          />
+        </v-col>
+      </v-row>
+    </DialogQuestion>
 
     <DialogQuestion
       title="Confirma estorno faturamento ?"
@@ -57,7 +70,10 @@
 </template>
 
 <script setup lang="ts">
+import { useDisplay } from "vuetify";
 const serviceStore = useServiceStore();
+
+const { mobile } = useDisplay();
 const { getFiltersStoreServices } = useUtils();
 const { $toast } = useNuxtApp();
 
@@ -66,6 +82,8 @@ const $allServices = computed(() => serviceStore.$all);
 const showInvoice = ref(false);
 const showCancelInvoice = ref(false);
 const loading = ref(false);
+const category = ref<CategoryProps>();
+const paymentMethod = ref("");
 const headers = [
   {
     title: "",
@@ -84,10 +102,22 @@ const handleInvoice = async () => {
       return;
     }
 
+    if (!category.value) {
+      $toast.warn("Categoria não selecionada");
+      return;
+    }
+
+    if (!paymentMethod.value) {
+      $toast.warn("Informe a forma de pagamento");
+      return;
+    }
+
     await serviceStore.invoiceServices({
       clientId: filters.Client?.id ?? 0,
       initialDate: filters.initialDate ?? "",
       finalDate: filters.finalDate ?? "",
+      categoryId: category.value.id,
+      paymentMethod: paymentMethod.value,
       invoiced: true,
     });
 

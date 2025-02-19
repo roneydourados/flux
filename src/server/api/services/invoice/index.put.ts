@@ -5,9 +5,14 @@ export default defineEventHandler(async (event) => {
   const user = userLogged(event);
 
   if (user && user.id) {
-    const { initialDate, finalDate, clientId, invoiced } = await readBody(
-      event
-    );
+    const {
+      initialDate,
+      finalDate,
+      clientId,
+      invoiced,
+      categoryId,
+      paymentMethod,
+    } = await readBody(event);
 
     setResponseStatus(event, 200);
 
@@ -17,6 +22,8 @@ export default defineEventHandler(async (event) => {
       clientId: Number(clientId),
       invoiced: Boolean(invoiced),
       userId: user.id,
+      categoryId: categoryId ? Number(categoryId) : undefined,
+      paymentMethod: paymentMethod ? String(paymentMethod) : undefined,
     });
   }
 });

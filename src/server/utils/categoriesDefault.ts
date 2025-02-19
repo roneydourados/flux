@@ -32,6 +32,14 @@ export const categoriesDefault = [
     icon: "mdi-flash-outline",
   },
   {
+    name: "Abastecimento",
+    icon: "mdi-gas-station-in-use-outline",
+  },
+  {
+    name: "Prestação de Serviços",
+    icon: "mdi-account-wrench-outline",
+  },
+  {
     name: "Outros",
     icon: "mdi-cog-outline",
   },
