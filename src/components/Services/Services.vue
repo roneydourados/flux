@@ -13,10 +13,4 @@
   </div>
 </template>
 
-<script setup lang="ts">
-const { clearFilters } = useUtils();
-
-onMounted(() => {
-  //clearFilters();
-});
-</script>
+<script setup lang="ts"></script>

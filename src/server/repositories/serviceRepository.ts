@@ -335,6 +335,14 @@ export const invoiceServices = async (input: {
         },
       });
 
+      if (
+        totalValue._sum.totalValue === null ||
+        Number(totalValue._sum.totalValue) <= 0
+      ) {
+        // se não encontrar total então não fazer nada
+        return;
+      }
+
       const client = await prisma.client.findFirst({
         where: {
           id: clientId,
@@ -386,6 +394,11 @@ export const invoiceServices = async (input: {
           },
         },
       });
+
+      if (!service || !service.financeOwner) {
+        //caso não enocntre o serviço ou não tenha transação então não fazer nada
+        return;
+      }
 
       // apagar transação caso exista
       await prisma.transaction.delete({

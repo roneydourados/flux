@@ -1,6 +1,5 @@
 <template>
   <div>
-    <!-- <pre>{{ $allServices[0] }}</pre> -->
     <v-row>
       <v-col cols="12" lg="3" class="d-flex flex-wrap" style="gap: 0.5rem">
         <v-btn
@@ -131,6 +130,8 @@ const handleInvoice = async () => {
     console.log("🚀 ~ handleInvoice ~ error:", error);
   } finally {
     loading.value = false;
+    category.value = undefined;
+    paymentMethod.value = "";
   }
 };
 

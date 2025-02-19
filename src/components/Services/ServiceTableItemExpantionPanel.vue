@@ -11,14 +11,10 @@
               class="d-flex align-center text-grey-darken-1"
               style="gap: 0.5rem"
             >
-              <span
-                class="d-inline-block text-truncate"
-                style="max-width: 20rem"
-              >
-                <v-icon icon="mdi-file-outline" start />
-                {{ item.title }}
-              </span>
-              <v-icon icon="mdi-clock-outline"> </v-icon>
+              <strong style="font-size: 1.2rem"># {{ item.id }}</strong>
+              <v-icon icon="mdi-file-chart-outline" />
+              <span>{{ item.ClientProject?.name }}</span>
+              <v-icon icon="mdi-clock-outline" />
               <span>Total de ocorrências</span>
               {{ item._count?.ServiceOccurrence ?? 0 }}
 
@@ -38,7 +34,7 @@
                 {{ getStatus(item).title }}
               </div>
 
-              <div class="d-flex align-center ml-4" style="gap: 0.5rem">
+              <div class="d-flex flex-wrap align-center" style="gap: 0.5rem">
                 <div
                   v-if="item.status === 'STARTED'"
                   class="d-flex align-center"
@@ -91,42 +87,51 @@
           </div>
         </v-expansion-panel-title>
         <v-expansion-panel-text>
+          <v-row dense class="mb-4">
+            <v-col cols="12" lg="2">
+              <InfoLabel
+                title="Cliente"
+                font-size="0.9"
+                :show-divider="false"
+                icon="mdi-account-outline"
+                color-icon="info"
+                :content="item.ClientProject?.Client?.name"
+              />
+            </v-col>
+            <v-col cols="12" lg="2">
+              <InfoLabel
+                title="Projeto"
+                font-size="0.9"
+                :show-divider="false"
+                icon="mdi-file-chart-outline"
+                color-icon="info"
+                :content="item.ClientProject?.name"
+              />
+            </v-col>
+          </v-row>
+          <v-row dense class="mb-4">
+            <v-col cols="12">
+              <InfoLabel
+                title="Descrição do serviço"
+                font-size="0.9"
+                :show-divider="false"
+                icon="mdi-file-outline"
+                color-icon="orange"
+                :content="item.title"
+              />
+            </v-col>
+          </v-row>
           <div
             v-for="serviceOccorrence in item.ServiceOccurrence"
             :key="serviceOccorrence.id"
+            class="w-100"
           >
             <v-row dense>
-              <!-- <v-col cols="12" lg="3">
-                <InfoLabel :show-divider="false" color-icon="primary">
-                  <div class="d-flex align-center" style="gap: 0.5rem">
-                    <v-icon icon="mdi-file-chart-outline" color="blue-grey" />
-                    <span
-                      class="d-inline-block text-truncate text-caption text-blue-grey font-weight-bold"
-                      :style="mobile ? 'width: 12rem' : 'width: 30rem'"
-                    >
-                      {{ item.title }}
-
-                      <v-tooltip
-                        activator="parent"
-                        location="top center"
-                        content-class="tooltip-background"
-                      >
-                        <v-card width="500" elevation="0" color="transparent">
-                          <v-card-text class="text-subtitle-1">
-                            {{ item.title }}
-                          </v-card-text>
-                        </v-card>
-                      </v-tooltip>
-                    </span>
-                  </div>
-                </InfoLabel>
-              </v-col> -->
               <v-col cols="12" lg="3">
                 <InfoLabel
                   v-if="item.status === 'STARTED' || item.status === 'FINISHED'"
                   title="Início"
                   font-size="0.9"
-                  font-size-content="0.8"
                   :show-divider="false"
                   icon="mdi-calendar-multiselect-outline"
                   color-icon="primary"
@@ -195,10 +200,7 @@
                 />
               </v-col>
               <v-col cols="12" lg="2">
-                <div
-                  class="d-flex align-center justify-end w-100"
-                  style="gap: 0.5rem"
-                >
+                <div class="d-flex align-center w-100" style="gap: 0.5rem">
                   <v-btn
                     variant="text"
                     class="text-none"
@@ -275,7 +277,7 @@
 
 <script setup lang="ts">
 import moment from "moment";
-import { useDisplay } from "vuetify";
+// import { useDisplay } from "vuetify";
 
 const props = defineProps({
   item: {
