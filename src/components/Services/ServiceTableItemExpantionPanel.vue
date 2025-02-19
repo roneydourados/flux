@@ -212,7 +212,7 @@
                     "
                     @click="handleUpdateOccorrence(serviceOccorrence)"
                   >
-                    <v-icon icon="mdi-check-circle" />
+                    <v-icon icon="mdi-check-circle-outline" size="25" />
                   </v-btn>
                   <v-btn
                     variant="text"
@@ -225,7 +225,7 @@
                     "
                     @click="handleGetServiceOccurrence(serviceOccorrence)"
                   >
-                    <DeleteSVG color="#EF5350" />
+                    <DeleteSVG color="#EF5350" height="25" />
                   </v-btn>
                 </div>
               </v-col>
