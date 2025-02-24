@@ -25,12 +25,17 @@
               {{ amountFormated(item.totalValue ?? 0, true) }}
             </div>
 
-            <div class="d-flex align-center mr-6">
+            <div class="d-flex align-center mr-6" style="gap: 0.5rem">
               <div class="d-flex align-center" style="gap: 0.5rem">
-                <v-icon
+                <ServiceAnimedTimerSVG
+                  v-if="item.status === 'STARTED'"
+                  height="20"
+                />
+                <!-- <v-icon
                   :icon="getStatus(item).icon"
                   :color="getStatus(item).color"
-                />
+                  start
+                /> -->
                 {{ getStatus(item).title }}
               </div>
 
@@ -40,7 +45,6 @@
                   class="d-flex align-center"
                   style="gap: 0.5rem"
                 >
-                  <ServiceAnimedTimerSVG height="20" />
                   <span>{{ currentHour }}</span>
                 </div>
                 <v-btn
