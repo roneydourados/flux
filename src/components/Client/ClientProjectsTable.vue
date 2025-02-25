@@ -88,10 +88,6 @@ const { $toast } = useNuxtApp();
 const projectStore = useProjectsStore();
 const clientStore = useClientStore();
 
-const loading = ref(false);
-const dialogForm = ref(false);
-const isEditing = ref(false);
-const showDestroy = ref(false);
 const headers = [
   {
     title: "Nome do projeto",
@@ -102,12 +98,14 @@ const headers = [
     key: "actions",
   },
 ];
-const model = ref<ClientProjectProps>({
-  id: 0,
+const loading = ref(false);
+const dialogForm = ref(false);
+const isEditing = ref(false);
+const showDestroy = ref(false);
+const model = ref({
   name: "",
-  clientId: 0,
   color: "",
-  Client: undefined,
+  publicId: "",
 });
 
 const $projects = computed(() => projectStore.$all);
@@ -116,11 +114,9 @@ const $client = computed(() => clientStore.$single);
 
 const clearModel = () => {
   model.value = {
-    id: 0,
     name: "",
-    clientId: 0,
     color: "",
-    Client: undefined,
+    publicId: "",
   };
 };
 
@@ -149,13 +145,15 @@ const handleEdit = async (item: ClientProjectProps) => {
   try {
     await projectStore.show(item.publicId!);
 
+    if (!$single.value) {
+      $toast.error("Projeto não encontrado");
+      return;
+    }
+
     model.value = {
-      id: $single.value?.id ?? 0,
-      clientId: $client.value?.id,
-      name: $single.value?.name ?? "",
-      Client: $single.value?.Client,
-      color: $single.value?.color ?? "#000000",
-      publicId: $single.value?.publicId,
+      name: $single.value.name ?? "",
+      color: $single.value.color ?? "#1565C0",
+      publicId: $single.value.publicId!,
     };
 
     dialogForm.value = true;
@@ -169,32 +167,35 @@ const onSubmit = async () => {
   dialogForm.value = false;
   loading.value = true;
   try {
-    try {
-      if (isEditing.value) {
-        await projectStore.update({
-          publicId: model.value.publicId,
-          name: model.value.name,
-          color: model.value.color ?? "#1565C0",
-        });
-      } else {
-        await projectStore.store({
-          name: model.value.name,
-          clientId: model.value.Client?.id!,
-          color: model.value.color ?? "#1565C0",
-        });
-      }
-      await getProjects();
-      clearModel();
-    } catch (error) {
-      console.error("🚀 ~ onSubmit ~ error:", error);
+    if (isEditing.value) {
+      await projectStore.update({
+        publicId: model.value.publicId,
+        name: model.value.name,
+        color: model.value.color ?? "#1565C0",
+      });
+    } else {
+      await projectStore.store({
+        name: model.value.name,
+        clientId: $client.value?.id,
+        color: model.value.color ?? "#1565C0",
+      });
     }
+    await getProjects();
+    clearModel();
+  } catch (error) {
+    console.error("🚀 ~ onSubmit ~ error:", error);
   } finally {
     loading.value = false;
   }
 };
 
 const getItemDestroy = (item: ClientProjectProps) => {
-  model.value = item;
+  model.value = {
+    name: item.name,
+    publicId: item.publicId!,
+    color: item.color,
+  };
+
   showDestroy.value = true;
 };
 
@@ -202,13 +203,11 @@ const handleDestroy = async () => {
   showDestroy.value = false;
   loading.value = true;
   try {
-    try {
-      await projectStore.destroy(model.value.publicId!);
-      await getProjects();
-      clearModel();
-    } catch (error) {
-      console.error("🚀 ~ handleDestroy ~ error:", error);
-    }
+    await projectStore.destroy(model.value.publicId!);
+    await getProjects();
+    clearModel();
+  } catch (error) {
+    console.error("🚀 ~ handleDestroy ~ error:", error);
   } finally {
     loading.value = false;
   }
