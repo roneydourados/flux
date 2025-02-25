@@ -44,3 +44,19 @@ export interface ServiceFilterProps {
   finalDate: string;
   invoiced: string;
 }
+
+export interface ServiceInvoiceProps {
+  dayMonth: number;
+  total: number;
+}
+
+export interface ServiceStatusProps {
+  status: string;
+  total: number;
+}
+
+export interface ServicesDashboardProps {
+  returnServices: ServiceProps[];
+  servicesInvoice: ServiceInvoiceProps[];
+  servicesStatus: ServiceStatusProps[];
+}

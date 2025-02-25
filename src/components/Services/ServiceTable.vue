@@ -25,7 +25,7 @@
     <Table
       title="Serviços"
       :headers="headers"
-      :items="$allServices"
+      :items="$allServices?.returnServices"
       :items-per-page="10"
       :show-select="false"
       :show-crud="false"
@@ -76,7 +76,7 @@ const { mobile } = useDisplay();
 const { getFiltersStoreServices } = useUtils();
 const { $toast } = useNuxtApp();
 
-const $allServices = computed(() => serviceStore.$all);
+const $allServices = computed(() => serviceStore.$services);
 
 const showInvoice = ref(false);
 const showCancelInvoice = ref(false);

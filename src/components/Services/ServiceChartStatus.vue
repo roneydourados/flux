@@ -10,9 +10,14 @@
 </template>
 
 <script setup lang="ts">
+const serviceStore = useServiceStore();
+
 const chartOptions = computed(() => {
   return {
-    series: [30, 20, 18],
+    series:
+      serviceStore.$services?.servicesStatus.map((service) =>
+        Number(service.total)
+      ) ?? [],
     options: {
       chart: {
         height: "250",
@@ -21,7 +26,6 @@ const chartOptions = computed(() => {
       stroke: {
         show: false,
       },
-      //colors: ["#e93030", "#55B02E"],
       theme: {
         palette: "palette7",
       },
@@ -34,7 +38,9 @@ const chartOptions = computed(() => {
           fontWeight: "100",
         },
       },
-      labels: ["Aberto", "Fechado", "Faturado"],
+      labels: serviceStore.$services?.servicesStatus.map(
+        (service) => service.status
+      ),
       plotOptions: {
         pie: {
           dataLabels: {
@@ -56,7 +62,7 @@ const chartOptions = computed(() => {
       legend: {
         show: false,
         labels: {
-          colors: ["#fff", "#fff"],
+          colors: serviceStore.$services?.servicesStatus.map(() => "#fff"),
         },
         position: "right",
         horizontalAlign: "center",

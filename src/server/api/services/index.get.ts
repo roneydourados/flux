@@ -1,4 +1,4 @@
-import { index } from "~/server/repositories/serviceRepository";
+import { index } from "@/server/repositories/serviceRepository";
 export default defineEventHandler((event) => {
   const { userLogged } = useJwtToken();
   const user = userLogged(event);

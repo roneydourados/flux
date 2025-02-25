@@ -11,12 +11,17 @@
 
 <script setup lang="ts">
 const { amountFormated } = useUtils();
+const serviceStore = useServiceStore();
+
 const chartOptions = computed(() => {
   return {
     series: [
       {
         name: "Tarefas",
-        data: Array.from({ length: 30 }, () => Math.floor(Math.random() * 100)),
+        data:
+          serviceStore.$services?.servicesInvoice.map(
+            (service) => service.total
+          ) ?? [],
       },
     ],
 
@@ -63,7 +68,9 @@ const chartOptions = computed(() => {
         labels: {
           show: true,
           style: {
-            colors: Array(30).fill("#B8B8B8"),
+            colors: serviceStore.$services?.servicesInvoice.map(
+              () => "#B8B8B8"
+            ),
           },
           formatter: function (val: any) {
             return amountFormated(val, true);
@@ -71,11 +78,15 @@ const chartOptions = computed(() => {
         },
       },
       xaxis: {
-        categories: Array.from({ length: 30 }, (_, i) => i + 1),
+        categories: serviceStore.$services?.servicesInvoice.map(
+          (service) => service.dayMonth
+        ),
         labels: {
           show: true,
           style: {
-            colors: Array(30).fill("#B8B8B8"),
+            colors: serviceStore.$services?.servicesInvoice.map(
+              () => "#B8B8B8"
+            ),
           },
         },
       },

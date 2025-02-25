@@ -61,9 +61,6 @@
       <v-col cols="12" lg="3">
         <ServiceChartStatus />
       </v-col>
-      <!-- <v-col cols="12" lg="2">
-        <ServiceChartProject />
-      </v-col> -->
     </v-row>
     <ServiceForm v-model="showForm" />
     <DialogLoading :dialog="loading" />
@@ -105,7 +102,7 @@ const serviceStatusItens = [
   { name: "Não Faturado", type: "Não Faturadas" },
 ];
 
-const $services = computed(() => serviceStore.$all);
+const $services = computed(() => serviceStore.$services);
 
 onMounted(() => {
   const filtersStore = getFiltersStoreServices();
@@ -157,7 +154,10 @@ const handleExportServicesToPDF = () => {
     invoiced: filter.value.status,
   } as ServiceFilterProps;
 
-  const report = serviceReport($services.value, payloadFilters);
+  const report = serviceReport(
+    $services.value?.returnServices ?? [],
+    payloadFilters
+  );
 
   pdfMake.vfs = pdfMakeFonts.vfs;
   pdfMake

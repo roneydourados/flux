@@ -3,11 +3,11 @@ import { defineStore } from "pinia";
 export const useServiceStore = defineStore("service", () => {
   const { api } = useAxios();
 
-  const services = ref<ServiceProps[]>([]);
+  const services = ref<ServicesDashboardProps>();
   const service = ref<ServiceProps>();
   const serviceOcurrence = ref<ServiceOccurrenceProps>();
 
-  const $all = computed(() => services.value);
+  const $services = computed(() => services.value);
   const $single = computed(() => service.value);
   const $serviceOcurrence = computed(() => serviceOcurrence.value);
 
@@ -79,7 +79,7 @@ export const useServiceStore = defineStore("service", () => {
     destroyServiceOccurrence,
     updateServiceOccurrence,
     invoiceServices,
-    $all,
+    $services,
     $single,
     $serviceOcurrence,
   };

@@ -3,6 +3,7 @@ import prisma from "~/lib/prisma";
 import { useServiceApiUtils } from "../utils/ApiUtils";
 import { TransactionPaymentMethod } from "@prisma/client";
 import { uuidv7 } from "uuidv7";
+import moment from "moment";
 
 interface FiltersProps {
   initialDate?: string;
@@ -12,6 +13,11 @@ interface FiltersProps {
   invoiced?: string;
   userId?: number;
   ownerId?: number;
+}
+
+interface ServiceInvoiceProps {
+  day_month: number;
+  total: number;
 }
 
 export const index = async ({
@@ -109,7 +115,44 @@ export const index = async ({
     })
   );
 
-  return returnServices;
+  const servicesInvoice = await prisma.$queryRaw<ServiceInvoiceProps[]>`
+    select 
+    date_part('day', s.service_date) as day_month,
+    sum(s.total_value) as total
+    from services s
+    where s.user_id = ${userId}
+      and s.service_date BETWEEN ${gte} and ${lte}
+    group by  day_month
+    order by day_month  
+  `;
+
+  const servicesStatus = await prisma.$queryRaw<ServiceInvoiceProps[]>`
+    select 
+    CASE
+      when s.status = 'STOPPED' then 'Parado'
+      when s.status = 'FINISHED' then 'Finalizado'
+      when s.status = 'STARTED' then 'Trabalhando'
+    end as status,
+    sum(s.total_value) as total
+    from services s
+    where s.user_id = ${userId}
+      and s.service_date BETWEEN ${gte} and ${lte}
+    group by s.status
+  `;
+
+  return {
+    returnServices,
+    servicesInvoice:
+      returnServices.length > 0
+        ? servicesInvoice.map((item) => {
+            return {
+              dayMonth: item.day_month,
+              total: item.total,
+            };
+          })
+        : [],
+    servicesStatus,
+  };
 };
 
 const getLastOpenOcurrence = async (serviceId: number) => {
