@@ -12,7 +12,10 @@
               style="gap: 0.5rem"
             >
               <strong style="font-size: 1.2rem"># {{ item.id }}</strong>
-              <v-icon icon="mdi-file-chart-outline" />
+              <v-icon
+                icon="mdi-file-chart-outline"
+                :color="item.ClientProject?.color"
+              />
               <span>{{ item.ClientProject?.name }}</span>
               <v-icon icon="mdi-clock-outline" />
               <span>Total de ocorrências</span>

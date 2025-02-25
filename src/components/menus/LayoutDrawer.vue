@@ -71,15 +71,21 @@ const itemsMenu = ref([
   { title: "Dashboard", icon: "mdi-view-dashboard", id: 1, to: "/dashboard" },
   { title: "Financeiro", icon: "mdi-cash", id: 2, to: "/finance" },
   {
+    title: "Clientes",
+    icon: "mdi-account-multiple-outline",
+    id: 3,
+    to: "/clients",
+  },
+  {
     title: "Serviços",
     icon: "mdi-account-wrench-outline",
-    id: 3,
+    id: 4,
     to: "/services",
   },
   {
     title: "Assinatura",
     icon: "mdi-vector-arrange-below",
-    id: 4,
+    id: 5,
     to: "/signature",
   },
 ]);

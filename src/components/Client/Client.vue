@@ -1,5 +1,8 @@
 <template>
-  <DialogForm
+  <div class="w-100">
+    <ClientTable />
+  </div>
+  <!-- <DialogForm
     :show="show"
     title="Cliente"
     @dialog="close"
@@ -33,7 +36,7 @@
         </div>
       </v-tabs-window-item>
     </v-tabs-window>
-  </DialogForm>
+  </DialogForm> -->
 </template>
 
 <script setup lang="ts">

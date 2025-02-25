@@ -1,4 +1,4 @@
-import { ServiceProps } from "~/interfaces/Service";
+import { ServiceProjectProps, ServiceProps } from "~/interfaces/Service";
 import { Prisma } from "@prisma/client";
 import prisma from "~/lib/prisma";
 import { useServiceApiUtils } from "../utils/ApiUtils";
@@ -28,21 +28,19 @@ export const index = async ({
   invoiced,
   userId,
 }: FiltersProps) => {
-  let isInvoiced: boolean | undefined;
+  let isInvoiced = undefined;
   let invoicedWhere = Prisma.empty;
 
   if (invoiced === "Faturadas") {
     isInvoiced = true;
-    invoicedWhere = Prisma.raw(`and s.is_invoiced = ${isInvoiced}`);
+    invoicedWhere = Prisma.sql`and s.is_invoiced = ${isInvoiced}`;
   } else if (invoiced === "Não Faturadas") {
     isInvoiced = false;
-    invoicedWhere = Prisma.raw(`and s.is_invoiced = ${isInvoiced}`);
-  } else if (invoiced === "Todas") {
-    isInvoiced = undefined;
+    invoicedWhere = Prisma.sql`and s.is_invoiced = ${isInvoiced}`;
   }
 
-  const gte = initialDate ? new Date(String(initialDate)) : new Date();
-  const lte = finalDate ? new Date(String(finalDate)) : new Date();
+  const gte = initialDate ? new Date(initialDate) : new Date();
+  const lte = finalDate ? new Date(finalDate) : new Date();
 
   const services = await prisma.service.findMany({
     select: {
@@ -118,31 +116,28 @@ export const index = async ({
     })
   );
 
+  const servicesProjects = await prisma.$queryRaw<ServiceProjectProps[]>`
+    select 
+      p.name project,
+      cast(count(s.id) as integer) as total
+    from services s
+    join clients_projects p on p.id = s.client_project_id
+    where s.user_id = ${userId}
+      and s.service_date BETWEEN ${gte} and ${lte}
+      ${invoicedWhere}
+      group by p.name
+  `;
+
   const servicesInvoice = await prisma.$queryRaw<ServiceInvoiceProps[]>`
     select 
-    date_part('day', s.service_date) as day_month,
-    sum(s.total_value) as total
+      date_part('day', s.service_date) as day_month,
+      sum(s.total_value) as total
     from services s
     where s.user_id = ${userId}
       and s.service_date BETWEEN ${gte} and ${lte}
       ${invoicedWhere}
     group by  day_month
     order by day_month  
-  `;
-
-  const servicesStatus = await prisma.$queryRaw<ServiceInvoiceProps[]>`
-    select 
-    CASE
-      when s.status = 'STOPPED' then 'Parado'
-      when s.status = 'FINISHED' then 'Finalizado'
-      when s.status = 'STARTED' then 'Trabalhando'
-    end as status,
-    sum(s.total_value) as total
-    from services s
-    where s.user_id = ${userId}
-      and s.service_date BETWEEN ${gte} and ${lte}
-      ${invoicedWhere}
-    group by s.status
   `;
 
   return {
@@ -156,7 +151,7 @@ export const index = async ({
             };
           })
         : [],
-    servicesStatus,
+    servicesProjects,
   };
 };
 

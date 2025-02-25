@@ -13,7 +13,7 @@
       <v-col cols="12" lg="7">
         <ClientSelectSearch
           v-model="filter.client"
-          @update:model-value="handleChangeClient"
+          @update:model-value="getServices"
         />
       </v-col>
       <v-col cols="12" lg="2">
@@ -25,7 +25,7 @@
           item-value="type"
           density="comfortable"
           variant="outlined"
-          @update:model-value="handleChangeStatus"
+          @update:model-value="getServices"
         />
       </v-col>
       <v-col cols="12" lg="3" class="d-flex align-center justify-end">
@@ -59,7 +59,7 @@
         </v-btn>
       </v-col>
       <v-col cols="12" lg="3">
-        <ServiceChartStatus />
+        <ServiceChartProject />
       </v-col>
     </v-row>
     <ServiceForm v-model="showForm" />
@@ -131,16 +131,6 @@ const getYear = async (year: number) => {
   await getServices();
 };
 
-const handleChangeClient = async () => {
-  if (filter.value.client?.id) {
-    await getServices();
-  }
-};
-
-const handleChangeStatus = async () => {
-  await getServices();
-};
-
 const handleExportServicesToPDF = () => {
   const initialDate = `01-${filter.value.month + 1}-${filter.value.year}`;
   const finalDate = moment(initialDate, "DD-MM-YYYY")
@@ -187,10 +177,10 @@ const getServices = async () => {
       invoiced: filter.value.status,
     };
 
+    await serviceStore.index(payloadFilters);
+
     // salvar os filtros no localstorage
     saveServiceFilters(payloadFilters);
-
-    await serviceStore.index(payloadFilters);
   } catch (error) {
     console.error(error);
   } finally {

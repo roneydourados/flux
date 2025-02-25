@@ -74,22 +74,13 @@
 </template>
 
 <script setup lang="ts">
-import { type ClientProps } from "@/interfaces/Client";
 import { type ClientProjectProps } from "@/interfaces/ClientProjects";
 
-const props = defineProps({
+defineProps({
   width: {
     type: String,
     default: "80%",
   },
-  loadOnInit: {
-    type: Boolean,
-    default: true,
-  },
-  // client: {
-  //   type: Object as PropType<ClientProps>,
-  //   default: () => ({}),
-  // },
 });
 
 defineEmits(["close"]);
@@ -123,30 +114,6 @@ const $projects = computed(() => projectStore.$all);
 const $single = computed(() => projectStore.$single);
 const $client = computed(() => clientStore.$single);
 
-watchEffect(() => {
-  if ($client.value?.id) {
-    model.value.clientId = $client.value.id;
-    model.value.Client = $client.value;
-  }
-});
-
-watch(
-  () => $client.value,
-  async () => {
-    if ($client.value?.id) {
-      loading.value = true;
-      try {
-        await getProjects();
-      } finally {
-        loading.value = false;
-      }
-    }
-  },
-  {
-    immediate: true,
-  }
-);
-
 const clearModel = () => {
   model.value = {
     id: 0,
@@ -158,7 +125,12 @@ const clearModel = () => {
 };
 
 const getProjects = async (query: string = "") => {
-  await projectStore.index(query, $client.value?.id);
+  loading.value = true;
+  try {
+    await projectStore.index(query, $client.value?.id);
+  } finally {
+    loading.value = false;
+  }
 };
 
 const handleNew = () => {
@@ -179,10 +151,11 @@ const handleEdit = async (item: ClientProjectProps) => {
 
     model.value = {
       id: $single.value?.id ?? 0,
-      clientId: $single.value?.clientId ?? 0,
+      clientId: $client.value?.id,
       name: $single.value?.name ?? "",
       Client: $single.value?.Client,
       color: $single.value?.color ?? "#000000",
+      publicId: $single.value?.publicId,
     };
 
     dialogForm.value = true;
@@ -199,20 +172,19 @@ const onSubmit = async () => {
     try {
       if (isEditing.value) {
         await projectStore.update({
-          id: model.value.id,
+          publicId: model.value.publicId,
           name: model.value.name,
-          clientId: model.value.Client?.id!,
-          color: model.value.color ?? "#000000",
+          color: model.value.color ?? "#1565C0",
         });
       } else {
         await projectStore.store({
           name: model.value.name,
           clientId: model.value.Client?.id!,
-          color: model.value.color ?? "#000000",
+          color: model.value.color ?? "#1565C0",
         });
       }
-      clearModel();
       await getProjects();
+      clearModel();
     } catch (error) {
       console.error("🚀 ~ onSubmit ~ error:", error);
     }

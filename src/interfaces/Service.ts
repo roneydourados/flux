@@ -50,13 +50,13 @@ export interface ServiceInvoiceProps {
   total: number;
 }
 
-export interface ServiceStatusProps {
-  status: string;
+export interface ServiceProjectProps {
+  project: string;
   total: number;
 }
 
 export interface ServicesDashboardProps {
   returnServices: ServiceProps[];
   servicesInvoice: ServiceInvoiceProps[];
-  servicesStatus: ServiceStatusProps[];
+  servicesProjects: ServiceProjectProps[];
 }

@@ -48,7 +48,7 @@ export const indexClientProjects = async (
   name?: string,
   userId?: number
 ) => {
-  return prisma.clientProject.findMany({
+  const data = await prisma.clientProject.findMany({
     select: {
       id: true,
       clientId: true,
@@ -74,6 +74,8 @@ export const indexClientProjects = async (
       id: "desc",
     },
   });
+
+  return data;
 };
 
 export const updateClientProject = async ({

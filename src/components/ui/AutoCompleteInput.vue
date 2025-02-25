@@ -1,7 +1,7 @@
 <template>
   <v-autocomplete
     ref="autocomplete"
-    v-model:model-value="value"
+    v-model:model-value="model"
     :item-title="itemTitle"
     :item-value="itemValue"
     :label="dynamicLabel"
@@ -18,14 +18,11 @@
     :readonly="readonly"
     :loading="loading"
     :error-messages="errorMessage"
-    @update:model-value="handleComplet"
-    @keydown.enter="handleComplet"
     rounded="lg"
   >
     <template v-slot:item="{ props, item }">
       <slot name="items" :props="props" :item="item" />
     </template>
-
     <template v-slot:selection="{ item }">
       <slot name="selection" :item="item" />
     </template>
@@ -58,10 +55,6 @@ const props = defineProps({
     type: Array as PropType<Array<any>>,
     required: true,
   },
-  modelValue: {
-    type: [Object, String, Number],
-    default: null,
-  },
   icon: {
     type: String,
     default: "",
@@ -86,10 +79,6 @@ const props = defineProps({
     type: Boolean,
     default: false,
   },
-  // name: {
-  //   type: String,
-  //   required: true,
-  // },
   readonly: {
     type: Boolean,
     default: false,
@@ -104,7 +93,8 @@ const props = defineProps({
   },
 });
 
-const emit = defineEmits(["update:modelValue"]);
+// Utilizando defineModel ao invés de modelValue
+const model = defineModel<object | string | number>();
 
 const dynamicLabel = computed(() =>
   props.required ? props.label + "*" : props.label
@@ -135,7 +125,6 @@ const validationRules = computed<MaybeRef>(() => {
           })
       );
     }
-
     return toTypedSchema(
       zod
         .string({
@@ -145,27 +134,17 @@ const validationRules = computed<MaybeRef>(() => {
         .or(zod.number().min(1, { message: textRequired }))
     );
   }
-
   if (props.returnObject) {
     return toTypedSchema(zod.object({}).nullish().optional());
   }
-
   return toTypedSchema(zod.string().nullish().optional().or(zod.number()));
 });
 
-const { value, errorMessage } = useField<string | object | number>(
+const { errorMessage } = useField<string | object | number>(
   fieldName,
   validationRules,
   {
     syncVModel: true,
   }
 );
-
-const handleComplet = () => {
-  emit("update:modelValue", value.value);
-  // Fecha o menu do autocomplete
-  autocomplete.value?.blur();
-  // Define o foco no próximo campo
-  nextField.value?.focus();
-};
 </script>

@@ -2,8 +2,13 @@
   <div class="w-100">
     <form ref="formRef" @submit.prevent="onSubmit">
       <slot />
-      <div class="d-flex align-center pa-4 w-100" v-if="showSubmitButton">
+      <div
+        class="d-flex align-center pa-4 w-100"
+        v-if="showSubmitButton"
+        style="gap: 0.5rem"
+      >
         <v-spacer></v-spacer>
+        <slot name="button" />
         <Button
           color="green"
           :disabled="loading"
@@ -17,7 +22,6 @@
             </span>
           </div>
         </Button>
-        <slot name="button" />
       </div>
       <DialogLoading :dialog="loading" />
     </form>

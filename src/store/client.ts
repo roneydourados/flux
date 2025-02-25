@@ -12,7 +12,7 @@ export const useClientStore = defineStore("client", () => {
   const index = async (query?: string) => {
     const config = {
       params: {
-        query,
+        name: query,
       },
     };
 
@@ -39,7 +39,7 @@ export const useClientStore = defineStore("client", () => {
     client.value = resp.data;
   };
 
-  const destroy = async (id: number) => {
+  const destroy = async (id: string) => {
     await api.delete(`/clients/${id}`);
   };
 

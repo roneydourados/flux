@@ -5,6 +5,7 @@ export default defineEventHandler(async (event) => {
   const user = userLogged(event);
 
   const { name, clientId } = getQuery(event);
+  console.log("🚀 ~ defineEventHandler ~ clientId:", clientId);
 
   setResponseStatus(event, 200);
 

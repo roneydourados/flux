@@ -130,23 +130,30 @@
         <TextInput label="Observações" v-model="model.observation" />
       </v-col>
     </v-row>
+
+    <template #button>
+      <v-btn
+        variant="flat"
+        color="surface"
+        class="text-none"
+        @click="$router.back()"
+        rounded="xl"
+      >
+        <v-icon icon="mdi-arrow-left"> </v-icon>
+        Voltar
+      </v-btn>
+    </template>
   </FormCrud>
 </template>
 
 <script setup lang="ts">
 import { formatCEP } from "@brazilian-utils/brazilian-utils";
-import { type ClientProps } from "@/interfaces/Client";
 import { type CepAdderssProps } from "@/interfaces/Address";
-
-const props = defineProps({
-  client: {
-    type: Object as PropType<ClientProps>,
-    default: () => ({} as ClientProps),
-  },
-});
 
 const emit = defineEmits(["close"]);
 const clientStore = useClientStore();
+
+const $client = computed(() => clientStore.$single);
 
 const model = ref({
   id: 0,
@@ -171,31 +178,11 @@ const model = ref({
   type: "F",
 });
 
-//const $single = computed(() => clientStore.$single);
-
-watch(
-  () => props.client,
-  async () => {
-    await nextTick(); // aqui apenas para não dar erro de inicialização
-
-    if (props.client.id && model.value.id === 0) {
-      loadModel();
-    } else {
-      clearModel();
-    }
-  },
-  { immediate: true }
-);
-
-onUnmounted(() => {
-  clearModel();
-});
-
 const onSubmit = async () => {
   try {
-    if (props.client.publicId) {
+    if ($client.value) {
       await clientStore.update({
-        publicId: props.client.publicId,
+        publicId: $client.value.publicId,
         name: model.value.name,
         hourValueDefault: Number(model.value.hourValueDefault ?? "0"),
         address: {
@@ -241,7 +228,6 @@ const onSubmit = async () => {
 };
 
 const clearModel = () => {
-  console.log("clearModel");
   model.value = {
     id: 0,
     name: "",
@@ -267,33 +253,34 @@ const clearModel = () => {
 };
 
 const loadModel = () => {
-  console.log("props.client loading", props.client);
+  if (!$client.value) return;
+
   model.value = {
-    id: props.client.id ?? 0,
-    name: props.client.name ?? "",
-    email: props.client.email ?? "",
-    observation: props.client.observation ?? "",
-    hourValueDefault: props.client.hourValueDefault
-      ? String(props.client.hourValueDefault * 100)
+    id: $client.value.id ?? 0,
+    name: $client.value.name ?? "",
+    email: $client.value.email ?? "",
+    observation: $client.value.observation ?? "",
+    hourValueDefault: $client.value.hourValueDefault
+      ? String($client.value.hourValueDefault * 100)
       : "",
-    phone: props.client.phone ?? "",
-    cnpjCpf: props.client.cnpjCpf ?? "",
+    phone: $client.value.phone ?? "",
+    cnpjCpf: $client.value.cnpjCpf ?? "",
 
     addressZipcode: {
-      text: props.client.address?.zipCode
-        ? formatCEP(props.client.address?.zipCode)
+      text: $client.value.address?.zipCode
+        ? formatCEP($client.value.address?.zipCode)
         : undefined,
       address: {} as CepAdderssProps,
     },
 
-    address: props.client.address
+    address: $client.value.address
       ? {
-          addressCity: props.client.address.city ?? "",
-          addressDistrict: props.client.address.district ?? "",
-          addressStreet: props.client.address.street ?? "",
-          addressNumber: props.client.address.number ?? "",
-          addressState: props.client.address.state ?? "",
-          addressComplement: props.client.address.complement ?? "",
+          addressCity: $client.value.address.city ?? "",
+          addressDistrict: $client.value.address.district ?? "",
+          addressStreet: $client.value.address.street ?? "",
+          addressNumber: $client.value.address.number ?? "",
+          addressState: $client.value.address.state ?? "",
+          addressComplement: $client.value.address.complement ?? "",
         }
       : {
           addressCity: "",
@@ -303,9 +290,28 @@ const loadModel = () => {
           addressState: "",
           addressComplement: "",
         },
-    type: props.client.type ?? "F",
+    type: $client.value.type ?? "F",
   };
 };
+
+onUnmounted(() => {
+  clearModel();
+});
+
+/**
+ * Quando for usar um watch, sempre deixar depois da função
+ * assim evita um erro de que a função não foi definida
+ */
+watch(
+  () => $client.value,
+  () => {
+    if ($client.value && model.value.id === 0) {
+      loadModel();
+    } else {
+      clearModel();
+    }
+  }
+);
 
 const setAddress = (address: CepAdderssProps) => {
   model.value.address.addressCity = address.localidade ?? "";

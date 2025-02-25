@@ -15,7 +15,7 @@ const serviceStore = useServiceStore();
 const chartOptions = computed(() => {
   return {
     series:
-      serviceStore.$services?.servicesStatus.map((service) =>
+      serviceStore.$services?.servicesProjects.map((service) =>
         Number(service.total)
       ) ?? [],
     options: {
@@ -30,7 +30,7 @@ const chartOptions = computed(() => {
         palette: "palette7",
       },
       title: {
-        text: "Serviço por status",
+        text: "Serviço por projeto",
         align: "left",
         style: {
           color: "#fff",
@@ -38,8 +38,8 @@ const chartOptions = computed(() => {
           fontWeight: "100",
         },
       },
-      labels: serviceStore.$services?.servicesStatus.map(
-        (service) => service.status
+      labels: serviceStore.$services?.servicesProjects.map(
+        (service) => service.project
       ),
       plotOptions: {
         pie: {
@@ -62,7 +62,7 @@ const chartOptions = computed(() => {
       legend: {
         show: false,
         labels: {
-          colors: serviceStore.$services?.servicesStatus.map(() => "#fff"),
+          colors: serviceStore.$services?.servicesProjects.map(() => "#fff"),
         },
         position: "right",
         horizontalAlign: "center",
