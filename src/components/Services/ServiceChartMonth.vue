@@ -19,8 +19,8 @@ const chartOptions = computed(() => {
       {
         name: "Tarefas",
         data:
-          serviceStore.$services?.servicesInvoice.map(
-            (service) => service.total
+          serviceStore.$services?.servicesInvoice.map((service) =>
+            Number(service.total)
           ) ?? [],
       },
     ],

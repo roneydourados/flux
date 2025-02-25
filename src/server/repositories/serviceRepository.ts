@@ -1,9 +1,9 @@
 import { ServiceProps } from "~/interfaces/Service";
+import { Prisma } from "@prisma/client";
 import prisma from "~/lib/prisma";
 import { useServiceApiUtils } from "../utils/ApiUtils";
 import { TransactionPaymentMethod } from "@prisma/client";
 import { uuidv7 } from "uuidv7";
-import moment from "moment";
 
 interface FiltersProps {
   initialDate?: string;
@@ -29,11 +29,14 @@ export const index = async ({
   userId,
 }: FiltersProps) => {
   let isInvoiced: boolean | undefined;
+  let invoicedWhere = Prisma.empty;
 
   if (invoiced === "Faturadas") {
     isInvoiced = true;
+    invoicedWhere = Prisma.raw(`and s.is_invoiced = ${isInvoiced}`);
   } else if (invoiced === "Não Faturadas") {
     isInvoiced = false;
+    invoicedWhere = Prisma.raw(`and s.is_invoiced = ${isInvoiced}`);
   } else if (invoiced === "Todas") {
     isInvoiced = undefined;
   }
@@ -122,6 +125,7 @@ export const index = async ({
     from services s
     where s.user_id = ${userId}
       and s.service_date BETWEEN ${gte} and ${lte}
+      ${invoicedWhere}
     group by  day_month
     order by day_month  
   `;
@@ -137,13 +141,14 @@ export const index = async ({
     from services s
     where s.user_id = ${userId}
       and s.service_date BETWEEN ${gte} and ${lte}
+      ${invoicedWhere}
     group by s.status
   `;
 
   return {
     returnServices,
     servicesInvoice:
-      returnServices.length > 0
+      servicesInvoice.length > 0
         ? servicesInvoice.map((item) => {
             return {
               dayMonth: item.day_month,
