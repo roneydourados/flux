@@ -19,8 +19,8 @@ export const index = async (input: {
 }) => {
   const { finalDate, initialDate, userId, status } = input;
 
-  const gte = initialDate ? new Date(String(initialDate)) : new Date();
-  const lte = finalDate ? new Date(String(finalDate)) : new Date();
+  const gte = initialDate ? new Date(initialDate) : new Date();
+  const lte = finalDate ? new Date(finalDate) : new Date();
 
   const transactions = await prisma.transaction.findMany({
     select: {
