@@ -25,7 +25,12 @@
               {{ amountFormated(item.hourValue ?? 0, true) }}
 
               <span>Total</span>
-              {{ amountFormated(item.totalValue ?? 0, true) }}
+              {{
+                amountFormated(
+                  calculeServiceTotals(item).valorNumber ?? 0,
+                  true
+                )
+              }}
             </div>
 
             <div class="d-flex align-center mr-6" style="gap: 0.5rem">
@@ -298,7 +303,8 @@ const props = defineProps({
 const serviceStore = useServiceStore();
 const { amountFormated, getFiltersStoreServices } = useUtils();
 //const { mobile } = useDisplay();
-const { calculeServiceTotalsOccurence } = useServiceUtils();
+const { calculeServiceTotalsOccurence, calculeServiceTotals } =
+  useServiceUtils();
 const { $toast } = useNuxtApp();
 
 const showDestroyOccurrence = ref(false);
