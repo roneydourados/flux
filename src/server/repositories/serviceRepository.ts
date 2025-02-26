@@ -124,33 +124,13 @@ export const index = async ({
     join clients_projects p on p.id = s.client_project_id
     where s.user_id = ${userId}
       and s.service_date BETWEEN ${gte} and ${lte}
+      ${clientId ? Prisma.sql`and s.client_id = ${clientId}` : Prisma.empty}
       ${invoicedWhere}
       group by p.name
   `;
 
-  // const servicesInvoice = await prisma.$queryRaw<ServiceInvoiceProps[]>`
-  //   select
-  //     date_part('day', s.service_date) as day_month,
-  //     sum(s.total_value) as total
-  //   from services s
-  //   where s.user_id = ${userId}
-  //     and s.service_date BETWEEN ${gte} and ${lte}
-  //     ${invoicedWhere}
-  //   group by  day_month
-  //   order by day_month
-  // `;
-
   return {
     returnServices,
-    // servicesInvoice:
-    //   servicesInvoice.length > 0
-    //     ? servicesInvoice.map((item) => {
-    //         return {
-    //           dayMonth: item.day_month,
-    //           total: item.total,
-    //         };
-    //       })
-    //     : [],
     servicesProjects,
   };
 };
@@ -349,6 +329,7 @@ export const invoiceServices = async (input: {
   userId: number;
   categoryId?: number;
   paymentMethod?: string;
+  total: number;
 }) => {
   const {
     clientId,
@@ -358,32 +339,18 @@ export const invoiceServices = async (input: {
     userId,
     categoryId,
     paymentMethod,
+    total,
   } = input;
 
   try {
     // se for para faturar então criar uma transação
     if (invoiced) {
-      const totalValue = await prisma.service.aggregate({
-        _sum: {
-          totalValue: true,
-        },
-        where: {
-          clientId,
-          userId,
-          //status: "FINISHED",
-          serviceDate: {
-            gte: new Date(initialDate),
-            lte: new Date(finalDate),
-          },
-        },
-      });
-
-      if (
-        totalValue._sum.totalValue === null ||
-        Number(totalValue._sum.totalValue) <= 0
-      ) {
+      if (!total || total <= 0) {
         // se não encontrar total então não fazer nada
-        return;
+        throw createError({
+          statusCode: 404,
+          statusMessage: "Informe o valor total para faturar",
+        });
       }
 
       const client = await prisma.client.findFirst({
@@ -395,7 +362,7 @@ export const invoiceServices = async (input: {
       const transaction = await prisma.transaction.create({
         data: {
           categoryId: categoryId!,
-          amount: Number(totalValue._sum.totalValue),
+          amount: Number(total),
           dueDate: new Date(),
           emisstionDate: new Date(),
           fixed: false,

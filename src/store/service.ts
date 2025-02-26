@@ -66,6 +66,7 @@ export const useServiceStore = defineStore("service", () => {
     categoryId?: number;
     paymentMethod?: string;
     invoiced: boolean;
+    total: number;
   }) => {
     await api.put("/services/invoice", payload);
   };

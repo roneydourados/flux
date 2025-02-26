@@ -73,10 +73,22 @@ import { useDisplay } from "vuetify";
 const serviceStore = useServiceStore();
 
 const { mobile } = useDisplay();
-const { getFiltersStoreServices } = useUtils();
+const { getFiltersStoreServices, amountFormated } = useUtils();
+const { calculeServiceTotals } = useServiceUtils();
 const { $toast } = useNuxtApp();
 
 const $allServices = computed(() => serviceStore.$services);
+
+const $serviceTotals = computed(() => {
+  let totalValor = 0;
+
+  serviceStore.$services?.returnServices.map((service) => {
+    const totals = calculeServiceTotals(service);
+    totalValor += totals.valorNumber ?? 0;
+  });
+
+  return totalValor;
+});
 
 const showInvoice = ref(false);
 const showCancelInvoice = ref(false);
@@ -118,6 +130,7 @@ const handleInvoice = async () => {
       categoryId: category.value.id,
       paymentMethod: paymentMethod.value,
       invoiced: true,
+      total: $serviceTotals.value,
     });
 
     await serviceStore.index({
@@ -151,6 +164,7 @@ const handleCancelInvoice = async () => {
       initialDate: filters.initialDate ?? "",
       finalDate: filters.finalDate ?? "",
       invoiced: false,
+      total: 0,
     });
 
     await serviceStore.index({

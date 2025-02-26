@@ -12,6 +12,7 @@ export default defineEventHandler(async (event) => {
       invoiced,
       categoryId,
       paymentMethod,
+      total,
     } = await readBody(event);
 
     setResponseStatus(event, 200);
@@ -24,6 +25,7 @@ export default defineEventHandler(async (event) => {
       userId: user.id,
       categoryId: categoryId ? Number(categoryId) : undefined,
       paymentMethod: paymentMethod ? String(paymentMethod) : undefined,
+      total: total ? Number(total) : 0,
     });
   }
 });

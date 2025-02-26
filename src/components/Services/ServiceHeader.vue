@@ -140,34 +140,6 @@ onMounted(() => {
   }
 });
 
-// const getMonth = async (month: number) => {
-//   filter.value.month = month;
-
-//   filter.value.initialDate = moment(
-//     `${filter.value.year}-${filter.value.month + 1}-01`
-//   ).format("YYYY-MM-DD");
-
-//   filter.value.finalDate = moment(filter.value.initialDate)
-//     .endOf("month")
-//     .format("YYYY-MM-DD");
-
-//   await getServices();
-// };
-
-// const getYear = async (year: number) => {
-//   filter.value.year = year;
-
-//   filter.value.initialDate = moment(
-//     `${filter.value.year}-${filter.value.month + 1}-01`
-//   ).format("YYYY-MM-DD");
-
-//   filter.value.finalDate = moment(filter.value.initialDate)
-//     .endOf("month")
-//     .format("YYYY-MM-DD");
-
-//   await getServices();
-// };
-
 const handleExportServicesToPDF = () => {
   const initialDate = `01-${filter.value.month + 1}-${filter.value.year}`;
   const finalDate = moment(initialDate, "DD-MM-YYYY")
