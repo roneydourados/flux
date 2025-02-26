@@ -3,7 +3,7 @@
   "private": true,
   "type": "module",
   "scripts": {
-    "build": "nuxt build",
+    "build": "prisma generate && prisma migrate deploy && nuxt build",
     "dev": "nuxt dev",
     "rm": "nuxt dev --host --dotenv .env --port 3014",
     "generate": "nuxt generate",
