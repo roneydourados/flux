@@ -57,6 +57,6 @@ export interface ServiceProjectProps {
 
 export interface ServicesDashboardProps {
   returnServices: ServiceProps[];
-  servicesInvoice: ServiceInvoiceProps[];
+  //servicesInvoice: ServiceInvoiceProps[];
   servicesProjects: ServiceProjectProps[];
 }

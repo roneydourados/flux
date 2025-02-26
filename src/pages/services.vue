@@ -12,6 +12,7 @@ const loading = ref(false);
 
 onMounted(async () => {
   let filters;
+  loading.value = true;
   try {
     const filtersStore = getFiltersStoreServices();
 

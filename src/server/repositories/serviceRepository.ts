@@ -128,29 +128,29 @@ export const index = async ({
       group by p.name
   `;
 
-  const servicesInvoice = await prisma.$queryRaw<ServiceInvoiceProps[]>`
-    select 
-      date_part('day', s.service_date) as day_month,
-      sum(s.total_value) as total
-    from services s
-    where s.user_id = ${userId}
-      and s.service_date BETWEEN ${gte} and ${lte}
-      ${invoicedWhere}
-    group by  day_month
-    order by day_month  
-  `;
+  // const servicesInvoice = await prisma.$queryRaw<ServiceInvoiceProps[]>`
+  //   select
+  //     date_part('day', s.service_date) as day_month,
+  //     sum(s.total_value) as total
+  //   from services s
+  //   where s.user_id = ${userId}
+  //     and s.service_date BETWEEN ${gte} and ${lte}
+  //     ${invoicedWhere}
+  //   group by  day_month
+  //   order by day_month
+  // `;
 
   return {
     returnServices,
-    servicesInvoice:
-      servicesInvoice.length > 0
-        ? servicesInvoice.map((item) => {
-            return {
-              dayMonth: item.day_month,
-              total: item.total,
-            };
-          })
-        : [],
+    // servicesInvoice:
+    //   servicesInvoice.length > 0
+    //     ? servicesInvoice.map((item) => {
+    //         return {
+    //           dayMonth: item.day_month,
+    //           total: item.total,
+    //         };
+    //       })
+    //     : [],
     servicesProjects,
   };
 };

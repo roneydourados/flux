@@ -10,8 +10,44 @@
 </template>
 
 <script setup lang="ts">
+import moment from "moment";
+
 const { amountFormated } = useUtils();
 const serviceStore = useServiceStore();
+
+const { calculeServiceTotals } = useServiceUtils();
+
+const $servicesInvoice = computed(() => {
+  // Objeto para acumular os valores por dia
+  interface AccumulatedService {
+    serviceDate: string;
+    total: number;
+  }
+
+  const accumulatedServices: { [key: string]: AccumulatedService } = {};
+
+  serviceStore.$services?.returnServices.forEach((service) => {
+    // Formatar a data para YYYY-MM-DD usando moment
+    const serviceDay = moment(service.serviceDate).format("D");
+
+    // Calcular o total do serviço
+    const total = Number(calculeServiceTotals(service).valorNumber.toFixed(2));
+
+    // Se já existe um serviço nesse dia, acumula o valor
+    if (accumulatedServices[serviceDay]) {
+      accumulatedServices[serviceDay].total += total;
+    } else {
+      // Caso contrário, cria uma nova entrada
+      accumulatedServices[serviceDay] = {
+        serviceDate: serviceDay,
+        total: total,
+      };
+    }
+  });
+
+  // Converter o objeto de volta para um array
+  return Object.values(accumulatedServices);
+});
 
 const chartOptions = computed(() => {
   return {
@@ -19,9 +55,7 @@ const chartOptions = computed(() => {
       {
         name: "Tarefas",
         data:
-          serviceStore.$services?.servicesInvoice.map((service) =>
-            Number(service.total)
-          ) ?? [],
+          $servicesInvoice.value.map((service) => Number(service.total)) ?? [],
       },
     ],
 
@@ -42,7 +76,7 @@ const chartOptions = computed(() => {
         width: 2,
       },
       title: {
-        text: "Fluxo de serviços do mês",
+        text: "Fluxo diário de serviços",
         align: "left",
         style: {
           color: "#fff",
@@ -68,9 +102,7 @@ const chartOptions = computed(() => {
         labels: {
           show: true,
           style: {
-            colors: serviceStore.$services?.servicesInvoice.map(
-              () => "#B8B8B8"
-            ),
+            colors: $servicesInvoice.value.map(() => "#B8B8B8"),
           },
           formatter: function (val: any) {
             return amountFormated(val, true);
@@ -78,15 +110,13 @@ const chartOptions = computed(() => {
         },
       },
       xaxis: {
-        categories: serviceStore.$services?.servicesInvoice.map(
-          (service) => service.dayMonth
+        categories: $servicesInvoice.value.map(
+          (service) => service.serviceDate
         ),
         labels: {
           show: true,
           style: {
-            colors: serviceStore.$services?.servicesInvoice.map(
-              () => "#B8B8B8"
-            ),
+            colors: $servicesInvoice.value.map(() => "#B8B8B8"),
           },
         },
       },

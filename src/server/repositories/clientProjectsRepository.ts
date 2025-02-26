@@ -29,6 +29,7 @@ export const showClientProject = async (publicId: string) => {
       name: true,
       clientId: true,
       color: true,
+      publicId: true,
       Client: {
         select: {
           id: true,

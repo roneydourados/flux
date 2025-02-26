@@ -151,8 +151,8 @@ const handleEdit = async (item: ClientProjectProps) => {
     }
 
     model.value = {
-      name: $single.value.name ?? "",
-      color: $single.value.color ?? "#1565C0",
+      name: $single.value.name,
+      color: $single.value.color,
       publicId: $single.value.publicId!,
     };
 

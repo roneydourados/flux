@@ -1,6 +1,6 @@
 <template>
   <div class="py-4">
-    <v-row dense>
+    <!-- <v-row dense>
       <v-col cols="12" lg="9" class="d-flex flex-column">
         <Months
           class="w-100"
@@ -8,15 +8,24 @@
           @year="getYear($event)"
         />
       </v-col>
-    </v-row>
+    </v-row> -->
     <v-row>
-      <v-col cols="12" lg="7">
+      <v-col cols="12" lg="4">
         <ClientSelectSearch
           v-model="filter.client"
           @update:model-value="getServices"
         />
       </v-col>
-      <v-col cols="12" lg="2">
+      <v-col
+        cols="12"
+        lg="4"
+        class="d-flex align-center flex-wrap"
+        style="gap: 0.5rem"
+      >
+        <DatePicker label="Data inicial" v-model="filter.initialDate" />
+        <DatePicker label="Data final" v-model="filter.finalDate" />
+      </v-col>
+      <v-col cols="12" lg="4" class="d-flex flex-wrap" style="gap: 0.5rem">
         <SelectInput
           v-model="filter.status"
           label="Situação"
@@ -27,13 +36,23 @@
           variant="outlined"
           @update:model-value="getServices"
         />
-      </v-col>
-      <v-col cols="12" lg="3" class="d-flex align-center justify-end">
+
+        <v-btn
+          icon
+          flat
+          color="primary"
+          size="small"
+          @click="getServices"
+          class="mt-1"
+        >
+          <v-icon>mdi-reload</v-icon>
+        </v-btn>
         <Button
           color="green"
           :block="mobile"
           @click="showForm = true"
           rounded="lg"
+          class="mt-1"
         >
           <strong class="mr-1" style="font-size: 0.8rem">+</strong>
           Adicionar serviço
@@ -94,6 +113,8 @@ const filter = ref({
   year: moment().year(),
   status: "Todas",
   client: undefined as ClientProps | undefined,
+  initialDate: moment().startOf("month").format("YYYY-MM-DD"),
+  finalDate: moment().endOf("month").format("YYYY-MM-DD"),
 });
 
 const serviceStatusItens = [
@@ -119,17 +140,33 @@ onMounted(() => {
   }
 });
 
-const getMonth = async (month: number) => {
-  filter.value.month = month;
+// const getMonth = async (month: number) => {
+//   filter.value.month = month;
 
-  await getServices();
-};
+//   filter.value.initialDate = moment(
+//     `${filter.value.year}-${filter.value.month + 1}-01`
+//   ).format("YYYY-MM-DD");
 
-const getYear = async (year: number) => {
-  filter.value.year = year;
+//   filter.value.finalDate = moment(filter.value.initialDate)
+//     .endOf("month")
+//     .format("YYYY-MM-DD");
 
-  await getServices();
-};
+//   await getServices();
+// };
+
+// const getYear = async (year: number) => {
+//   filter.value.year = year;
+
+//   filter.value.initialDate = moment(
+//     `${filter.value.year}-${filter.value.month + 1}-01`
+//   ).format("YYYY-MM-DD");
+
+//   filter.value.finalDate = moment(filter.value.initialDate)
+//     .endOf("month")
+//     .format("YYYY-MM-DD");
+
+//   await getServices();
+// };
 
 const handleExportServicesToPDF = () => {
   const initialDate = `01-${filter.value.month + 1}-${filter.value.year}`;
@@ -164,15 +201,15 @@ const getServices = async () => {
   loading.value = true;
 
   try {
-    const initialDate = moment(
-      `${filter.value.year}-${filter.value.month + 1}-01`
-    ).format("YYYY-MM-DD");
+    // const initialDate = moment(
+    //   `${filter.value.year}-${filter.value.month + 1}-01`
+    // ).format("YYYY-MM-DD");
 
-    const finalDate = moment(initialDate).endOf("month").format("YYYY-MM-DD");
+    // const finalDate = moment(initialDate).endOf("month").format("YYYY-MM-DD");
 
     const payloadFilters = {
-      initialDate,
-      finalDate,
+      initialDate: filter.value.initialDate,
+      finalDate: filter.value.finalDate,
       Client: filter.value.client,
       invoiced: filter.value.status,
     };

@@ -63,10 +63,7 @@
               </div>
               <v-chip color="warning" variant="outlined" size="large">
                 <div class="d-flex align-center" style="gap: 0.5rem">
-                  Faça upgrade para o plano
-
-                  <strong>standart</strong> ou
-                  <strong>full</strong>
+                  Atualize para <strong>Standard/Full</strong>
                 </div>
               </v-chip>
             </div>

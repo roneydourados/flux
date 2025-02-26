@@ -68,24 +68,34 @@ const drawer = defineModel({
 });
 
 const itemsMenu = ref([
-  { title: "Dashboard", icon: "mdi-view-dashboard", id: 1, to: "/dashboard" },
-  { title: "Financeiro", icon: "mdi-cash", id: 2, to: "/finance" },
+  {
+    title: "Dashboard",
+    icon: "mdi-view-dashboard",
+    id: 1,
+    to: "/dashboard",
+  },
   {
     title: "Clientes",
     icon: "mdi-account-multiple-outline",
-    id: 3,
+    id: 2,
     to: "/clients",
+  },
+  {
+    title: "Financeiro",
+    icon: "mdi-cash",
+    id: 3,
+    to: "/finance",
   },
   {
     title: "Serviços",
     icon: "mdi-account-wrench-outline",
-    id: 4,
+    id: 5,
     to: "/services",
   },
   {
     title: "Assinatura",
     icon: "mdi-vector-arrange-below",
-    id: 5,
+    id: 6,
     to: "/signature",
   },
 ]);

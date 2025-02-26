@@ -1,4 +1,3 @@
-import { Years } from "./../.nuxt/components.d";
 import moment from "moment";
 import { formatCNPJ, formatCPF } from "@brazilian-utils/brazilian-utils";
 type CompactDisplayType = "short" | "long" | undefined;

@@ -31,6 +31,8 @@
                   true
                 )
               }}
+              <span>Início</span>
+              {{ moment(item.serviceDate).format("DD/MM/YYYY") }}
             </div>
 
             <div class="d-flex align-center mr-6" style="gap: 0.5rem">
