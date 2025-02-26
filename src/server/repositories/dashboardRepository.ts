@@ -1,74 +1,121 @@
 import prisma from "@/lib/prisma";
 
-interface ChartMonthProps {
-  month_abbr?: string;
-  total_expense: number;
-  total_investment: number;
-  total_credit: number;
+interface TransactionProps {
+  total: number;
+  type: string;
 }
 
-export const chartMonthTransactions = async (input: {
-  year?: number;
+export const index = async (input: {
   userId: number;
+  initialDate: string;
+  finalDate: string;
 }) => {
-  const { year, userId } = input;
+  const { userId, initialDate, finalDate } = input;
 
-  const currentYear = year || new Date().getFullYear();
+  const gte = new Date(initialDate);
+  const lte = new Date(finalDate);
 
-  const inititalDate = `${currentYear}-01-01`;
-  const finalDate = `${currentYear}-12-31`;
+  let totalCredit = 0;
+  let totalExpense = 0;
+  let totalInvestment = 0;
 
-  const data = await prisma.$queryRaw<ChartMonthProps[]>`
-    WITH transaction_fin AS (
-        SELECT
-            EXTRACT(MONTH FROM t.due_date) AS month_num,
-            CASE
-                WHEN t.type = 'EXPENSE' THEN t.amount
-                ELSE 0
-            END AS expense,
-            CASE
-                WHEN t.type = 'INVESTMENT' THEN t.amount
-                ELSE 0
-            END AS investment,
-            CASE
-                WHEN t.type = 'CREDIT' THEN t.amount
-                ELSE 0
-            END AS credit
-        FROM transactions t
-        WHERE t.user_id = ${userId}
-          AND t.due_date BETWEEN ${new Date(inititalDate)} AND ${new Date(
-    finalDate
-  )}
-    )
-    SELECT
-        CASE
-            WHEN month_num = 1 THEN 'Jan'
-            WHEN month_num = 2 THEN 'Fev'
-            WHEN month_num = 3 THEN 'Mar'
-            WHEN month_num = 4 THEN 'Abr'
-            WHEN month_num = 5 THEN 'Mai'
-            WHEN month_num = 6 THEN 'Jun'
-            WHEN month_num = 7 THEN 'Jul'
-            WHEN month_num = 8 THEN 'Ago'
-            WHEN month_num = 9 THEN 'Set'
-            WHEN month_num = 10 THEN 'Out'
-            WHEN month_num = 11 THEN 'Nov'
-            WHEN month_num = 12 THEN 'Dez'
-        END AS month_abbr,
-        SUM(expense) AS total_expense,
-        SUM(investment) AS total_investment,
-        SUM(credit) AS total_credit
-    FROM transaction_fin
-    GROUP BY month_num
-    ORDER BY month_num;
-`;
+  const transactions = await prisma.$queryRaw<TransactionProps[]>`
+    select
+      sum(t.amount) total,
+      case 
+        when t.type = 'EXPENSE' then 'Despesa'
+        when t.type = 'CREDIT' then 'Receita'
+        when t.type = 'INVESTMENT' then 'Investimento'
+        else 'Outros'
+      end as type
+    from transactions t
+    where t.user_id = ${userId}
+      and t.due_date BETWEEN ${gte} and ${lte}
+    group by t.type
+  `;
 
-  return data.map((item: ChartMonthProps) => {
-    return {
-      month: item.month_abbr,
-      expense: item.total_expense,
-      investment: item.total_investment,
-      credit: item.total_credit,
-    };
+  transactions.forEach((transaction) => {
+    if (transaction.type === "Receita") {
+      totalCredit = transaction.total;
+    } else if (transaction.type === "Despesa") {
+      totalExpense = transaction.total;
+    } else if (transaction.type === "Investimento") {
+      totalInvestment = transaction.total;
+    }
   });
+
+  const lastTransactions = await prisma.transaction.findMany({
+    select: {
+      amount: true,
+      type: true,
+      Category: {
+        select: {
+          categoryName: true,
+          icon: true,
+          color: true,
+        },
+      },
+    },
+    where: {
+      userId,
+      dueDate: {
+        gte,
+        lte,
+      },
+    },
+    orderBy: {
+      id: "desc",
+    },
+    take: 5,
+  });
+
+  const services = await prisma.service.findMany({
+    select: {
+      id: true,
+      serviceDate: true,
+      hourValue: true,
+      title: true,
+      clientProjectId: true,
+      ServiceOccurrence: {
+        select: {
+          id: true,
+          started: true,
+          ended: true,
+        },
+      },
+    },
+    where: {
+      userId,
+      serviceDate: {
+        gte,
+        lte,
+      },
+    },
+    orderBy: {
+      id: "desc",
+    },
+  });
+
+  const { calculeServiceTotals } = useServiceApiUtils();
+  let totalServices = 0;
+
+  services.forEach((service) => {
+    totalServices =
+      //@ts-ignore
+      totalServices + Number(calculeServiceTotals(service).valorNumber ?? 0);
+  });
+
+  const lastServices = services.slice(0, 5);
+
+  return {
+    totalCredit,
+    totalExpense,
+    totalInvestment,
+    totalSalt: Number(
+      Number(totalCredit) + Number(totalInvestment) - Number(totalExpense)
+    ).toFixed(2),
+    totalServices: totalServices.toFixed(2),
+    lastTransactions,
+    lastServices,
+  };
 };

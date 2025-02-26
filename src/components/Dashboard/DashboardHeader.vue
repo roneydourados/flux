@@ -5,32 +5,77 @@
         <h2>{{ title }}</h2>
       </v-col>
       <v-col cols="12" lg="10" class="d-flex align-center justify-end">
-        <Months />
-        <Button color="background">
+        <Months @month="getMonth($event)" @year="getYear($event)" />
+        <!-- <Button color="background">
           <span style="font-weight: 100" class="text-greylight">
             Relatório de IA
           </span>
           <v-icon icon="mdi-file-table-outline" end />
-        </Button>
+        </Button> -->
       </v-col>
     </v-row>
+    <DialogLoading :dialog="loading" />
   </div>
 </template>
 
 <script setup lang="ts">
+import moment from "moment";
 defineProps({
   title: {
     type: String,
     default: "",
   },
 });
-const menuMonthItems = computed(() => {
-  return months.map((month) => {
-    return {
-      title: month.monthFull,
-      icon: "",
-      iconColor: "",
-    };
-  });
+
+const dashboard = useDashboardStore();
+const loading = ref(false);
+
+const filter = ref({
+  month: moment().month(),
+  year: moment().year(),
+  initialDate: moment().startOf("month").format("YYYY-MM-DD"),
+  finalDate: moment().endOf("month").format("YYYY-MM-DD"),
 });
+
+const getMonth = async (month: number) => {
+  filter.value.month = month + 1;
+
+  const initial = `${filter.value.year}-${filter.value.month
+    .toString()
+    .padStart(2, "0")}-01`;
+
+  filter.value.initialDate = moment(initial).format("YYYY-MM-DD");
+  filter.value.finalDate = moment(filter.value.initialDate)
+    .endOf("month")
+    .format("YYYY-MM-DD");
+
+  await getDashboard();
+};
+
+const getYear = async (year: number) => {
+  filter.value.year = year;
+
+  const initial = `${filter.value.year}-${filter.value.month
+    .toString()
+    .padStart(2, "0")}-01`;
+
+  filter.value.initialDate = moment(initial).format("YYYY-MM-DD");
+  filter.value.finalDate = moment(filter.value.initialDate)
+    .endOf("month")
+    .format("YYYY-MM-DD");
+
+  await getDashboard();
+};
+
+const getDashboard = async () => {
+  loading.value = true;
+  try {
+    await dashboard.index({
+      initialDate: filter.value.initialDate,
+      finalDate: filter.value.finalDate,
+    });
+  } finally {
+    loading.value = false;
+  }
+};
 </script>

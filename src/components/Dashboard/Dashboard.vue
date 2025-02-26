@@ -1,5 +1,6 @@
 <template>
   <div class="w-100">
+    <!-- <pre>{{ $dashboard }}</pre> -->
     <v-row>
       <v-col cols="12">
         <DashboardHeader title="Dashboard" />
@@ -33,5 +34,7 @@
 </template>
 
 <script setup lang="ts">
-defineEmits(["transactions", "services"]);
+const dashboard = useDashboardStore();
+
+const $dashboard = computed(() => dashboard.$dashboard);
 </script>

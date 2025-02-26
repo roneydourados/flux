@@ -10,7 +10,9 @@
       <template #content>
         <v-row dense>
           <v-col cols="12">
-            <h2 style="font-weight: 400">R$ 2500,00</h2>
+            <h2 style="font-weight: 400">
+              {{ amountFormated($total ?? 0, true) }}
+            </h2>
           </v-col>
         </v-row>
       </template>
@@ -18,4 +20,10 @@
   </div>
 </template>
 
-<script setup lang="ts"></script>
+<script setup lang="ts">
+const dashboard = useDashboardStore();
+
+const { amountFormated } = useUtils();
+
+const $total = computed(() => dashboard.$dashboard?.totalExpense);
+</script>

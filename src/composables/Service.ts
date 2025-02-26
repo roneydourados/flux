@@ -42,10 +42,10 @@ export const useServiceUtils = () => {
     };
   };
 
-  const calculeServiceTotals = (task: ServiceProps) => {
+  const calculeServiceTotals = (service: ServiceProps) => {
     let totalHoursNumber = 0;
 
-    task.ServiceOccurrence?.map((oc) => {
+    service.ServiceOccurrence?.map((oc) => {
       if (oc.started && oc.ended) {
         //deixar formatado para evitar diferenças de centavos
         const startDate = moment(oc.started).format("YYYY-MM-DD HH:mm:ss");
@@ -63,14 +63,13 @@ export const useServiceUtils = () => {
     const finalDuration = moment.duration(totalHoursNumber, "hours"); // converte as horas para duração
 
     const valor = amountFormated(
-      finalDuration.asHours() * task.hourValue,
+      finalDuration.asHours() * service.hourValue,
       true
     ); // obtém o valor em horas
 
-    const valorNumber = finalDuration.asHours() * task.hourValue;
+    const valorNumber = finalDuration.asHours() * service.hourValue;
 
     // obtém o valor em horas
-
     const totalHours = String(Math.floor(finalDuration.asHours())).padStart(
       2,
       "0"
