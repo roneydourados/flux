@@ -43,12 +43,18 @@ export const useClientStore = defineStore("client", () => {
     await api.delete(`/clients/${id}`);
   };
 
+  const clearAll = () => {
+    clients.value = [];
+    client.value = undefined;
+  };
+
   return {
     index,
     store,
     update,
     destroy,
     show,
+    clearAll,
     $all,
     $single,
   };

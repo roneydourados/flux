@@ -59,5 +59,20 @@ export const useProjectsStore = defineStore("projects", () => {
     await api.delete(`/client-projects/${publicId}`);
   };
 
-  return { index, show, store, update, destroy, clearStore, $all, $single };
+  const clearAll = () => {
+    projects.value = [];
+    project.value = undefined;
+  };
+
+  return {
+    index,
+    show,
+    store,
+    update,
+    destroy,
+    clearStore,
+    clearAll,
+    $all,
+    $single,
+  };
 });

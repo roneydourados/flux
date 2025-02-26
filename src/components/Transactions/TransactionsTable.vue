@@ -184,6 +184,7 @@ import moment from "moment";
 const { mobile } = useDisplay();
 const { amountFormated, getTransactions } = useUtils();
 const transactionStore = useTransactionStore();
+const { $toast } = useNuxtApp();
 
 const showForm = ref(false);
 const dialogQuestion = ref(false);

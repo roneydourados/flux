@@ -33,6 +33,7 @@
         <v-col cols="12" lg="2">
           <div class="d-flex align-center" style="gap: 0.5rem">
             <v-btn
+              v-if="showGoBack"
               variant="flat"
               color="surface"
               class="text-none"
@@ -192,6 +193,10 @@ const props = defineProps({
   density: {
     type: String as PropType<DensityType>,
     default: "default",
+  },
+  showGoBack: {
+    type: Boolean,
+    default: true,
   },
 });
 const { mobile } = useDisplay();

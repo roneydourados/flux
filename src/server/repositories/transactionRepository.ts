@@ -172,6 +172,26 @@ export const destroy = async (publicId: string) => {
   const transaction = await exists(publicId);
 
   try {
+    //verificar se existe serviço vinculado a transação a ser apagada
+    const service = await prisma.service.findFirst({
+      where: {
+        financeOwner: transaction.publicId,
+      },
+    });
+
+    //caso exista serviço vinculado então remover faturamento do mesmo
+    if (service) {
+      await prisma.service.updateMany({
+        where: {
+          financeOwner: transaction.publicId,
+        },
+        data: {
+          financeOwner: null,
+          isInvoiced: false,
+        },
+      });
+    }
+
     await prisma.transaction.delete({
       where: {
         id: transaction.id,

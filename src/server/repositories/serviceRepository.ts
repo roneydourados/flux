@@ -370,7 +370,7 @@ export const invoiceServices = async (input: {
         where: {
           clientId,
           userId,
-          status: "FINISHED",
+          //status: "FINISHED",
           serviceDate: {
             gte: new Date(initialDate),
             lte: new Date(finalDate),
@@ -413,13 +413,13 @@ export const invoiceServices = async (input: {
         where: {
           clientId,
           userId,
-          status: "FINISHED",
           serviceDate: {
             gte: new Date(initialDate),
             lte: new Date(finalDate),
           },
         },
         data: {
+          status: "FINISHED",
           isInvoiced: invoiced,
           financeOwner: transaction.publicId,
         },
@@ -454,7 +454,7 @@ export const invoiceServices = async (input: {
         where: {
           clientId,
           userId,
-          status: "FINISHED",
+          //status: "FINISHED",
           serviceDate: {
             gte: new Date(initialDate),
             lte: new Date(finalDate),

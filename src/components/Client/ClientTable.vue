@@ -4,6 +4,7 @@
       title="Seus clientes cadastrados"
       :headers="headers"
       :items="$all"
+      :show-go-back="false"
       @search="getClients($event)"
       @add="$router.push('/clients/new')"
     >

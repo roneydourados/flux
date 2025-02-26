@@ -112,17 +112,17 @@ const handleInvoice = async () => {
     }
 
     await serviceStore.invoiceServices({
-      clientId: filters.Client?.id ?? 0,
-      initialDate: filters.initialDate ?? "",
-      finalDate: filters.finalDate ?? "",
+      clientId: filters.Client.id!,
+      initialDate: filters.initialDate!,
+      finalDate: filters.finalDate!,
       categoryId: category.value.id,
       paymentMethod: paymentMethod.value,
       invoiced: true,
     });
 
     await serviceStore.index({
-      initialDate: filters.initialDate ?? "",
-      finalDate: filters.finalDate ?? "",
+      initialDate: filters.initialDate!,
+      finalDate: filters.finalDate!,
       Client: filters.Client,
       invoiced: filters.invoiced,
     });

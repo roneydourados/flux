@@ -78,17 +78,19 @@
                   size="small"
                   is-icon
                   @click="handleClickMenuButton($event, item)"
+                  :disabled="item.isInvoiced"
                 >
                   <EditSVG />
                 </MenuButton>
-                <v-btn
+                <!-- <v-btn
                   icon
                   variant="text"
                   size="small"
                   @click="getServiceDelete(item)"
+                  :disabled="item.isInvoiced"
                 >
                   <DeleteSVG />
-                </v-btn>
+                </v-btn> -->
               </div>
             </div>
           </div>
@@ -394,24 +396,11 @@ const itemsMenu = (service: ServiceProps) => {
         icon: "mdi-file-document-refresh-outline",
         iconColor: "blue-grey",
       },
-      {
-        title: "Faturar",
-        icon: "mdi-alert-circle-outline",
-        iconColor: "blue-grey",
-      },
-      {
-        title: "Excluir",
-        icon: "mdi-delete-outline",
-        iconColor: "blue-grey",
-      },
-    ];
-  } else if (service.status === "FINISHED" && service.isInvoiced) {
-    return [
-      {
-        title: "Estornar faturamento",
-        icon: "mdi-alert-circle-outline",
-        iconColor: "blue-grey",
-      },
+      // {
+      //   title: "Faturar",
+      //   icon: "mdi-alert-circle-outline",
+      //   iconColor: "blue-grey",
+      // },
       {
         title: "Excluir",
         icon: "mdi-delete-outline",
@@ -419,6 +408,20 @@ const itemsMenu = (service: ServiceProps) => {
       },
     ];
   }
+  // else if (service.status === "FINISHED" && service.isInvoiced) {
+  //   return [
+  //     {
+  //       title: "Estornar faturamento",
+  //       icon: "mdi-alert-circle-outline",
+  //       iconColor: "blue-grey",
+  //     },
+  //     {
+  //       title: "Excluir",
+  //       icon: "mdi-delete-outline",
+  //       iconColor: "blue-grey",
+  //     },
+  //   ];
+  // }
 
   return [
     {
@@ -575,7 +578,9 @@ const handleClickMenuButton = async (title: string, service: ServiceProps) => {
 
       selectedItem.value = service;
       showReopen.value = true;
-    } else if (title === "Estornar faturamento") {
+    }
+    /*
+    else if (title === "Estornar faturamento") {
       if (!service.isInvoiced) {
         useNuxtApp().$toast.warning("Serviço não faturado!");
         return;
@@ -616,6 +621,7 @@ const handleClickMenuButton = async (title: string, service: ServiceProps) => {
         loading.value = false;
       }
     }
+    */
   } finally {
     isUpdate.value = false;
   }
