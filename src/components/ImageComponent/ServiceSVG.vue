@@ -2,7 +2,7 @@
   <v-sheet
     rounded="lg"
     class="d-flex aling-center justify-center pa-2"
-    color="#0F0E11"
+    :color="color"
   >
     <svg
       xmlns="http://www.w3.org/2000/svg"
@@ -29,7 +29,7 @@ defineProps({
   },
   color: {
     type: String,
-    default: "#55B02E",
+    default: "#212121",
   },
 });
 </script>

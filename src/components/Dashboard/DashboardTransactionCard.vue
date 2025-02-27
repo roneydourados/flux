@@ -5,7 +5,12 @@
         <div class="d-flex align-center justify-space-between">
           <div class="d-flex align-center" style="gap: 0.5rem">
             <WalletSVG height="20" />
-            <span> Saldo financeiro </span>
+            <div class="d-flex flex-column justify-center">
+              <span> Saldo financeiro </span>
+              <span class="text-grey-lighten-1" style="font-size: 0.8rem">
+                Receita + Investimento - Despesas
+              </span>
+            </div>
           </div>
         </div>
       </v-card-title>

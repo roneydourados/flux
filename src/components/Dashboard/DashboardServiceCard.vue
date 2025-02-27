@@ -5,7 +5,12 @@
         <div class="d-flex align-center justify-space-between">
           <div class="d-flex align-center" style="gap: 0.5rem">
             <ServiceSVG height="20" />
-            <span> Total serviços </span>
+            <div class="d-flex flex-column justify-center">
+              <span> Total serviços </span>
+              <span class="text-grey-lighten-1" style="font-size: 0.8rem">
+                Soma de todos os serviços cadastrados do mês
+              </span>
+            </div>
           </div>
         </div>
       </v-card-title>
