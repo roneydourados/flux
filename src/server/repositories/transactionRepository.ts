@@ -19,6 +19,8 @@ export const index = async (input: {
 }) => {
   const { finalDate, initialDate, userId, status } = input;
 
+  const financeStatus = status === "all" ? undefined : status;
+
   const gte = initialDate ? new Date(initialDate) : new Date();
   const lte = finalDate ? new Date(finalDate) : new Date();
 
@@ -49,7 +51,7 @@ export const index = async (input: {
     },
     where: {
       userId,
-      status,
+      status: financeStatus,
       dueDate: {
         gte,
         lte,
