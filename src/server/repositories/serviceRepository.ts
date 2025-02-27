@@ -56,7 +56,6 @@ export const index = async ({
       isInvoiced: true,
       clientId: true,
       userId: true,
-      totalValue: true,
       _count: {
         select: {
           ServiceOccurrence: true,
@@ -171,13 +170,13 @@ export const create = async ({
         userId: Number(userId!),
         status,
         serviceDate: new Date(),
-        totalValue: 0,
       },
     });
   } catch (error) {
+    console.log("🚀 ~ error:", error);
     throw createError({
-      statusCode: 400,
-      statusMessage: `Erro ao criar: ${error}`,
+      statusCode: 500,
+      statusMessage: "Erro ao criar serviço",
     });
   }
 };
@@ -191,7 +190,6 @@ export const update = async ({
   serviceDate,
   serviceEndDate,
   updateOccorrence,
-  totalValue,
   isInvoiced,
   occurrenceStartDate,
   occurrenceEndDate,
@@ -210,7 +208,6 @@ export const update = async ({
         status,
         clientProjectId, // Add the missing property
         hourValue,
-        totalValue,
         title,
         serviceDate: serviceDate ? new Date(String(serviceDate)) : undefined,
         serviceEndDate: serviceEndDate
@@ -258,7 +255,6 @@ export const update = async ({
                 serviceDate: true,
                 title: true,
                 serviceEndDate: true,
-                totalValue: true,
                 userId: true,
                 ServiceOccurrence: {
                   select: {
@@ -272,15 +268,15 @@ export const update = async ({
               where: { id: exists.id },
             });
 
-            //@ts-ignore calcular o total do serviço sempre que finalizar um evento de tempo
-            const totalService = calculeServiceTotals(serviceUpdateTotal);
+            // //@ts-ignore calcular o total do serviço sempre que finalizar um evento de tempo
+            // const totalService = calculeServiceTotals(serviceUpdateTotal);
 
-            await prisma.service.update({
-              data: {
-                totalValue: totalService.valorNumber.toFixed(2),
-              },
-              where: { id: serviceUpdateTotal?.id },
-            });
+            // await prisma.service.update({
+            //   data: {
+            //     totalValue: totalService.valorNumber.toFixed(2),
+            //   },
+            //   where: { id: serviceUpdateTotal?.id },
+            // });
           }
         } else {
           await prisma.serviceOccurrence.create({

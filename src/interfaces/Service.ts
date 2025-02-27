@@ -8,7 +8,7 @@ export interface ServiceProps {
   clientId?: number;
   title: string;
   hourValue: number;
-  totalValue?: number;
+  //totalValue?: number;
   clientProjectId: number;
   serviceDate?: string;
   ownerId?: number;

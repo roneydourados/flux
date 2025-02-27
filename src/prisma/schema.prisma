@@ -101,7 +101,7 @@ model Service {
   clientProjectId   Int                 @map("client_project_id")
   title             String              @db.Text
   hourValue         Decimal             @map("hour_value") @db.Decimal(18, 2)
-  totalValue        Decimal             @default(0) @map("total_value") @db.Decimal(18, 2)
+  //totalValue        Decimal             @default(0) @map("total_value") @db.Decimal(18, 2)
   status            String?             @db.VarChar(20)
   serviceDate       DateTime?           @default(now()) @map("service_date") @db.Date
   serviceEndDate    DateTime?           @map("service_end_date") @db.Date
