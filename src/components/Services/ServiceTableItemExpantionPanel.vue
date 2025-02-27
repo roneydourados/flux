@@ -31,6 +31,9 @@
                   true
                 )
               }}
+              <span>Duração</span>
+              {{ calculeServiceTotals(item).horas }}
+
               <span>Início</span>
               {{ moment(item.serviceDate).format("DD/MM/YYYY") }}
             </div>
