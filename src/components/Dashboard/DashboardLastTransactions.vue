@@ -38,10 +38,10 @@
                 </div>
                 <span
                   :style="{
-                    color: item.type === 'DEBIT' ? '#E57373' : '#66BB6A',
+                    color: item.type === 'EXPENSE' ? '#E57373' : '#66BB6A',
                   }"
                 >
-                  {{ item.type === "DEBIT" ? "-" : "+" }}
+                  {{ item.type === "EXPENSE" ? "-" : "+" }}
                   {{ amountFormated(item.amount, true) }}
                 </span>
               </div>

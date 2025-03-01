@@ -38,11 +38,11 @@ export const paymentForms = [
 
 export const transactionTypes = [
   {
-    name: "Crédito",
+    name: "Receita",
     type: "CREDIT",
   },
   {
-    name: "Débito",
+    name: "Despesa",
     type: "EXPENSE",
   },
   {

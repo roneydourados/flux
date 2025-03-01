@@ -1,6 +1,5 @@
 <template>
   <div class="w-100">
-    <!-- <pre>{{ $dashboard }}</pre> -->
     <v-row>
       <v-col cols="12">
         <DashboardHeader title="Dashboard" />
