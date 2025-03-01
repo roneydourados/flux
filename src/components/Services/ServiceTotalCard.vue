@@ -1,33 +1,30 @@
 <template>
   <div>
     <Card>
-      <template #title>
-        <div class="d-flex align-center" style="gap: 1rem">
-          <ServiceSVG height="20" />
-          <span> Serviços </span>
-        </div>
-      </template>
-      <template #content>
-        <v-row dense>
-          <v-col cols="12">
-            <div class="d-flex align-center justify-space-between">
-              <CurrencyIconSVG height="25" />
-              <h2 style="font-weight: 400">
-                {{ $serviceTotals.valorTotal }}
-              </h2>
-            </div>
-            <v-divider class="mt-2" />
-          </v-col>
-          <v-col cols="12">
-            <div class="d-flex align-center justify-space-between">
-              <TimerIconSVG height="25" />
-              <h2 style="font-weight: 400">
-                {{ $serviceTotals.totalDuration }}
-              </h2>
-            </div>
-          </v-col>
-        </v-row>
-      </template>
+      <div class="d-flex align-center" style="gap: 1rem">
+        <ServiceSVG height="20" />
+        <span> Serviços </span>
+      </div>
+
+      <v-row dense>
+        <v-col cols="12">
+          <div class="d-flex align-center justify-space-between">
+            <CurrencyIconSVG height="25" />
+            <h2 style="font-weight: 400">
+              {{ $serviceTotals.valorTotal }}
+            </h2>
+          </div>
+          <v-divider class="mt-2" />
+        </v-col>
+        <v-col cols="12">
+          <div class="d-flex align-center justify-space-between">
+            <TimerIconSVG height="25" />
+            <h2 style="font-weight: 400">
+              {{ $serviceTotals.totalDuration }}
+            </h2>
+          </div>
+        </v-col>
+      </v-row>
     </Card>
   </div>
 </template>
