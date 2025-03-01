@@ -1,10 +1,10 @@
 <template>
   <div>
-    <Card height="412">
+    <Card>
       <Table
         title="Ultimas transações"
         :headers="headers"
-        :items="items"
+        :items="$transactions"
         :items-per-page="11"
         :show-select="false"
         :show-crud="false"
@@ -16,7 +16,7 @@
             size="small"
             variant="outlined"
             color="lightgrey"
-            @click="$emit('transactions')"
+            @click="$router.push('/finance')"
           >
             Ver mais
           </Button>
@@ -28,19 +28,21 @@
                 <div class="d-flex align-center" style="gap: 0.5rem">
                   <v-sheet
                     rounded="lg"
-                    height="30"
-                    width="30"
+                    height="35"
+                    width="35"
                     class="d-flex align-center justify-center"
                   >
-                    <v-icon :icon="item.icon" />
+                    <v-icon :icon="item.Category.icon" />
                   </v-sheet>
-                  <span>{{ item.transactionType }}</span>
+                  <span>{{ item.Category.categoryName }}</span>
                 </div>
                 <span
-                  :style="{ color: item.type === 'D' ? '#E57373' : '#66BB6A' }"
+                  :style="{
+                    color: item.type === 'DEBIT' ? '#E57373' : '#66BB6A',
+                  }"
                 >
-                  {{ item.type === "D" ? "-" : "+" }}
-                  {{ amountFormated(item.value, true) }}
+                  {{ item.type === "DEBIT" ? "-" : "+" }}
+                  {{ amountFormated(item.amount, true) }}
                 </span>
               </div>
             </div>
@@ -51,7 +53,7 @@
                 color: rgb(var(--v-theme-grey)) !important;
               "
             >
-              {{ moment(item.date).format("DD MMM, YYYY") }}
+              {{ moment(item.dueDate).format("DD MMM, YYYY") }}
             </span>
           </div>
         </template>
@@ -62,43 +64,18 @@
 
 <script setup lang="ts">
 import moment from "moment";
+const dashboard = useDashboardStore();
+
 const { amountFormated } = useUtils();
+
+const $transactions = computed(() => {
+  return dashboard.$dashboard?.lastTransactions;
+});
 
 defineEmits(["transactions"]);
 
 const headers = ref([
   { title: "", key: "transactionType" },
   // { title: "Valor", key: "value" },
-]);
-
-const items = ref([
-  {
-    transactionType: "Depósito",
-    value: 6700,
-    date: "2024-10-10",
-    type: "C",
-    icon: "mdi-dots-hexagon",
-  },
-  {
-    transactionType: "Compra",
-    value: 150,
-    date: "2024-11-11",
-    type: "D",
-    icon: "mdi-credit-card-outline",
-  },
-  {
-    transactionType: "Pagamento",
-    value: 200,
-    date: "2024-11-12",
-    type: "D",
-    icon: "mdi-dots-hexagon",
-  },
-  {
-    transactionType: "Transferência",
-    value: 500,
-    date: "2024-11-13",
-    type: "C",
-    icon: "mdi-dots-hexagon",
-  },
 ]);
 </script>

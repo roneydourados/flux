@@ -1,24 +1,15 @@
 <template>
   <div>
-    <v-sheet border="md" rounded="lg">
-      <v-card
-        rounded="lg"
-        color="background"
-        flat
-        :min-height="minHeight"
-        :height="height"
-      >
-        <v-card-title>
-          <div class="d-flex align-center" style="gap: 0.5rem">
-            <slot name="title" />
-          </div>
-        </v-card-title>
-        <v-card-text class="pa-6">
-          <slot name="content" />
-        </v-card-text>
+    <v-card
+      variant="outlined"
+      class="custom-border"
+      rounded="lg"
+      :height="height"
+    >
+      <v-card-text>
         <slot />
-      </v-card>
-    </v-sheet>
+      </v-card-text>
+    </v-card>
   </div>
 </template>
 
@@ -34,3 +25,9 @@ defineProps({
   },
 });
 </script>
+
+<style scoped>
+.custom-border {
+  border-color: #1f1f21; /* Custom border color */
+}
+</style>

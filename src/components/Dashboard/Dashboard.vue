@@ -26,15 +26,11 @@
         </v-row>
       </v-col>
       <v-col cols="12" lg="4" class="d-flex flex-column" style="gap: 0.5rem">
-        <DashboardLastTransactions @transactions="$emit('transactions')" />
-        <DashboardLastServices @services="$emit('services')" />
+        <DashboardLastTransactions />
+        <DashboardLastServices />
       </v-col>
     </v-row>
   </div>
 </template>
 
-<script setup lang="ts">
-const dashboard = useDashboardStore();
-
-const $dashboard = computed(() => dashboard.$dashboard);
-</script>
+<script setup lang="ts"></script>

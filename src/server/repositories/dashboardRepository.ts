@@ -1,4 +1,8 @@
 import prisma from "@/lib/prisma";
+import {
+  ServicesClientProps,
+  TransactionCategoryProps,
+} from "~/interfaces/Dashboard";
 
 interface TransactionProps {
   total: number;
@@ -10,11 +14,13 @@ export const index = async (input: {
   initialDate: string;
   finalDate: string;
 }) => {
+  const { calculeServiceTotals } = useServiceApiUtils();
   const { userId, initialDate, finalDate } = input;
 
   const gte = new Date(initialDate);
   const lte = new Date(finalDate);
 
+  let totalServices = 0;
   let totalCredit = 0;
   let totalExpense = 0;
   let totalInvestment = 0;
@@ -48,6 +54,7 @@ export const index = async (input: {
     select: {
       amount: true,
       type: true,
+      dueDate: true,
       Category: {
         select: {
           categoryName: true,
@@ -76,6 +83,11 @@ export const index = async (input: {
       hourValue: true,
       title: true,
       clientProjectId: true,
+      Client: {
+        select: {
+          name: true,
+        },
+      },
       ServiceOccurrence: {
         select: {
           id: true,
@@ -96,16 +108,48 @@ export const index = async (input: {
     },
   });
 
-  const { calculeServiceTotals } = useServiceApiUtils();
-  let totalServices = 0;
-
   services.forEach((service) => {
     totalServices =
       //@ts-ignore
       totalServices + Number(calculeServiceTotals(service).valorNumber ?? 0);
   });
 
-  const lastServices = services.slice(0, 5);
+  const lastServices = services
+    .map((item) => {
+      return {
+        id: item.id,
+        serviceDate: item.serviceDate,
+        hourValue: item.hourValue,
+        Client: item.Client,
+        //@ts-ignore
+        totalValue: Number(calculeServiceTotals(item).valorNumber ?? 0),
+      };
+    })
+    .slice(0, 5);
+
+  const transactionsCategories = await prisma.$queryRaw<
+    TransactionCategoryProps[]
+  >`
+    select
+      sum(t.amount) total,
+      c.category_name category
+    from transactions t 
+    join categories c on c.id = t.category_id
+        where t.user_id = ${userId}
+          and t.due_date BETWEEN ${gte} and ${lte}
+    group by  c.category_name
+  `;
+
+  const servicesClients = await prisma.$queryRaw<ServicesClientProps[]>`
+    select
+      cast(count(s.id) as integer) total,
+      c.name client
+    from services s  
+    join clients c on c.id = s.client_id
+    where s.user_id = ${userId}
+      and s.service_date BETWEEN ${gte} and ${lte}
+    group by  client
+  `;
 
   return {
     totalCredit,
@@ -117,5 +161,7 @@ export const index = async (input: {
     totalServices: totalServices.toFixed(2),
     lastTransactions,
     lastServices,
+    transactionsCategories,
+    servicesClients,
   };
 };

@@ -4,7 +4,7 @@
       <Table
         title="Top Transações por categoria"
         :headers="headers"
-        :items="items"
+        :items="$transactions"
         :items-per-page="5"
         :show-select="false"
         :show-crud="false"
@@ -35,16 +35,28 @@
 </template>
 
 <script setup lang="ts">
-const headers = ref([
-  { title: "", key: "category" },
-  // { title: "Valor", key: "value" },
-]);
+const dashboard = useDashboardStore();
 
-const items = ref([
-  { category: "Alimentação", value: "R$ 1.000,00", percent: 50 },
-  { category: "Transporte", value: "R$ 500,00", percent: 10 },
-  { category: "Saúde", value: "R$ 300,00", percent: 15 },
-  { category: "Educação", value: "R$ 200,00", percent: 12 },
-  { category: "Lazer", value: "R$ 100,00", percent: 22 },
-]);
+const { amountFormated } = useUtils();
+
+const $transactions = computed(() => {
+  let total = dashboard.$dashboard?.transactionsCategories.reduce(
+    (acc, item) => acc + Number(item.total),
+    1
+  );
+
+  if (!total) total = 1;
+
+  return dashboard.$dashboard?.transactionsCategories
+    .map((item) => ({
+      category: item.category,
+      value: amountFormated(item.total, true),
+      total: item.total,
+      percent: ((item.total / total) * 100).toFixed(2),
+    }))
+    .sort((a, b) => b.total - a.total)
+    .slice(0, 10);
+});
+
+const headers = ref([{ title: "", key: "category" }]);
 </script>

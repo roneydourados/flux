@@ -6,4 +6,16 @@ export interface DashboardProps {
   totalServices: number;
   lastTransactions: TransactionProps[];
   lastServices: ServiceProps[];
+  transactionsCategories: TransactionCategoryProps[];
+  servicesClients: ServicesClientProps[];
+}
+
+export interface TransactionCategoryProps {
+  total: number;
+  category: string;
+}
+
+export interface ServicesClientProps {
+  total: number;
+  client: string;
 }

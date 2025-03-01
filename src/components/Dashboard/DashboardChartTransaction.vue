@@ -3,37 +3,35 @@
     <v-row dense>
       <v-col cols="12">
         <Card height="565">
-          <template #content>
-            <Chart
-              :chart-options="chartOptions.chartOptions"
-              :series="chartOptions.series"
-              :height="chartOptions.chartOptions.chart.height"
-            />
+          <Chart
+            :chart-options="chartOptions.chartOptions"
+            :series="chartOptions.series"
+            :height="chartOptions.chartOptions.chart.height"
+          />
 
-            <div class="d-flex flex-column mt-6" style="gap: 0.5rem">
-              <div class="d-flex align-center justify-space-between">
-                <div class="d-flex align-center" style="gap: 1rem">
-                  <TransactionUpSVG height="30" />
-                  <span>Receitas</span>
-                </div>
-                <span>25%</span>
+          <div class="d-flex flex-column mt-6" style="gap: 0.5rem">
+            <div class="d-flex align-center justify-space-between">
+              <div class="d-flex align-center" style="gap: 1rem">
+                <TransactionUpSVG height="30" />
+                <span>Receitas</span>
               </div>
-              <div class="d-flex align-center justify-space-between">
-                <div class="d-flex align-center" style="gap: 1rem">
-                  <TransactionDownSVG height="30" />
-                  <span>Despesas</span>
-                </div>
-                <span>15%</span>
-              </div>
-              <div class="d-flex align-center justify-space-between">
-                <div class="d-flex align-center" style="gap: 1rem">
-                  <TransactionInvestmentSVG height="30" />
-                  <span>Investimentos</span>
-                </div>
-                <span>5%</span>
-              </div>
+              <span>{{ $results.credit }}%</span>
             </div>
-          </template>
+            <div class="d-flex align-center justify-space-between">
+              <div class="d-flex align-center" style="gap: 1rem">
+                <TransactionDownSVG height="30" />
+                <span>Despesas</span>
+              </div>
+              <span>{{ $results.expense }} %</span>
+            </div>
+            <div class="d-flex align-center justify-space-between">
+              <div class="d-flex align-center" style="gap: 1rem">
+                <TransactionInvestmentSVG height="30" />
+                <span>Investimentos</span>
+              </div>
+              <span>{{ $results.investment }}%</span>
+            </div>
+          </div>
         </Card>
       </v-col>
     </v-row>
@@ -41,9 +39,43 @@
 </template>
 
 <script setup lang="ts">
+const dashboard = useDashboardStore();
+
+const { amountFormated } = useUtils();
+
+const $results = computed(() => {
+  let total =
+    Number(dashboard.$dashboard?.totalInvestment ?? 0) +
+    Number(dashboard.$dashboard?.totalCredit ?? 0) +
+    Number(dashboard.$dashboard?.totalExpense ?? 0);
+
+  if (total === 0) {
+    total = 1;
+  }
+
+  return {
+    credit: (
+      (Number(dashboard.$dashboard?.totalCredit ?? 0) / total) *
+      100
+    ).toFixed(2),
+    expense: (
+      (Number(dashboard.$dashboard?.totalExpense ?? 0) / total) *
+      100
+    ).toFixed(2),
+    investment: (
+      (Number(dashboard.$dashboard?.totalInvestment ?? 0) / total) *
+      100
+    ).toFixed(2),
+  };
+});
+
 const chartOptions = computed(() => {
   return {
-    series: [25, 15, 5],
+    series: [
+      Number($results.value.credit),
+      Number($results.value.expense),
+      Number($results.value.investment),
+    ],
     chartOptions: {
       chart: {
         height: "280",

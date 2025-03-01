@@ -4,17 +4,17 @@
       <Table
         title="Top serviços por cliente"
         :headers="headers"
-        :items="items"
+        :items="$transactions"
         :items-per-page="5"
         :show-select="false"
         :show-crud="false"
         :loading="false"
       >
-        <template v-slot:item.category="{ item }">
+        <template v-slot:item.service="{ item }">
           <div class="d-flex flex-column" style="gap: 0.5rem">
             <div class="d-flex flex-column mt-2">
               <div class="d-flex align-center justify-space-between">
-                <span>{{ item.category }}</span>
+                <span>{{ item.client }}</span>
                 <span>{{ item.percent }}%</span>
               </div>
               <v-progress-linear
@@ -35,16 +35,28 @@
 </template>
 
 <script setup lang="ts">
-const headers = ref([
-  { title: "", key: "category" },
-  // { title: "Valor", key: "value" },
-]);
+const dashboard = useDashboardStore();
 
-const items = ref([
-  { category: "ZDZCode", value: "R$ 1.000,00", percent: 50 },
-  { category: "Juspericia", value: "R$ 500,00", percent: 10 },
-  { category: "Will Facilita", value: "R$ 300,00", percent: 15 },
-  { category: "Prefeitura de Campo grande", value: "R$ 200,00", percent: 12 },
-  { category: "Mercado Vaz", value: "R$ 100,00", percent: 22 },
-]);
+const { amountFormated } = useUtils();
+
+const $transactions = computed(() => {
+  let total = dashboard.$dashboard?.servicesClients.reduce(
+    (acc, item) => acc + Number(item.total),
+    1
+  );
+
+  if (!total) total = 1;
+
+  return dashboard.$dashboard?.servicesClients
+    .map((item) => ({
+      client: item.client,
+      value: item.total,
+      total: item.total,
+      percent: ((item.total / total) * 100).toFixed(2),
+    }))
+    .sort((a, b) => b.total - a.total)
+    .slice(0, 10);
+});
+
+const headers = ref([{ title: "", key: "service" }]);
 </script>

@@ -1,10 +1,10 @@
 <template>
   <div>
-    <Card height="425">
+    <Card>
       <Table
         title="Ultimos serviços"
         :headers="headers"
-        :items="items"
+        :items="$services"
         :items-per-page="11"
         :show-select="false"
         :show-crud="false"
@@ -16,12 +16,12 @@
             size="small"
             variant="outlined"
             color="lightgrey"
-            @click="$emit('services')"
+            @click="$router.push('/services')"
           >
             Ver mais
           </Button>
         </template>
-        <template v-slot:item.transactionType="{ item }">
+        <template v-slot:item.serviceDate="{ item }">
           <div class="d-flex flex-column" style="gap: 0.5rem">
             <div class="d-flex flex-column mt-2">
               <div class="d-flex align-center justify-space-between">
@@ -32,15 +32,13 @@
                     width="30"
                     class="d-flex align-center justify-center"
                   >
-                    <v-icon :icon="item.icon" />
+                    <ServiceSVG height="18" />
                   </v-sheet>
-                  <span>{{ item.transactionType }}</span>
+                  <span>{{ item.Client.name }}</span>
                 </div>
-                <span
-                  :style="{ color: item.type === 'D' ? '#E57373' : '#66BB6A' }"
-                >
-                  {{ item.type === "D" ? "-" : "+" }}
-                  {{ amountFormated(item.value, true) }}
+                <span style="color: #66bb6a">
+                  +
+                  {{ amountFormated(Number(item.totalValue) ?? 0, true) }}
                 </span>
               </div>
             </div>
@@ -51,7 +49,7 @@
                 color: rgb(var(--v-theme-grey)) !important;
               "
             >
-              {{ moment(item.date).format("DD MMM, YYYY") }}
+              {{ moment(item.serviceDate).format("DD MMM, YYYY") }}
             </span>
           </div>
         </template>
@@ -62,43 +60,13 @@
 
 <script setup lang="ts">
 import moment from "moment";
+const dashboard = useDashboardStore();
+
 const { amountFormated } = useUtils();
 
-defineEmits(["services"]);
+const $services = computed(() => {
+  return dashboard.$dashboard?.lastServices;
+});
 
-const headers = ref([
-  { title: "", key: "transactionType" },
-  // { title: "Valor", key: "value" },
-]);
-
-const items = ref([
-  {
-    transactionType: "Implementação tela dashboard",
-    value: 6700,
-    date: "2024-10-10",
-    type: "C",
-    icon: "mdi-dots-hexagon",
-  },
-  {
-    transactionType: "Correção de bug task 88954",
-    value: 150,
-    date: "2024-11-11",
-    type: "C",
-    icon: "mdi-credit-card-outline",
-  },
-  {
-    transactionType: "Criar componente no projeto da inpart",
-    value: 200,
-    date: "2024-11-12",
-    type: "C",
-    icon: "mdi-dots-hexagon",
-  },
-  {
-    transactionType: "Ajuste de tela de login",
-    value: 500,
-    date: "2024-11-13",
-    type: "C",
-    icon: "mdi-dots-hexagon",
-  },
-]);
+const headers = ref([{ title: "", key: "serviceDate" }]);
 </script>
