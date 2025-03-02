@@ -22,7 +22,7 @@
         </v-col>
       </v-row>
     </FormCrud>
-    <ApplicationOverlay :overlay="loading" />
+    <DialogLoading :dialog="loading" />
   </DrawerForm>
 </template>
 

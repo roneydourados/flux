@@ -72,7 +72,7 @@
         </Button>
       </template>
     </FormCrud>
-    <ApplicationOverlay :overlay="loading" />
+    <DialogLoading :dialog="loading" />
     <DialogQuestion
       v-model="dialogQuestion"
       title="Liquidar/Quitar transação"

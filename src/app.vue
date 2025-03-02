@@ -4,7 +4,7 @@
   <NuxtLayout>
     <NuxtPage />
   </NuxtLayout>
-  <ApplicationOverlay :overlay="loading" />
+  <DialogLoading :dialog="loading" />
 </template>
 <script setup lang="ts">
 const nuxtApp = useNuxtApp();

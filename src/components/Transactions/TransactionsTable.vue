@@ -172,7 +172,7 @@
       @cancel="dialogDownQuestion = false"
       @confirm="handleDownTransaction"
     />
-    <ApplicationOverlay :overlay="loading" />
+    <DialogLoading :dialog="loading" />
     <!-- <pre>{{ $transactions }}</pre> -->
   </div>
 </template>

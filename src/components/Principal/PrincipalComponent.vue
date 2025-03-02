@@ -95,7 +95,7 @@
         <div v-if="tabItem.id === 4"><Signature /></div>
       </v-tabs-window-item>
     </v-tabs-window>
-    <ApplicationOverlay :overlay="loading" />
+    <DialogLoading :dialog="loading" />
   </div>
 </template>
 

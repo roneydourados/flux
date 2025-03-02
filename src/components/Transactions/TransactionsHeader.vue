@@ -100,7 +100,7 @@
       </v-col>
     </v-row>
     <TransactionForm v-model="showForm" />
-    <ApplicationOverlay :overlay="loading" />
+    <DialogLoading :dialog="loading" />
   </div>
 </template>
 
