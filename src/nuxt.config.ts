@@ -69,7 +69,7 @@ export default defineNuxtConfig({
   app: {
     head: {
       title: "Flux",
-      titleTemplate: "Flux - %s",
+      titleTemplate: "Flux - App",
       meta: [
         {
           name: "theme-color",
