@@ -5,6 +5,11 @@
 // })
 
 import vuetify, { transformAssetUrls } from "vite-plugin-vuetify";
+import { icons } from "./utils/pwaConfig";
+
+const sw = true;
+const pwaTheme = "#141414";
+
 export default defineNuxtConfig({
   ssr: false,
   compatibilityDate: "2024-04-03",
@@ -19,6 +24,7 @@ export default defineNuxtConfig({
   modules: [
     "nuxt-auth-utils",
     "@pinia/nuxt",
+    "@vite-pwa/nuxt",
     (_options, nuxt) => {
       nuxt.hooks.hook("vite:extendConfig", (config) => {
         // @ts-expect-error
@@ -58,6 +64,66 @@ export default defineNuxtConfig({
         clientSecret: process.env.NUXT_OAUTH_GOOGLE_CLIENT_SECRET,
         redirectURL: process.env.NUXT_OAUTH_GOOGLE_REDIRECT_URL,
       },
+    },
+  },
+  app: {
+    head: {
+      title: "Flux",
+      titleTemplate: "Flux - %s",
+      meta: [
+        {
+          name: "theme-color",
+          content: pwaTheme,
+        },
+      ],
+    },
+  },
+  pwa: {
+    strategies: sw ? "injectManifest" : "generateSW",
+    srcDir: sw ? "service-worker" : undefined,
+    filename: sw ? "sw.ts" : undefined,
+    registerType: "autoUpdate",
+    manifest: {
+      name: "Flux",
+      short_name: "Flux",
+      theme_color: pwaTheme,
+      display: "standalone",
+      description: "Flux",
+      screenshots: [
+        {
+          src: "windows11/LargeTile.scale-200.png",
+          sizes: "620x620",
+          type: "image/png",
+          form_factor: "narrow",
+        },
+        {
+          src: "windows11/LargeTile.scale-200.png",
+          sizes: "620x620",
+          type: "image/png",
+          form_factor: "wide",
+        },
+      ],
+      icons,
+    },
+    workbox: {
+      globPatterns: ["**/*.{js,css,html,png,svg,ico}"],
+    },
+    injectManifest: {
+      globPatterns: ["**/*.{js,css,html,png,svg,ico}"],
+      maximumFileSizeToCacheInBytes: 5000000, // Ajuste o valor conforme necessário
+    },
+    client: {
+      installPrompt: true,
+      // you don't need to include this: only for testing purposes
+      // if enabling periodic sync for update use 1 hour or so (periodicSyncForUpdates: 3600)
+      periodicSyncForUpdates: 3600,
+    },
+    devOptions: {
+      enabled: true,
+      suppressWarnings: true,
+      navigateFallback: "/",
+      navigateFallbackAllowlist: [/^\/$/],
+      type: "module",
     },
   },
 });
