@@ -86,17 +86,16 @@
       </template>
 
       <template v-if="showPagination && itemsPerPage < items.length" v-slot:top>
-        <div class="d-flex justify-end px-4">
-          <Card height="38">
-            <v-pagination
-              v-model="page"
-              :length="pageCount"
-              rounded="circle"
-              density="comfortable"
-              size="small"
-              total-visible="4"
-            />
-          </Card>
+        <div class="d-flex justify-end pa-2">
+          <v-pagination
+            v-model="page"
+            :length="pageCount"
+            rounded="circle"
+            density="comfortable"
+            size="small"
+            total-visible="4"
+            variant="flat"
+          />
         </div>
       </template>
     </v-data-table>
