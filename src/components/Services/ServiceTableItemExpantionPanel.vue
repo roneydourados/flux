@@ -4,7 +4,8 @@
       <v-expansion-panel>
         <v-expansion-panel-title disable-icon-rotate>
           <div
-            class="d-flex align-center justify-space-between text-grey-darken-1 w-100"
+            v-if="!mobile"
+            class="d-flex flex-wrap align-center justify-space-between text-grey-darken-1 w-100"
             style="gap: 0.5rem"
           >
             <div
@@ -104,6 +105,93 @@
               </div>
             </div>
           </div>
+          <v-list v-else color="#141414" width="100%">
+            <v-list-item :title="`${item.ClientProject?.name}`">
+              <template #subtitle>
+                <div
+                  class="d-flex align-center text-grey-darken-1"
+                  style="gap: 0.5rem"
+                >
+                  <strong># {{ item.id }}</strong>
+
+                  <span>Total</span>
+                  {{
+                    amountFormated(
+                      calculeServiceTotals(item).valorNumber ?? 0,
+                      true
+                    )
+                  }}
+                </div>
+              </template>
+            </v-list-item>
+            <v-list-item>
+              <template #subtitle>
+                <div
+                  class="d-flex align-center text-grey-darken-1"
+                  style="gap: 0.5rem"
+                >
+                  <span>Duração</span>
+                  {{ calculeServiceTotals(item).horas }}
+                </div>
+              </template>
+            </v-list-item>
+            <v-list-item>
+              <template #subtitle>
+                <div class="d-flex align-center" style="gap: 0.5rem">
+                  <ServiceAnimedTimerSVG
+                    v-if="item.status === 'STARTED'"
+                    height="20"
+                  />
+                  {{ getStatus(item).title }}
+                </div>
+              </template>
+            </v-list-item>
+            <v-list-item>
+              <template #subtitle>
+                <div class="d-flex flex-wrap align-center" style="gap: 0.5rem">
+                  <div
+                    v-if="item.status === 'STARTED'"
+                    class="d-flex align-center"
+                    style="gap: 0.5rem"
+                  >
+                    <span>{{ currentHour }}</span>
+                  </div>
+                  <v-btn
+                    icon
+                    color="blue-grey-lighten-2"
+                    variant="text"
+                    type="submit"
+                    size="small"
+                    :disabled="item.status === 'FINISHED'"
+                    @click="updateStatusService(item)"
+                  >
+                    <ServiceTimerPlaySVG
+                      height="30"
+                      v-if="item.status === 'STOPPED'"
+                    />
+                    <ServiceTimerStopSVG height="20" v-else />
+                    <v-tooltip
+                      activator="parent"
+                      location="top center"
+                      content-class="tooltip-background"
+                    >
+                      {{ item.status === "STOPPED" ? "Iniciar" : "Parar" }}
+                    </v-tooltip>
+                  </v-btn>
+                  <MenuButton
+                    :items="itemsMenu(item)"
+                    variant="text"
+                    size="small"
+                    is-icon
+                    @click="handleClickMenuButton($event, item)"
+                    :disabled="item.isInvoiced"
+                  >
+                    <EditSVG />
+                  </MenuButton>
+                </div>
+              </template>
+            </v-list-item>
+          </v-list>
         </v-expansion-panel-title>
         <v-expansion-panel-text>
           <v-row dense class="mb-4">
@@ -296,7 +384,7 @@
 
 <script setup lang="ts">
 import moment from "moment";
-// import { useDisplay } from "vuetify";
+import { useDisplay } from "vuetify";
 
 const props = defineProps({
   item: {
@@ -307,7 +395,7 @@ const props = defineProps({
 
 const serviceStore = useServiceStore();
 const { amountFormated, getFiltersStoreServices } = useUtils();
-//const { mobile } = useDisplay();
+const { mobile } = useDisplay();
 const { calculeServiceTotalsOccurence, calculeServiceTotals } =
   useServiceUtils();
 const { $toast } = useNuxtApp();

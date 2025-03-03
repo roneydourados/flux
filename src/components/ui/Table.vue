@@ -92,7 +92,6 @@
             :length="pageCount"
             rounded="circle"
             density="comfortable"
-            size="small"
             total-visible="4"
             variant="flat"
           />
