@@ -415,7 +415,7 @@ export const invoiceServices = async (input: {
 
       await prisma.service.updateMany({
         where: {
-          financeOwner: service?.financeOwner,
+          financeOwner: service.financeOwner,
           // clientId,
           // userId,
           // serviceDate: {
