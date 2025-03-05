@@ -409,7 +409,7 @@ export const invoiceServices = async (input: {
       // apagar transação caso exista
       await prisma.transaction.delete({
         where: {
-          publicId: service?.financeOwner!,
+          publicId: service.financeOwner,
         },
       });
 
