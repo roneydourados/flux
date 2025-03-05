@@ -1,5 +1,13 @@
 <template>
   <div class="py-4">
+    <v-row>
+      <v-col cols="12">
+        <Months
+          @month="updateDatesMonth($event)"
+          @year="updateDatesYear($event)"
+        />
+      </v-col>
+    </v-row>
     <v-row dense>
       <v-col
         cols="12"
@@ -158,6 +166,34 @@ const $transactionPaymentForms = computed(() => {
   return tp;
 });
 
+const updateDatesMonth = async (month: number) => {
+  const year = moment().year();
+  const selectMonth = month < 10 ? `0${month + 1}` : (month + 1).toString();
+
+  filter.value.initialDate = moment(`${year}-${selectMonth}`).format(
+    "YYYY-MM-DD"
+  );
+
+  filter.value.finalDate = moment(filter.value.initialDate)
+    .endOf("month")
+    .format("YYYY-MM-DD");
+
+  await getTransactions();
+};
+
+const updateDatesYear = async (year: number) => {
+  const selectMonth = moment(filter.value.initialDate).format("MM");
+
+  filter.value.initialDate = moment(`${year}-${selectMonth}-01`).format(
+    "YYYY-MM-DD"
+  );
+  filter.value.finalDate = moment(filter.value.initialDate)
+    .endOf("month")
+    .format("YYYY-MM-DD");
+
+  await getTransactions();
+};
+
 const getTransactions = async () => {
   loading.value = true;
   try {
@@ -166,36 +202,15 @@ const getTransactions = async () => {
       finalDate: filter.value.finalDate,
       status: filter.value.status,
     });
-  } catch (error) {
-    console.error(error);
-  } finally {
-    loading.value = false;
-  }
-};
 
-/*
-const setLocalStorageMonth = async (month: number) => {
-  localStorage.setItem("month_transaction", month.toString());
-  try {
-    loading.value = true;
-    await getTransactions();
+    await transactionStore.chartMonth({
+      initialDate: filter.value.initialDate,
+      finalDate: filter.value.finalDate,
+    });
   } catch (error) {
     console.error(error);
   } finally {
     loading.value = false;
   }
 };
-
-const setLocalStorageYear = async (year: number) => {
-  localStorage.setItem("year_transaction", year.toString());
-  try {
-    loading.value = true;
-    //await getTransactions();
-  } catch (error) {
-    console.error(error);
-  } finally {
-    loading.value = false;
-  }
-};
-*/
 </script>

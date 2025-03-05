@@ -1,6 +1,6 @@
 <template>
   <div class="py-4">
-    <!-- <v-row dense>
+    <v-row dense>
       <v-col cols="12" lg="9" class="d-flex flex-column">
         <Months
           class="w-100"
@@ -8,7 +8,7 @@
           @year="getYear($event)"
         />
       </v-col>
-    </v-row> -->
+    </v-row>
     <v-row>
       <v-col cols="12" lg="4">
         <ClientSelectSearch
@@ -169,16 +169,38 @@ const handleExportServicesToPDF = () => {
     );
 };
 
+const getMonth = async (month: number) => {
+  const year = moment().year();
+  const selectMonth = month < 10 ? `0${month + 1}` : (month + 1).toString();
+
+  filter.value.initialDate = moment(`${year}-${selectMonth}`).format(
+    "YYYY-MM-DD"
+  );
+
+  filter.value.finalDate = moment(filter.value.initialDate)
+    .endOf("month")
+    .format("YYYY-MM-DD");
+
+  await getServices();
+};
+
+const getYear = async (year: number) => {
+  const selectMonth = moment(filter.value.initialDate).format("MM");
+
+  filter.value.initialDate = moment(`${year}-${selectMonth}-01`).format(
+    "YYYY-MM-DD"
+  );
+  filter.value.finalDate = moment(filter.value.initialDate)
+    .endOf("month")
+    .format("YYYY-MM-DD");
+
+  await getServices();
+};
+
 const getServices = async () => {
   loading.value = true;
 
   try {
-    // const initialDate = moment(
-    //   `${filter.value.year}-${filter.value.month + 1}-01`
-    // ).format("YYYY-MM-DD");
-
-    // const finalDate = moment(initialDate).endOf("month").format("YYYY-MM-DD");
-
     const payloadFilters = {
       initialDate: filter.value.initialDate,
       finalDate: filter.value.finalDate,

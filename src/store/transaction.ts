@@ -52,12 +52,15 @@ export const useTransactionStore = defineStore("transaction", () => {
     await api.delete(`/transaction/${publicId}`);
   };
 
-  const chartMonth = async (input: { year?: number; month?: number }) => {
-    const { year, month } = input;
+  const chartMonth = async (input: {
+    initialDate: string;
+    finalDate: string;
+  }) => {
+    const { initialDate, finalDate } = input;
     const config = {
       params: {
-        year,
-        month,
+        initialDate,
+        finalDate,
       },
     };
 

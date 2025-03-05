@@ -53,7 +53,7 @@ const chartOptions = computed(() => {
         width: 2,
       },
       title: {
-        text: "Fluxo financeiro do mês",
+        text: "Fluxo financeiro diário",
         align: "left",
         style: {
           color: "#fff",

@@ -19,12 +19,11 @@ onMounted(async () => {
     await transactionStore.index({
       initialDate,
       finalDate,
-      status,
     });
 
     await transactionStore.chartMonth({
-      year: Number(moment().year()),
-      month: moment(finalDate).month() + 1,
+      initialDate,
+      finalDate,
     });
   } finally {
     loading.value = false;

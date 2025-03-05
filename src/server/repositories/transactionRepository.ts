@@ -252,22 +252,11 @@ const exists = async (publicId: string) => {
 };
 
 export const chartMonthDays = async (input: {
-  month?: number;
-  year?: number;
+  initialDate: string;
+  finalDate: string;
   userId: number;
 }) => {
-  const { month, year, userId } = input;
-
-  const currentYear = year || new Date().getFullYear();
-  const currentMonth = month || new Date().getMonth() + 1;
-
-  const inititalDate = moment(`${currentYear}-${currentMonth}-01`)
-    .startOf("month")
-    .format("YYYY-MM-DD");
-
-  const finalDate = moment(`${currentYear}-${currentMonth}-01`)
-    .endOf("month")
-    .format("YYYY-MM-DD");
+  const { initialDate, finalDate, userId } = input;
 
   const data = await prisma.$queryRaw<ChartMonthProps[]>`
     WITH transaction_fin AS (
@@ -287,7 +276,7 @@ export const chartMonthDays = async (input: {
             END AS credit
         FROM transactions t
         WHERE t.user_id = ${userId}
-          AND t.due_date BETWEEN ${new Date(inititalDate)} AND ${new Date(
+          AND t.due_date BETWEEN ${new Date(initialDate)} AND ${new Date(
     finalDate
   )}
     )

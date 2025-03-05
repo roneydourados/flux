@@ -5,13 +5,13 @@ export default defineEventHandler(async (event) => {
   const user = userLogged(event);
 
   if (user && user.id) {
-    const { year, month } = getQuery(event);
+    const { initialDate, finalDate } = getQuery(event);
 
     setResponseStatus(event, 200);
 
     return chartMonthDays({
-      year: year ? Number(year) : undefined,
-      month: month ? Number(month) : undefined,
+      initialDate: String(initialDate),
+      finalDate: String(finalDate),
       userId: user.id,
     });
   }
