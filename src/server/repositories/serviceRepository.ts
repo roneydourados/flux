@@ -415,13 +415,13 @@ export const invoiceServices = async (input: {
 
       await prisma.service.updateMany({
         where: {
-          clientId,
-          userId,
-          //status: "FINISHED",
-          serviceDate: {
-            gte: new Date(initialDate),
-            lte: new Date(finalDate),
-          },
+          financeOwner: service?.financeOwner,
+          // clientId,
+          // userId,
+          // serviceDate: {
+          //   gte: new Date(initialDate),
+          //   lte: new Date(finalDate),
+          // },
         },
         data: {
           isInvoiced: invoiced,
