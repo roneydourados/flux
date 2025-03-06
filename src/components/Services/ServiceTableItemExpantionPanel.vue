@@ -45,11 +45,7 @@
                   v-if="item.status === 'STARTED'"
                   height="20"
                 />
-                <!-- <v-icon
-                  :icon="getStatus(item).icon"
-                  :color="getStatus(item).color"
-                  start
-                /> -->
+
                 {{ getStatus(item).title }}
               </div>
 
@@ -218,14 +214,16 @@
           </v-row>
           <v-row dense class="mb-4">
             <v-col cols="12">
-              <InfoLabel
+              <!-- <InfoLabel
                 title="Descrição do serviço"
                 font-size="0.9"
                 :show-divider="false"
                 icon="mdi-file-outline"
                 color-icon="orange"
                 :content="item.title"
-              />
+              /> -->
+
+              <div style="white-space: pre-line" v-html="item.title" />
             </v-col>
           </v-row>
           <div
