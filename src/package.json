@@ -38,6 +38,6 @@
     "@types/pdfmake": "^0.2.10",
     "prisma": "^6.4.1",
     "vite-plugin-vuetify": "^2.0.4",
-    "vuetify": "^3.7.12"
+    "vuetify": "^3.7.16"
   }
 }

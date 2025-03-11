@@ -20,11 +20,9 @@
             required
           />
         </v-col>
-        <!-- <v-col cols="6">
-          <DatePicker v-model="model.emission" label="Emissão" required />
-        </v-col> -->
+
         <v-col cols="6">
-          <DatePicker v-model="model.due" label="Data" required />
+          <DatePicker v-model="model.due" label="Data/Vencimento" required />
         </v-col>
         <v-col cols="12" lg="6">
           <PaymentMethodSelect v-model="model.paymentMethod" required />
@@ -60,7 +58,7 @@
         </v-col>
       </v-row>
 
-      <template #button>
+      <!-- <template #button>
         <Button
           color="info"
           @click="getTransactionDown"
@@ -70,7 +68,7 @@
           <DownTransactionSVG height="20" color="#fff" class="mr-2" />
           <span style="font-size: 1rem"> Liquidar </span>
         </Button>
-      </template>
+      </template> -->
     </FormCrud>
     <DialogLoading :dialog="loading" />
     <DialogQuestion
@@ -209,11 +207,11 @@ const handleSubmit = async () => {
     await getTransactions();
 
     clearModel();
-    drawer.value = false;
   } catch (error) {
     console.error(error);
   } finally {
     loading.value = false;
+    drawer.value = false;
   }
 };
 

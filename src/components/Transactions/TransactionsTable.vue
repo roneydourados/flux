@@ -48,12 +48,26 @@
             <template #append>
               <div class="d-flex align-center" style="gap: 0.5rem">
                 <v-btn
+                  v-if="item.status === 'A'"
                   icon
                   variant="text"
                   size="small"
                   @click="getDownItem(item)"
                 >
                   <DownTransactionSVG height="20" />
+                </v-btn>
+                <v-btn
+                  v-if="item.status === 'P'"
+                  icon
+                  variant="text"
+                  size="small"
+                  @click="getCancelDownItem(item)"
+                >
+                  <v-icon
+                    icon="mdi-flip-to-back"
+                    color="grey-darken-1"
+                    size="24"
+                  />
                 </v-btn>
                 <v-btn
                   icon
@@ -134,10 +148,34 @@
           </div>
 
           <div class="d-flex align-center">
-            <v-btn icon variant="text" size="small" @click="getDownItem(item)">
+            <v-btn
+              v-if="item.status === 'A'"
+              icon
+              variant="text"
+              size="small"
+              @click="getDownItem(item)"
+            >
               <DownTransactionSVG height="20" />
+              <v-tooltip activator="parent" location="bottom center">
+                Liquidar
+              </v-tooltip>
+            </v-btn>
+            <v-btn
+              v-if="item.status === 'P'"
+              icon
+              variant="text"
+              size="small"
+              @click="getCancelDownItem(item)"
+            >
+              <v-icon icon="mdi-flip-to-back" color="grey-darken-1" size="24" />
+              <v-tooltip activator="parent" location="bottom center">
+                Estornar
+              </v-tooltip>
             </v-btn>
             <v-btn icon variant="text" size="small" @click="getEditItem(item)">
+              <v-tooltip activator="parent" location="bottom center">
+                Editar/Detalhar
+              </v-tooltip>
               <EditSVG />
             </v-btn>
             <v-btn
@@ -146,6 +184,9 @@
               size="small"
               @click="getDeleteItem(item)"
             >
+              <v-tooltip activator="parent" location="bottom center">
+                Apagar
+              </v-tooltip>
               <DeleteSVG />
             </v-btn>
           </div>
@@ -172,6 +213,15 @@
       @cancel="dialogDownQuestion = false"
       @confirm="handleDownTransaction"
     />
+    <DialogQuestion
+      v-model="dialogCancelDownQuestion"
+      title="Estornar liquidação ?"
+      text="Confirmar estorno de liquidação/quitação de transação!"
+      color-confirm="info"
+      text-confirm="Estornar"
+      @cancel="dialogCancelDownQuestion = false"
+      @confirm="handleCancelDownTransaction"
+    />
     <DialogLoading :dialog="loading" />
     <!-- <pre>{{ $transactions }}</pre> -->
   </div>
@@ -189,6 +239,7 @@ const { $toast } = useNuxtApp();
 const showForm = ref(false);
 const dialogQuestion = ref(false);
 const dialogDownQuestion = ref(false);
+const dialogCancelDownQuestion = ref(false);
 const loading = ref(false);
 const selectedItem = ref<TransactionProps>();
 
@@ -250,6 +301,18 @@ const getDownItem = (item: TransactionProps) => {
   dialogDownQuestion.value = true;
 };
 
+const getCancelDownItem = (item: TransactionProps) => {
+  selectedItem.value = item;
+
+  if (selectedItem.value?.status === "A") {
+    useNuxtApp().$toast.warn("Transação não esta liquidada!");
+    selectedItem.value = {};
+    return;
+  }
+
+  dialogCancelDownQuestion.value = true;
+};
+
 const getDeleteItem = (item: TransactionProps) => {
   selectedItem.value = item;
   dialogQuestion.value = true;
@@ -278,6 +341,25 @@ const handleDownTransaction = async () => {
       await transactionStore.update({
         ...selectedItem.value,
         status: "P",
+      });
+
+      await getTransactions();
+    } catch (error) {
+      console.error(error);
+    } finally {
+      loading.value = false;
+    }
+  }
+};
+
+const handleCancelDownTransaction = async () => {
+  dialogCancelDownQuestion.value = false;
+  if (selectedItem.value?.publicId) {
+    loading.value = true;
+    try {
+      await transactionStore.update({
+        ...selectedItem.value,
+        status: "A",
       });
 
       await getTransactions();

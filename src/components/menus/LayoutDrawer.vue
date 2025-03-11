@@ -1,7 +1,12 @@
 <template>
-  <v-navigation-drawer v-model="drawer" color="background" width="250">
-    <template v-slot:prepend>
-      <!-- <v-list-item lines="two">
+  <v-navigation-drawer
+    v-model="drawer"
+    color="background"
+    elevation="4"
+    width="250"
+  >
+    <!-- <template v-slot:prepend>
+      <v-list-item lines="tw</v-navigation-drawer>o">
         <template #prepend>
           <v-avatar color="primary">
             <span class="text-h6">{{ $user?.initials }}</span>
@@ -15,15 +20,15 @@
             {{ $user?.Profile?.profileName }}
           </span>
         </template>
-      </v-list-item> -->
-    </template>
+      </v-list-item>
+    </template> -->
 
     <v-list density="compact" nav>
       <v-list-item
         v-for="(item, index) in itemsMenu"
         :key="index"
         :prepend-icon="item.icon"
-        :value="item.id"
+        :value="item.to"
         :to="item.to"
         active-class="item-menu"
       >
@@ -109,5 +114,10 @@ const logout = () => {
 .item-menu {
   background-color: rgb(var(--v-theme-surface)) !important;
   color: rgb(var(--v-theme-itemMenu)) !important;
+}
+
+.navigation-drawer-border {
+  border: 1px solid rgba(0, 0, 0, 0.1);
+  border-radius: 8px;
 }
 </style>

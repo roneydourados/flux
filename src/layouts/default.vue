@@ -1,6 +1,6 @@
 <template>
   <v-app>
-    <v-app-bar color="grey-darken-4" elevation="0">
+    <v-app-bar color="#191919" elevation="0">
       <template #title>
         <Logo height="40" />
       </template>

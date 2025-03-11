@@ -58,7 +58,7 @@ export const index = async (input: {
       },
     },
     orderBy: {
-      dueDate: "asc",
+      id: "desc",
     },
   });
 
