@@ -30,7 +30,6 @@
         :prepend-icon="item.icon"
         :value="item.to"
         :to="item.to"
-        active-class="item-menu"
       >
         <template #title>
           <span style="font-size: 0.8rem; font-weight: 400">
@@ -59,10 +58,10 @@
 </template>
 
 <script setup lang="ts">
-import { useDisplay } from "vuetify";
+//import { useDisplay } from "vuetify";
 
-const { getInitials } = useUtils();
-const { mobile } = useDisplay();
+// const { getInitials } = useUtils();
+// const { mobile } = useDisplay();
 
 const route = useRouter();
 
@@ -105,12 +104,12 @@ const itemsMenu = ref([
   },
 ]);
 
-const logout = () => {
-  route.push("/");
-};
+// const logout = () => {
+//   route.push("/");
+// };
 </script>
 
-<style scoped>
+<!-- <style scoped>
 .item-menu {
   background-color: rgb(var(--v-theme-surface)) !important;
   color: rgb(var(--v-theme-itemMenu)) !important;
@@ -120,4 +119,4 @@ const logout = () => {
   border: 1px solid rgba(0, 0, 0, 0.1);
   border-radius: 8px;
 }
-</style>
+</style> -->

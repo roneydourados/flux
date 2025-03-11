@@ -16,7 +16,7 @@
             size="small"
             variant="outlined"
             color="lightgrey"
-            @click="$router.push('/finance')"
+            @click="router.push('/finance')"
           >
             Ver mais
           </Button>
@@ -65,7 +65,7 @@
 <script setup lang="ts">
 import moment from "moment";
 const dashboard = useDashboardStore();
-
+const router = useRouter();
 const { amountFormated } = useUtils();
 
 const $transactions = computed(() => {

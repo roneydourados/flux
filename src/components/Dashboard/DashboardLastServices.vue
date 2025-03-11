@@ -16,7 +16,7 @@
             size="small"
             variant="outlined"
             color="lightgrey"
-            @click="$router.push('/services')"
+            @click="router.push('/services')"
           >
             Ver mais
           </Button>
@@ -61,7 +61,7 @@
 <script setup lang="ts">
 import moment from "moment";
 const dashboard = useDashboardStore();
-
+const router = useRouter();
 const { amountFormated } = useUtils();
 
 const $services = computed(() => {
