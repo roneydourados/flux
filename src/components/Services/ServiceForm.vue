@@ -8,7 +8,7 @@
     <FormCrud :on-submit="handleSubmit" :show-submit-button="true">
       <v-row dense class="pa-4">
         <v-col cols="12">
-          <TextInput v-model="model.title" label="Título" required />
+          <TextInput v-model="model.title" label="Título" required rows="12" />
         </v-col>
         <v-col cols="12">
           <ClientProjectSelectSearch
@@ -17,7 +17,7 @@
             required
           />
         </v-col>
-        <v-col cols="12" lg="6">
+        <v-col cols="12">
           <CurrencyInput v-model="model.value" label="Valor da hora" required />
         </v-col>
       </v-row>
