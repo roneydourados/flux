@@ -8,22 +8,16 @@
         />
       </v-col>
     </v-row>
-    <v-row dense>
+    <v-row>
       <v-col
         cols="12"
-        lg="4"
+        lg="6"
         class="d-flex flex-wrap align-center"
         style="gap: 0.5rem"
       >
         <DatePicker label="Data inicial" v-model="filter.initialDate" />
         <DatePicker label="Data final" v-model="filter.finalDate" />
-      </v-col>
-      <v-col
-        cols="12"
-        lg="4"
-        class="d-flex flex-wrap align-center"
-        style="gap: 0.5rem"
-      >
+
         <SelectInput
           v-model="filter.type"
           label="Tipo Transação"
@@ -33,22 +27,11 @@
           density="comfortable"
           variant="outlined"
         />
-        <SelectInput
-          v-model="filter.paymentForm"
-          label="Forma pagamento"
-          :items="$transactionPaymentForms"
-          item-title="name"
-          item-value="type"
-          density="comfortable"
-          variant="outlined"
-        />
       </v-col>
-    </v-row>
 
-    <v-row dense>
       <v-col
         cols="12"
-        lg="8"
+        lg="6"
         class="d-flex flex-wrap align-center"
         style="gap: 0.5rem"
       >
@@ -79,6 +62,13 @@
           class="mt-n4"
         >
           <v-icon>mdi-reload</v-icon>
+          <v-tooltip
+            activator="parent"
+            location="top center"
+            content-class="tooltip-background"
+          >
+            Atualiazar
+          </v-tooltip>
         </v-btn>
         <Button
           color="green"
@@ -87,12 +77,14 @@
           class="mt-n4"
           rounded="lg"
         >
-          <strong class="mr-1" style="font-size: 0.8rem">+</strong> Adicionar
-          Transação
+          <strong class="mr-1" style="font-size: 0.8rem">+</strong>
+          Nova Transação
           <v-icon icon="mdi-swap-vertical" end />
         </Button>
       </v-col>
     </v-row>
+
+    <v-row dense> </v-row>
 
     <v-row dense>
       <v-col cols="12" lg="6">

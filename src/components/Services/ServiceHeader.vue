@@ -16,16 +16,10 @@
           @update:model-value="getServices"
         />
       </v-col>
-      <v-col
-        cols="12"
-        lg="4"
-        class="d-flex align-center flex-wrap"
-        style="gap: 0.5rem"
-      >
+      <v-col cols="12" lg="8" class="d-flex flex-wrap" style="gap: 0.5rem">
         <DatePicker label="Data inicial" v-model="filter.initialDate" />
         <DatePicker label="Data final" v-model="filter.finalDate" />
-      </v-col>
-      <v-col cols="12" lg="4" class="d-flex flex-wrap" style="gap: 0.5rem">
+
         <SelectInput
           v-model="filter.status"
           label="Situação"
@@ -46,6 +40,13 @@
           class="mt-1"
         >
           <v-icon>mdi-reload</v-icon>
+          <v-tooltip
+            activator="parent"
+            location="top center"
+            content-class="tooltip-background"
+          >
+            Atualiazar
+          </v-tooltip>
         </v-btn>
         <Button
           color="green"
@@ -55,7 +56,7 @@
           class="mt-1"
         >
           <strong class="mr-1" style="font-size: 0.8rem">+</strong>
-          Adicionar serviço
+          Novo serviço
           <v-icon icon="mdi-account-wrench-outline" end />
         </Button>
       </v-col>
