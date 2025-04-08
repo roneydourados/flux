@@ -55,6 +55,9 @@
             v-model="paymentMethod"
           />
         </v-col>
+        <v-col cols="12">
+          <DatePicker required label="Data" v-model="dueDate" />
+        </v-col>
       </v-row>
     </DialogQuestion>
 
@@ -69,6 +72,7 @@
 </template>
 
 <script setup lang="ts">
+import moment from "moment";
 import { useDisplay } from "vuetify";
 const serviceStore = useServiceStore();
 
@@ -95,6 +99,7 @@ const showCancelInvoice = ref(false);
 const loading = ref(false);
 const category = ref<CategoryProps>();
 const paymentMethod = ref("");
+const dueDate = ref("");
 const headers = [
   {
     title: "",
@@ -123,6 +128,15 @@ const handleInvoice = async () => {
       return;
     }
 
+    if (
+      dueDate.value === "" ||
+      !dueDate.value ||
+      moment(dueDate.value).isBefore(moment())
+    ) {
+      $toast.warn("Data inválida ou menor que a data atual");
+      return;
+    }
+
     await serviceStore.invoiceServices({
       clientId: filters.Client.id!,
       initialDate: filters.initialDate!,
@@ -131,6 +145,7 @@ const handleInvoice = async () => {
       paymentMethod: paymentMethod.value,
       invoiced: true,
       total: $serviceTotals.value,
+      dueDate: dueDate.value,
     });
 
     await serviceStore.index({
@@ -165,6 +180,7 @@ const handleCancelInvoice = async () => {
       finalDate: filters.finalDate ?? "",
       invoiced: false,
       total: 0,
+      dueDate: dueDate.value,
     });
 
     await serviceStore.index({

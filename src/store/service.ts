@@ -62,6 +62,7 @@ export const useServiceStore = defineStore("service", () => {
   const invoiceServices = async (payload: {
     initialDate: string;
     finalDate: string;
+    dueDate: string;
     clientId: number;
     categoryId?: number;
     paymentMethod?: string;

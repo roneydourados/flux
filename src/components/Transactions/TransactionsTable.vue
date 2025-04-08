@@ -97,7 +97,7 @@
           {{ moment(item.emissonDate).format("DD/MM/YYYY") }}
         </template> -->
       <template v-slot:item.dueDate="{ item }">
-        {{ moment(item.dueDate).format("DD/MM/YYYY") }}
+        {{ formatDate(item.dueDate) }}
       </template>
       <template v-slot:item.Category="{ item }">
         <div
@@ -232,9 +232,8 @@ import { useDisplay } from "vuetify";
 import moment from "moment";
 
 const { mobile } = useDisplay();
-const { amountFormated, getTransactions } = useUtils();
+const { amountFormated, getTransactions, formatDate } = useUtils();
 const transactionStore = useTransactionStore();
-const { $toast } = useNuxtApp();
 
 const showForm = ref(false);
 const dialogQuestion = ref(false);

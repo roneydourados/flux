@@ -238,8 +238,8 @@ export const useUtils = () => {
     });
 
     await transactionStore.chartMonth({
-      year: Number(year),
-      month: moment(finalDate).month() + 1,
+      initialDate,
+      finalDate,
     });
   };
 

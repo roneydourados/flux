@@ -4,6 +4,7 @@ import prisma from "~/lib/prisma";
 import { useServiceApiUtils } from "../utils/ApiUtils";
 import { TransactionPaymentMethod } from "@prisma/client";
 import { uuidv7 } from "uuidv7";
+import moment from "moment";
 
 interface FiltersProps {
   initialDate?: string;
@@ -320,6 +321,7 @@ export const destroy = async (publicId: string) => {
 export const invoiceServices = async (input: {
   initialDate: string;
   finalDate: string;
+  dueDate: string;
   clientId: number;
   invoiced: boolean;
   userId: number;
@@ -336,6 +338,7 @@ export const invoiceServices = async (input: {
     categoryId,
     paymentMethod,
     total,
+    dueDate,
   } = input;
 
   try {
@@ -355,11 +358,19 @@ export const invoiceServices = async (input: {
         },
       });
 
+      // const dueDateMomentLocal = moment(dueDate, "YYYY-MM-DD");
+      // const dueDateJS = dueDateMomentLocal.toDate();
+
+      // Zerar as horas para garantir que estamos no início do dia
+      // dueDateJS.setHours(12, 10, 0, 0);
+
+      // console.log("🚀 ~ dueDateJS:", dueDateJS);
+
       const transaction = await prisma.transaction.create({
         data: {
           categoryId: categoryId!,
           amount: Number(total),
-          dueDate: new Date(),
+          dueDate: new Date(dueDate),
           emisstionDate: new Date(),
           fixed: false,
           title: `Faturamento de serviços, cliente: ${client?.name}`,
