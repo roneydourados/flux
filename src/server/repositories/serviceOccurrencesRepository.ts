@@ -55,11 +55,14 @@ export const updateTaskOccurrence = async ({
 };
 
 export const deleteTaskOccurrence = async (publicId: string) => {
-  const { calculeServiceTotals } = useServiceApiUtils();
+  //const { calculeServiceTotals } = useServiceApiUtils();
 
   try {
     const exists = await prisma.serviceOccurrence.findUnique({
       where: { publicId },
+      select: {
+        id: true,
+      },
     });
 
     if (exists) {
@@ -67,29 +70,29 @@ export const deleteTaskOccurrence = async (publicId: string) => {
         where: { id: exists.id },
       });
 
-      const serviceUpdateTotal = await prisma.service.findFirst({
-        select: {
-          id: true,
-          hourValue: true,
-          status: true,
-          createdAt: true,
-          serviceDate: true,
-          title: true,
-          serviceEndDate: true,
-          //totalValue: true,
-          userId: true,
-          clientProjectId: true,
-          ServiceOccurrence: {
-            select: {
-              id: true,
-              createdAt: true,
-              started: true,
-              ended: true,
-            },
-          },
-        },
-        where: { id: exists.serviceId },
-      });
+      // const serviceUpdateTotal = await prisma.service.findFirst({
+      //   select: {
+      //     id: true,
+      //     hourValue: true,
+      //     status: true,
+      //     createdAt: true,
+      //     serviceDate: true,
+      //     title: true,
+      //     serviceEndDate: true,
+      //     //totalValue: true,
+      //     userId: true,
+      //     clientProjectId: true,
+      //     ServiceOccurrence: {
+      //       select: {
+      //         id: true,
+      //         createdAt: true,
+      //         started: true,
+      //         ended: true,
+      //       },
+      //     },
+      //   },
+      //   where: { id: exists.serviceId },
+      // });
 
       // if (serviceUpdateTotal) {
       //   //@ts-ignore calcular o total da task sempre que finalizar um evento de tempo
