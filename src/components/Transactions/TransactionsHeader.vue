@@ -58,7 +58,7 @@
 
     <v-row dense>
       <v-col cols="12" lg="4">
-        <CategorySelectSearch v-model="filter.category" />
+        <CategorySelectSearch v-model="filter.category" clearable />
       </v-col>
       <v-col cols="12" lg="3" class="d-flex align-center" style="gap: 0.5rem">
         <v-btn
