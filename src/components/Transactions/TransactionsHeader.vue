@@ -55,7 +55,6 @@
         />
       </v-col>
     </v-row>
-
     <v-row dense>
       <v-col cols="12" lg="4">
         <CategorySelectSearch v-model="filter.category" clearable />
@@ -90,7 +89,6 @@
         </Button>
       </v-col>
     </v-row>
-
     <v-row dense>
       <v-col cols="12" lg="6">
         <TransactionChartMonth />
