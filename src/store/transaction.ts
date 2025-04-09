@@ -14,12 +14,14 @@ export const useTransactionStore = defineStore("transaction", () => {
     initialDate,
     finalDate,
     status,
+    categoryId,
   }: TransactionsFilterProps) => {
     const config = {
       params: {
         initialDate,
         finalDate,
         status,
+        categoryId,
       },
     };
 

@@ -16,8 +16,9 @@ export const index = async (input: {
   initialDate: string;
   finalDate: string;
   status?: string;
+  categoryId?: number;
 }) => {
-  const { finalDate, initialDate, userId, status } = input;
+  const { finalDate, initialDate, userId, status, categoryId } = input;
 
   const financeStatus = status === "all" ? undefined : status;
 
@@ -52,6 +53,7 @@ export const index = async (input: {
     where: {
       userId,
       status: financeStatus,
+      categoryId,
       dueDate: {
         gte,
         lte,

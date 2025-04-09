@@ -6,7 +6,7 @@ export default defineEventHandler(async (event) => {
   const user = userLogged(event);
 
   if (user && user.id) {
-    const { initialDate, finalDate, status } = getQuery(event);
+    const { initialDate, finalDate, status, categoryId } = getQuery(event);
 
     setResponseStatus(event, 200);
 
@@ -17,6 +17,7 @@ export default defineEventHandler(async (event) => {
         : moment().subtract(1, "month").format("YYYY-MM-DD"),
       userId: user.id,
       status: status ? String(status) : undefined,
+      categoryId: categoryId ? Number(categoryId) : undefined,
     });
   }
 });

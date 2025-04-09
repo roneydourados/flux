@@ -4,7 +4,13 @@
       :style="`${mobile ? 'width: 100%' : 'width: 15%'}`"
       @year="$emit('year', $event)"
     />
-    <v-carousel v-model="monthIndex" hide-delimiters height="50" v-if="mobile">
+    <v-carousel
+      v-model="monthIndex"
+      hide-delimiters
+      height="50"
+      v-if="mobile"
+      @update:model-value="getMonthWithChip(monthIndex)"
+    >
       <template v-slot:prev="{ props }">
         <v-btn
           size="x-small"

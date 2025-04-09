@@ -23,6 +23,7 @@ export interface TransactionsFilterProps {
   initialDate?: string;
   finalDate?: string;
   status?: string;
+  categoryId?: number;
 }
 
 export interface TransactionChartMonthDayProps {

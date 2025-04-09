@@ -53,6 +53,14 @@
           density="comfortable"
           variant="outlined"
         />
+      </v-col>
+    </v-row>
+
+    <v-row dense>
+      <v-col cols="12" lg="4">
+        <CategorySelectSearch v-model="filter.category" />
+      </v-col>
+      <v-col cols="12" lg="3" class="d-flex align-center" style="gap: 0.5rem">
         <v-btn
           icon
           flat
@@ -72,7 +80,6 @@
         </v-btn>
         <Button
           color="green"
-          :block="mobile"
           @click="showForm = true"
           class="mt-n4"
           rounded="lg"
@@ -83,8 +90,6 @@
         </Button>
       </v-col>
     </v-row>
-
-    <v-row dense> </v-row>
 
     <v-row dense>
       <v-col cols="12" lg="6">
@@ -127,6 +132,7 @@ const filter = ref({
   status: "all",
   initialDate: moment().startOf("month").format("YYYY-MM-DD"),
   finalDate: moment().endOf("month").format("YYYY-MM-DD"),
+  category: undefined as CategoryProps | undefined,
 });
 
 const transactionStatusItens = [
@@ -193,6 +199,7 @@ const getTransactions = async () => {
       initialDate: filter.value.initialDate,
       finalDate: filter.value.finalDate,
       status: filter.value.status,
+      categoryId: filter.value.category?.id,
     });
 
     await transactionStore.chartMonth({
