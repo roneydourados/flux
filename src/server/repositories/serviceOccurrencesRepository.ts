@@ -76,7 +76,7 @@ export const deleteTaskOccurrence = async (publicId: string) => {
           serviceDate: true,
           title: true,
           serviceEndDate: true,
-          totalValue: true,
+          //totalValue: true,
           userId: true,
           clientProjectId: true,
           ServiceOccurrence: {
@@ -91,17 +91,17 @@ export const deleteTaskOccurrence = async (publicId: string) => {
         where: { id: exists.serviceId },
       });
 
-      if (serviceUpdateTotal) {
-        //@ts-ignore calcular o total da task sempre que finalizar um evento de tempo
-        const totalService = calculeServiceTotals(serviceUpdateTotal);
+      // if (serviceUpdateTotal) {
+      //   //@ts-ignore calcular o total da task sempre que finalizar um evento de tempo
+      //   const totalService = calculeServiceTotals(serviceUpdateTotal);
 
-        await prisma.service.update({
-          data: {
-            totalValue: totalService.valorNumber.toFixed(2),
-          },
-          where: { id: serviceUpdateTotal.id },
-        });
-      }
+      //   await prisma.service.update({
+      //     data: {
+      //       totalValue: totalService.valorNumber.toFixed(2),
+      //     },
+      //     where: { id: serviceUpdateTotal.id },
+      //   });
+      // }
     }
   } catch (error) {
     throw createError({

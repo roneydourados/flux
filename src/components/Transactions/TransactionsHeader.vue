@@ -109,7 +109,7 @@
 
 <script setup lang="ts">
 import moment from "moment";
-import { useDisplay } from "vuetify";
+//import { useDisplay } from "vuetify";
 
 defineProps({
   title: {
@@ -118,7 +118,7 @@ defineProps({
   },
 });
 
-const { mobile } = useDisplay();
+//const { mobile } = useDisplay();
 const transactionStore = useTransactionStore();
 //const { getTransactions } = useUtils();
 const showForm = ref(false);
