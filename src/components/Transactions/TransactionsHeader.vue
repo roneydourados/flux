@@ -77,7 +77,7 @@
             Atualiazar
           </v-tooltip>
         </v-btn>
-        <Button
+        <!-- <Button
           color="green"
           @click="showForm = true"
           class="mt-n4"
@@ -86,7 +86,7 @@
           <strong class="mr-1" style="font-size: 0.8rem">+</strong>
           Nova Transação
           <v-icon icon="mdi-swap-vertical" end />
-        </Button>
+        </Button> -->
       </v-col>
     </v-row>
     <v-row dense>
@@ -102,7 +102,7 @@
         <TransactionCardSalt />
       </v-col>
     </v-row>
-    <TransactionForm v-model="showForm" />
+
     <DialogLoading :dialog="loading" />
   </div>
 </template>

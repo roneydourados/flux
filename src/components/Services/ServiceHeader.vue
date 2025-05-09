@@ -48,7 +48,7 @@
             Atualiazar
           </v-tooltip>
         </v-btn>
-        <Button
+        <!-- <Button
           color="green"
           :block="mobile"
           @click="showForm = true"
@@ -58,7 +58,7 @@
           <strong class="mr-1" style="font-size: 0.8rem">+</strong>
           Novo serviço
           <v-icon icon="mdi-account-wrench-outline" end />
-        </Button>
+        </Button> -->
       </v-col>
     </v-row>
     <v-row dense>
@@ -82,7 +82,7 @@
         <ServiceChartProject />
       </v-col>
     </v-row>
-    <ServiceForm v-model="showForm" />
+
     <DialogLoading :dialog="loading" />
   </div>
 </template>
@@ -106,7 +106,7 @@ const { saveServiceFilters, getFiltersStoreServices } = useUtils();
 const { serviceReport } = useExportPDF();
 const { user } = useUserSession();
 const serviceStore = useServiceStore();
-const showForm = ref(false);
+
 const loading = ref(false);
 
 const filter = ref({

@@ -10,7 +10,11 @@
         <ServiceTable />
       </v-col>
     </v-row>
+    <FloatButton v-if="!showForm" size="50" @click="showForm = true" />
+    <ServiceForm v-model="showForm" />
   </div>
 </template>
 
-<script setup lang="ts"></script>
+<script setup lang="ts">
+const showForm = ref(false);
+</script>

@@ -1,12 +1,16 @@
 <template>
   <div>
+    <StringInput
+      label="Pesquisar"
+      v-model="search"
+      @update:model-value="getClients(search)"
+    />
     <Table
       title="Seus clientes cadastrados"
       :headers="headers"
       :items="$all"
       :show-go-back="false"
-      @search="getClients($event)"
-      @add="$router.push('/clients/new')"
+      :show-crud="false"
     >
       <template v-if="mobile" v-slot:item.name="{ item }">
         <v-list density="compact" rounded="lg" class="mb-2">
@@ -94,6 +98,7 @@ const $all = computed(() => clientStore.$all);
 const loading = ref(false);
 const dialogDelete = ref(false);
 const selected = ref<ClientProps>();
+const search = ref("");
 
 const headers = computed(() => {
   if (mobile.value) {

@@ -1,6 +1,7 @@
 <template>
   <div class="w-100">
     <ClientTable />
+    <FloatButton size="50" @click="$router.push('/clients/new')" />
   </div>
   <!-- <DialogForm
     :show="show"

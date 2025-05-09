@@ -8,11 +8,11 @@
         <TransactionsTable />
       </v-col>
     </v-row>
+    <FloatButton v-if="!showForm" size="50" @click="showForm = true" />
+    <TransactionForm v-model="showForm" />
   </div>
 </template>
 
 <script setup lang="ts">
-// import { useDisplay } from "vuetify";
-
-// const { mobile } = useDisplay();
+const showForm = ref(false);
 </script>
