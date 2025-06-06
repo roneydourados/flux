@@ -77,6 +77,13 @@ export default defineOAuthGoogleEventHandler({
       secure: {
         token,
       },
+      cookie: {
+        maxAge: 60 * 60 * 24 * 30, // 30 dias
+        httpOnly: true,
+        secure: process.env.NODE_ENV === "production",
+        sameSite: "lax",
+        path: "/",
+      },
     });
 
     return sendRedirect(event, "/dashboard");
