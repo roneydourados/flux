@@ -7,24 +7,24 @@
           <v-col cols="12" lg="6">
             <div class="animate-fade-up">
               <h1 class="text-h2 font-weight-bold mb-6">
-                <span class="gradient-text">Flux</span>: Controle suas
+                <span class="gradient-text">Timer Count</span>: Controle suas
                 <span class="gradient-text">finanças</span> e
                 <span class="gradient-text">tempo</span> em um só lugar
               </h1>
               <p class="text-body-1 text-grey-darken-1 mb-8">
-                Com o Flux, você gerencia seu dinheiro e seus serviços por hora
-                de forma simples e eficiente. Tome o controle da sua vida
-                financeira hoje mesmo.
+                Com o Timer Count, você gerencia seu dinheiro e seus serviços
+                por hora de forma simples e eficiente. Tome o controle da sua
+                vida financeira hoje mesmo.
               </p>
               <v-btn size="x-large" color="primary" class="text-white">
-                Começar com o Flux
+                Começar com o Timer Count
               </v-btn>
             </div>
           </v-col>
           <v-col cols="12" lg="6">
             <v-img
               src="https://images.unsplash.com/photo-1460925895917-afdab827c52f"
-              alt="Flux Dashboard Preview"
+              alt="Timer Count Dashboard Preview"
               class="rounded-lg elevation-10 animate-fade-up"
             />
           </v-col>
@@ -36,7 +36,7 @@
     <section class="bg-white py-16">
       <v-container>
         <h2 class="text-h3 font-weight-bold text-center mb-12">
-          Por que escolher o Flux?
+          Por que escolher o Timer Count?
         </h2>
         <v-row>
           <v-col
@@ -87,14 +87,14 @@
     <section class="py-16 text-center">
       <v-container>
         <h2 class="text-h3 font-weight-bold mb-6">
-          Comece a transformar sua vida financeira com o Flux
+          Comece a transformar sua vida financeira com o Timer Count
         </h2>
         <p
           class="text-body-1 text-grey-darken-1 mb-8 mx-auto"
           style="max-width: 42rem"
         >
           Junte-se a milhares de pessoas que já estão economizando mais e
-          gerenciando melhor seu tempo com o Flux.
+          gerenciando melhor seu tempo com o Timer Count.
         </p>
         <v-btn size="x-large" color="primary" class="text-white">
           Criar Conta Gratuita
@@ -139,7 +139,7 @@ const features = [
 ];
 
 const stats = [
-  { number: "10k+", text: "Usuários do Flux" },
+  { number: "10k+", text: "Usuários do Timer Count" },
   { number: "1M+", text: "Horas Registradas" },
   { number: "R$5M+", text: "Economia Gerada" },
 ];

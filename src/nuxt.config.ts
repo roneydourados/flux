@@ -84,11 +84,11 @@ export default defineNuxtConfig({
     filename: sw ? "sw.ts" : undefined,
     registerType: "autoUpdate",
     manifest: {
-      name: "Flux",
-      short_name: "Flux",
+      name: "TimerCount",
+      short_name: "TimerCount",
       theme_color: pwaTheme,
       display: "standalone",
-      description: "Flux",
+      description: "Timer Count",
       screenshots: [
         {
           src: "windows11/LargeTile.scale-200.png",

@@ -12,7 +12,7 @@
 
           <p>
             Controle total das suas finanças, sem complicação. Transforme a
-            maneira como você gerencia seu dinheiro com o Flux.
+            maneira como você gerencia seu dinheiro com o Timer Count.
           </p>
           <a
             href="/api/auth/google"
@@ -29,7 +29,7 @@
               <v-img
                 src="@/assets/images/google.svg"
                 cover
-                alt="Flux controle financeiro pessoal"
+                alt="Timer Count controle financeiro pessoal e de serviços"
                 height="25"
                 width="25"
                 class="mr-2"
@@ -43,7 +43,7 @@
         <v-img
           src="@/assets/images/login-image.png"
           cover
-          alt="Flux controle financeiro pessoal"
+          alt="Timer Count controle financeiro pessoal"
           max-height="100dvh"
           style="object-fit: cover"
         />
