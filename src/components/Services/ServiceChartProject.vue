@@ -15,7 +15,7 @@ const serviceStore = useServiceStore();
 const chartOptions = computed(() => {
   return {
     series:
-      serviceStore.$services?.servicesProjects.map((service) =>
+      serviceStore.$services?.servicesProjects?.map((service) =>
         Number(service.total)
       ) ?? [],
     options: {
@@ -38,7 +38,7 @@ const chartOptions = computed(() => {
           fontWeight: "100",
         },
       },
-      labels: serviceStore.$services?.servicesProjects.map(
+      labels: serviceStore.$services?.servicesProjects?.map(
         (service) => service.project
       ),
       plotOptions: {
@@ -62,7 +62,7 @@ const chartOptions = computed(() => {
       legend: {
         show: false,
         labels: {
-          colors: serviceStore.$services?.servicesProjects.map(() => "#fff"),
+          colors: serviceStore.$services?.servicesProjects?.map(() => "#fff"),
         },
         position: "right",
         horizontalAlign: "center",

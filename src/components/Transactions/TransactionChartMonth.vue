@@ -18,21 +18,28 @@ const chartOptions = computed(() => {
     series: [
       {
         name: "Receita",
-        data: transactionStore.$transactionMonthChart.map((chart) => {
-          return Number(chart.credit ?? 0) * 1;
-        }),
+        data:
+          transactionStore.$transactionMonthChart.length > 0
+            ? transactionStore.$transactionMonthChart.map((chart) => {
+                return Number(chart.credit ?? 0) * 1;
+              })
+            : [],
       },
       {
         name: "Despesas",
-        data: transactionStore.$transactionMonthChart.map((chart) => {
-          return Number(chart.expense) * 1;
-        }),
+        data: transactionStore.$transactionMonthChart
+          ? transactionStore.$transactionMonthChart.map((chart) => {
+              return Number(chart.expense) * 1;
+            })
+          : [],
       },
       {
         name: "Investimentos",
-        data: transactionStore.$transactionMonthChart.map((chart) => {
-          return Number(chart.investment) * 1;
-        }),
+        data: transactionStore.$transactionMonthChart
+          ? transactionStore.$transactionMonthChart.map((chart) => {
+              return Number(chart.investment) * 1;
+            })
+          : [],
       },
     ],
 
@@ -79,9 +86,9 @@ const chartOptions = computed(() => {
         labels: {
           show: true,
           style: {
-            colors: transactionStore.$transactionMonthChart.map(
-              () => "#B8B8B8"
-            ),
+            colors: transactionStore.$transactionMonthChart
+              ? transactionStore.$transactionMonthChart.map(() => "#B8B8B8")
+              : ["#B8B8B8"],
           },
           formatter: function (val: any) {
             return amountFormated(val, true);
@@ -89,15 +96,15 @@ const chartOptions = computed(() => {
         },
       },
       xaxis: {
-        categories: transactionStore.$transactionMonthChart.map(
-          (chart) => chart.day
-        ),
+        categories: transactionStore.$transactionMonthChart
+          ? transactionStore.$transactionMonthChart.map((chart) => chart.day)
+          : [],
         labels: {
           show: true,
           style: {
-            colors: transactionStore.$transactionMonthChart.map(
-              () => "#B8B8B8"
-            ),
+            colors: transactionStore.$transactionMonthChart
+              ? transactionStore.$transactionMonthChart.map(() => "#B8B8B8")
+              : ["#B8B8B8"],
           },
         },
       },

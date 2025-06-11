@@ -68,8 +68,8 @@ export default defineNuxtConfig({
   },
   app: {
     head: {
-      title: "Flux",
-      titleTemplate: "Flux - App",
+      title: "TimerCount",
+      titleTemplate: "TimerCount - App",
       meta: [
         {
           name: "theme-color",

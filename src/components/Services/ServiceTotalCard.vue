@@ -38,7 +38,7 @@ const $serviceTotals = computed(() => {
   let totalValor = 0;
   let totalDuration = 0;
 
-  serviceStore.$services?.returnServices.map((service) => {
+  serviceStore.$services?.returnServices?.map((service) => {
     const totals = calculeServiceTotals(service);
     totalValor += totals.valorNumber;
     totalDuration += totals.finalDuration.asSeconds();

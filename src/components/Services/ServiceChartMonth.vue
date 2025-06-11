@@ -26,7 +26,7 @@ const $servicesInvoice = computed(() => {
 
   const accumulatedServices: { [key: string]: AccumulatedService } = {};
 
-  serviceStore.$services?.returnServices.forEach((service) => {
+  serviceStore.$services?.returnServices?.forEach((service) => {
     // Formatar a data para YYYY-MM-DD usando moment
     const serviceDay = moment(service.serviceDate).format("D");
 

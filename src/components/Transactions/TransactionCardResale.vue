@@ -21,7 +21,11 @@
 const transactions = useTransactionStore();
 const { amountFormated } = useUtils();
 const $totals = computed(() => {
-  return transactions.$all.reduce((acc, transaction) => {
+  if (!transactions.$all || transactions.$all.length === 0) {
+    return 0;
+  }
+
+  return transactions.$all?.reduce((acc, transaction) => {
     if (transaction.type === "CREDIT") {
       acc += Number(transaction.amount!);
     }
