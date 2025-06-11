@@ -101,8 +101,8 @@ defineProps({
   },
 });
 
-const { mobile } = useDisplay();
-const { saveServiceFilters, getFiltersStoreServices } = useUtils();
+//const { mobile } = useDisplay();
+// const { saveServiceFilters, getFiltersStoreServices } = useUtils();
 const { serviceReport } = useExportPDF();
 const { user } = useUserSession();
 const serviceStore = useServiceStore();
@@ -125,21 +125,6 @@ const serviceStatusItens = [
 ];
 
 const $services = computed(() => serviceStore.$services);
-
-onMounted(() => {
-  const filtersStore = getFiltersStoreServices();
-
-  if (filtersStore) {
-    filter.value.client = filtersStore.Client;
-    filter.value.month = filtersStore.initialDate
-      ? moment(filtersStore.initialDate).month()
-      : moment().month();
-    filter.value.year = filtersStore.initialDate
-      ? moment(filtersStore.initialDate).year()
-      : moment().year();
-    filter.value.status = filtersStore.invoiced;
-  }
-});
 
 const handleExportServicesToPDF = () => {
   const initialDate = `01-${filter.value.month + 1}-${filter.value.year}`;
@@ -210,9 +195,6 @@ const getServices = async () => {
     };
 
     await serviceStore.index(payloadFilters);
-
-    // salvar os filtros no localstorage
-    saveServiceFilters(payloadFilters);
   } catch (error) {
     console.error(error);
   } finally {
