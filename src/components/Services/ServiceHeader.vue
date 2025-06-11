@@ -12,7 +12,7 @@
     <v-row>
       <v-col cols="12" lg="4">
         <ClientSelectSearch
-          v-model="filter.client"
+          v-model="filter.Client"
           @update:model-value="getServices"
         />
       </v-col>
@@ -102,7 +102,7 @@ defineProps({
 });
 
 //const { mobile } = useDisplay();
-// const { saveServiceFilters, getFiltersStoreServices } = useUtils();
+const { saveServiceFilters, getFiltersStoreServices } = useUtils();
 const { serviceReport } = useExportPDF();
 const { user } = useUserSession();
 const serviceStore = useServiceStore();
@@ -113,7 +113,8 @@ const filter = ref({
   month: moment().month(),
   year: moment().year(),
   status: "Todas",
-  client: undefined as ClientProps | undefined,
+  invoiced: "Todas",
+  Client: undefined as ClientProps | undefined,
   initialDate: moment().startOf("month").format("YYYY-MM-DD"),
   finalDate: moment().endOf("month").format("YYYY-MM-DD"),
 });
@@ -126,6 +127,22 @@ const serviceStatusItens = [
 
 const $services = computed(() => serviceStore.$services);
 
+onMounted(async () => {
+  const filters = getFiltersStoreServices();
+
+  if (filters) {
+    filter.value.month = filters.month ?? moment().month();
+    filter.value.year = filters.year ?? moment().year();
+    filter.value.status = filters.status ?? "Todas";
+    filter.value.invoiced = filters.invoiced;
+    filter.value.Client = filters.Client;
+    filter.value.initialDate = filters.initialDate;
+    filter.value.finalDate = filters.finalDate;
+  }
+
+  await getServices();
+});
+
 const handleExportServicesToPDF = () => {
   const initialDate = `01-${filter.value.month + 1}-${filter.value.year}`;
   const finalDate = moment(initialDate, "DD-MM-YYYY")
@@ -135,7 +152,7 @@ const handleExportServicesToPDF = () => {
   const payloadFilters = {
     initialDate,
     finalDate,
-    Client: filter.value.client,
+    Client: filter.value.Client,
     invoiced: filter.value.status,
   } as ServiceFilterProps;
 
@@ -190,11 +207,13 @@ const getServices = async () => {
     const payloadFilters = {
       initialDate: filter.value.initialDate,
       finalDate: filter.value.finalDate,
-      Client: filter.value.client,
+      Client: filter.value.Client,
       invoiced: filter.value.status,
     };
 
     await serviceStore.index(payloadFilters);
+
+    saveServiceFilters(payloadFilters);
   } catch (error) {
     console.error(error);
   } finally {

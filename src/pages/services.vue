@@ -1,29 +1,39 @@
 <template>
   <Services />
-  <DialogLoading :dialog="loading" />
+  <!-- <DialogLoading :dialog="loading" /> -->
 </template>
 
 <script setup lang="ts">
 import moment from "moment";
 
 const serviceStore = useServiceStore();
-
-const loading = ref(false);
+const { getFiltersStoreServices } = useUtils();
+//const loading = ref(false);
 
 onMounted(async () => {
-  loading.value = true;
-  try {
-    const filters = {
-      ClientProject: undefined,
-      Client: undefined,
-      initialDate: moment().startOf("month").format("YYYY-MM-DD"),
-      finalDate: moment().endOf("month").format("YYYY-MM-DD"),
-      invoiced: "Todas",
-    };
+  let filter = {
+    ClientProject: undefined,
+    Client: undefined as ClientProps | undefined,
+    initialDate: moment().startOf("month").format("YYYY-MM-DD"),
+    finalDate: moment().endOf("month").format("YYYY-MM-DD"),
+    invoiced: "Todas",
+    month: moment().month(),
+    year: moment().year(),
+    status: "Todas",
+  };
 
-    await serviceStore.index(filters);
-  } finally {
-    loading.value = false;
+  let filtersStore = getFiltersStoreServices();
+
+  if (filtersStore) {
+    filter.month = filtersStore.month ?? moment().month();
+    filter.year = filtersStore.year ?? moment().year();
+    filter.status = filtersStore.status ?? "Todas";
+    filter.invoiced = filtersStore.invoiced;
+    filter.Client = filtersStore.Client;
+    filter.initialDate = filtersStore.initialDate;
+    filter.finalDate = filtersStore.finalDate;
   }
+
+  await serviceStore.index(filter);
 });
 </script>

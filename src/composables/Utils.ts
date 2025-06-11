@@ -253,6 +253,8 @@ export const useUtils = () => {
     return {
       ClientProject: undefined,
       Client: undefined,
+      month: moment().month(),
+      year: moment().year(),
       initialDate: moment().startOf("month").format("YYYY-MM-DD"),
       finalDate: moment().endOf("month").format("YYYY-MM-DD"),
       invoiced: "Todas",

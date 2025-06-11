@@ -43,6 +43,9 @@ export interface ServiceFilterProps {
   initialDate: string;
   finalDate: string;
   invoiced: string;
+  month?: number;
+  year?: number;
+  status?: string;
 }
 
 export interface ServiceInvoiceProps {
