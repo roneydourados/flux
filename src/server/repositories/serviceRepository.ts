@@ -1,10 +1,10 @@
 import { ServiceProjectProps, ServiceProps } from "~/interfaces/Service";
 import { Prisma } from "@prisma/client";
 import prisma from "~/lib/prisma";
-import { useServiceApiUtils } from "../utils/ApiUtils";
+//import { useServiceApiUtils } from "../utils/ApiUtils";
 import { TransactionPaymentMethod } from "@prisma/client";
 import { uuidv7 } from "uuidv7";
-import dayjs from "dayjs";
+//import dayjs from "dayjs";
 
 interface FiltersProps {
   initialDate?: string;
@@ -195,7 +195,7 @@ export const update = async ({
   occurrenceStartDate,
   occurrenceEndDate,
 }: ServiceProps) => {
-  const { calculeServiceTotals } = useServiceApiUtils();
+  //const { calculeServiceTotals } = useServiceApiUtils();
 
   try {
     const exists = await prisma.service.findFirst({

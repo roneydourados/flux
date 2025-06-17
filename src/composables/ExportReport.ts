@@ -318,121 +318,48 @@ export const useExportReport = () => {
     XLSX.writeFile(workbook, filename);
   };
 
-  /*
-  const exportReportExcel = (
-    services: ServiceProps[],
-    filters: ServiceFilterProps
-  ) => {
-    const { amountFormated } = useUtils();
-    const { user } = useUserSession();
-
-    let totalHoursDuration = 0;
-    const serviceArray = services.map((service) => {
-      const totals = totalHoursService(service);
-      totalHoursDuration += totals.totalHoursNumber;
-      return {
-        Projeto: service.ClientProject?.name,
-        Tarefa: service.title,
-        Inicio: dayjs(service.serviceDate?.substring(0, 10)).format(
-          "DD/MM/YYYY"
-        ),
-        Fim: service.serviceEndDate
-          ? dayjs(service.serviceEndDate.substring(0, 10)).format("DD/MM/YYYY")
-          : "Aberta",
-        //Duracao: totals.horas,
-        Duracao:
-          dayjs.duration(totals.totalHoursNumber, "hours").asMilliseconds() /
-          (1000 * 60 * 60 * 24),
-        ValorHora: amountFormated(service.hourValue, false),
-        Total: Number(totals.valor.replace("R$", "").replace(",", ".")),
-      };
-    });
-
-    const filename = `Relatório de horas de ${user.value?.name} ${dayjs(
-      filters.initialDate
-    ).format("DD/MM/YYYY")} até ${dayjs(filters.finalDate).format(
-      "DD/MM/YYYY"
-    )}.xlsx`;
-
-    const worksheet = XLSX.utils.json_to_sheet(serviceArray);
-
-    // Número total de linhas de dados + 1 (cabeçalho)
-    const totalRows = serviceArray.length + 1;
-    const totalRowIndex = totalRows + 1;
-
-    // 🟦 Total da coluna Duração (coluna E)
-    worksheet[`E${totalRowIndex}`] = {
-      t: "n",
-      f: `SUM(E2:E${totalRows})`,
-    };
-
-    // 🟩 Total da coluna Total (coluna G)
-    worksheet[`G${totalRowIndex}`] = {
-      t: "n",
-      f: `SUM(G2:G${totalRows})`,
-    };
-
-    // 🏷️ Rótulo "TOTAL" na primeira coluna (coluna A)
-    worksheet[`A${totalRowIndex}`] = {
-      t: "s",
-      v: "TOTAL",
-    };
-
-    // Atualiza o range do worksheet para incluir a linha extra
-    const range = XLSX.utils.decode_range(worksheet["!ref"]!);
-    range.e.r = totalRowIndex - 1; // linha final (0-based)
-    worksheet["!ref"] = XLSX.utils.encode_range(range);
-
-    // Cria workbook e exporta
-    const workbook = XLSX.utils.book_new();
-    XLSX.utils.book_append_sheet(workbook, worksheet, "Tarefas");
-    XLSX.writeFile(workbook, filename);
-  };
-  */
-
-  // const exportReportExcel = (
-  //   services: ServiceProps[],
-  //   filters: ServiceFilterProps
-  // ) => {
-  //   const { amountFormated } = useUtils();
-  //   const { user } = useUserSession();
-
-  //   let totalHoursDuration = 0;
-  //   const serviceArray = services.map((service) => {
-  //     const totals = totalHoursService(service);
-  //     totalHoursDuration = totalHoursDuration + totals.totalHoursNumber;
-  //     return {
-  //       Projeto: service.ClientProject?.name,
-  //       Tarefa: service.title,
-  //       Inicio: dayjs(service.serviceDate?.substring(0, 10)).format(
-  //         "DD/MM/YYYY"
-  //       ),
-  //       Fim: service.serviceEndDate
-  //         ? dayjs(service.serviceEndDate.substring(0, 10)).format("DD/MM/YYYY")
-  //         : "Aberta",
-  //       Duracao: totals.horas,
-  //       ValorHora: amountFormated(service.hourValue, false),
-  //       Total: Number(totals.valor.replace("R$", "").replace(",", ".")),
-  //     };
-  //   });
-
-  //   const filename = `Relatório de horas de ${user.value?.name} ${dayjs(
-  //     filters.initialDate
-  //   ).format("DD/MM/YYYY")} até ${dayjs(filters.finalDate).format(
-  //     "DD/MM/YYYY"
-  //   )}.xlsx`;
-
-  //   const worksheet = XLSX.utils.json_to_sheet(serviceArray);
-
-  //   const workbook = XLSX.utils.book_new();
-  //   XLSX.utils.book_append_sheet(workbook, worksheet, "Tarefas");
-
-  //   // Salva no browser
-  //   XLSX.writeFile(workbook, filename);
-  // };
-
   return { exportReportPDF, exportReportExcel };
 };
+
+// const totalHoursService = (service: ServiceProps) => {
+//   const { amountFormated } = useUtils();
+
+//   let totalHoursNumber = 0;
+
+//   // Use forEach para iterar, pois não estamos criando um novo array
+//   service.ServiceOccurrence?.forEach((oc) => {
+//     if (oc.started && oc.ended) {
+//       const initial = dayjs(oc.started);
+//       const final = dayjs(oc.ended);
+
+//       // Calcula a diferença em horas como um número de ponto flutuante (ex: 1.5)
+//       const hoursDifference = final.diff(initial, "hours", true);
+
+//       totalHoursNumber += hoursDifference;
+//     }
+//   });
+
+//   // 'totalHoursNumber' já é o total de horas em formato decimal
+//   const valorTotal = totalHoursNumber * service.hourValue;
+//   const valor = amountFormated(valorTotal, false);
+
+//   // --- Cálculo manual para o formato HH:mm:ss ---
+//   const hours = Math.floor(totalHoursNumber);
+//   const minutes = Math.floor((totalHoursNumber * 60) % 60);
+//   const seconds = Math.floor((totalHoursNumber * 3600) % 60);
+
+//   // Formata os valores para garantir dois dígitos (ex: 01, 09, 15)
+//   const formattedHours = String(hours).padStart(2, "0");
+//   const formattedMinutes = String(minutes).padStart(2, "0");
+//   const formattedSeconds = String(seconds).padStart(2, "0");
+
+//   return {
+//     horas: `${formattedHours}:${formattedMinutes}:${formattedSeconds}`,
+//     valor,
+//     totalHoursNumber, // Duração total em horas (ex: 8.5)
+//     valorTotal,
+//   };
+// };
 
 const totalHoursService = (service: ServiceProps) => {
   const { amountFormated } = useUtils();

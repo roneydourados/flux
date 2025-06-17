@@ -1,6 +1,6 @@
-import dayjs from "dayjs";
 import { type ServiceProps } from "@/interfaces/Service";
 
+import dayjs from "dayjs";
 import duration from "dayjs/plugin/duration";
 dayjs.extend(duration);
 
