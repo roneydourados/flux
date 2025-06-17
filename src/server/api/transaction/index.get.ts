@@ -1,4 +1,4 @@
-import moment from "moment";
+import dayjs from "dayjs";
 import { index } from "~/server/repositories/transactionRepository";
 
 export default defineEventHandler(async (event) => {
@@ -11,10 +11,10 @@ export default defineEventHandler(async (event) => {
     setResponseStatus(event, 200);
 
     return index({
-      finalDate: finalDate ? String(finalDate) : moment().format("YYYY-MM-DD"),
+      finalDate: finalDate ? String(finalDate) : dayjs().format("YYYY-MM-DD"),
       initialDate: initialDate
         ? String(initialDate)
-        : moment().subtract(1, "month").format("YYYY-MM-DD"),
+        : dayjs().subtract(1, "month").format("YYYY-MM-DD"),
       userId: user.id,
       status: status ? String(status) : undefined,
       categoryId: categoryId ? Number(categoryId) : undefined,

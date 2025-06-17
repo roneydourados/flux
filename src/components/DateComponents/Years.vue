@@ -31,14 +31,14 @@
 </template>
 
 <script setup lang="ts">
-import moment from "moment";
-const yearIndex = ref(moment().year());
+import dayjs from "dayjs";
+const yearIndex = ref(dayjs().year());
 
 const emit = defineEmits(["year"]);
 
 const $years = computed(() => {
   const years = [];
-  const currentYear = moment().year();
+  const currentYear = dayjs().year();
 
   for (let i = 1970; i <= currentYear + 20; i++) {
     years.push({
@@ -49,7 +49,7 @@ const $years = computed(() => {
 });
 
 onMounted(() => {
-  const currentYear = moment().year();
+  const currentYear = dayjs().year();
   const index = $years.value.findIndex((year) => year.year === currentYear);
   yearIndex.value = index;
 });

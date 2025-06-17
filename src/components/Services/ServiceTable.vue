@@ -72,7 +72,7 @@
 </template>
 
 <script setup lang="ts">
-import moment from "moment";
+import dayjs from "dayjs";
 import { useDisplay } from "vuetify";
 const serviceStore = useServiceStore();
 
@@ -131,7 +131,7 @@ const handleInvoice = async () => {
     if (
       dueDate.value === "" ||
       !dueDate.value ||
-      moment(dueDate.value).isBefore(moment())
+      dayjs(dueDate.value).isBefore(dayjs())
     ) {
       $toast.warn("Data inválida ou menor que a data atual");
       return;

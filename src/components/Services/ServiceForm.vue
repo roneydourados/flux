@@ -27,7 +27,7 @@
 </template>
 
 <script setup lang="ts">
-import moment from "moment";
+import dayjs from "dayjs";
 import { useForm } from "vee-validate";
 
 const { handleReset } = useForm();
@@ -49,7 +49,7 @@ const model = ref({
   publicId: "",
   title: "",
   ClientProject: undefined as ClientProjectProps | undefined,
-  serviceDate: moment().format("YYYY-MM-DD"),
+  serviceDate: dayjs().format("YYYY-MM-DD"),
   value: "",
 });
 
@@ -68,7 +68,7 @@ const loadModel = () => {
     title: props.data.title ?? "",
     ClientProject: props.data.ClientProject ?? undefined,
     value: props.data.hourValue ? Number(props.data.hourValue).toFixed(2) : "",
-    serviceDate: moment(props.data.serviceDate).format("YYYY-MM-DD"),
+    serviceDate: dayjs(props.data.serviceDate).format("YYYY-MM-DD"),
   };
 };
 
@@ -78,7 +78,7 @@ const clearModel = () => {
     title: "",
     ClientProject: undefined,
     value: "",
-    serviceDate: moment().format("YYYY-MM-DD"),
+    serviceDate: dayjs().format("YYYY-MM-DD"),
   };
 };
 
@@ -109,7 +109,7 @@ const handleSubmit = async () => {
         title: model.value.title,
         clientId: model.value.ClientProject?.clientId!,
         clientProjectId: model.value.ClientProject?.id!,
-        serviceDate: moment().format("YYYY-MM-DD"),
+        serviceDate: dayjs().format("YYYY-MM-DD"),
       });
     } else {
       await serviceStore.store({
@@ -117,7 +117,7 @@ const handleSubmit = async () => {
         title: model.value.title,
         clientId: model.value.ClientProject?.clientId!,
         clientProjectId: model.value.ClientProject?.id!,
-        serviceDate: moment().format("YYYY-MM-DD"),
+        serviceDate: dayjs().format("YYYY-MM-DD"),
       });
     }
 

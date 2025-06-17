@@ -1,4 +1,4 @@
-import moment from "moment";
+import dayjs from "dayjs";
 import { TransactionProps } from "~/interfaces/Transaction";
 import { update } from "~/server/repositories/transactionRepository";
 

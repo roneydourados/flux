@@ -36,7 +36,7 @@
               {{ calculeServiceTotals(item).horas }}
 
               <span>Início</span>
-              {{ moment(item.serviceDate).format("DD/MM/YYYY") }}
+              {{ dayjs(item.serviceDate).format("DD/MM/YYYY") }}
             </div>
 
             <div class="d-flex align-center mr-6" style="gap: 0.5rem">
@@ -232,7 +232,7 @@
                   icon="mdi-calendar-multiselect-outline"
                   color-icon="primary"
                   :content="
-                    moment(serviceOccorrence?.started).format(
+                    dayjs(serviceOccorrence?.started).format(
                       'DD/MM/YYYY HH:mm:ss'
                     )
                   "
@@ -255,7 +255,7 @@
                   color-icon="primary"
                   :content="
                     serviceOccorrence?.ended
-                      ? moment(serviceOccorrence?.ended).format(
+                      ? dayjs(serviceOccorrence?.ended).format(
                           'DD/MM/YYYY HH:mm:ss'
                         )
                       : 'Trabalhando'
@@ -372,7 +372,7 @@
 </template>
 
 <script setup lang="ts">
-import moment from "moment";
+import dayjs from "dayjs";
 import { useDisplay } from "vuetify";
 
 const props = defineProps({
@@ -404,8 +404,8 @@ const selectedServiceOccurrence = ref<ServiceOccurrenceProps>();
 
 const $totalHours = (item: ServiceOccurrenceProps, hourValue: number) => {
   return calculeServiceTotalsOccurence(
-    moment(item.started).format("YYYY-MM-DD HH:mm:ss"),
-    item.ended ? moment(item.ended).format("YYYY-MM-DD HH:mm:ss") : undefined,
+    dayjs(item.started).format("YYYY-MM-DD HH:mm:ss"),
+    item.ended ? dayjs(item.ended).format("YYYY-MM-DD HH:mm:ss") : undefined,
     hourValue
   );
 };
@@ -542,8 +542,8 @@ const updateStatusService = async (service: ServiceProps) => {
       serviceDate: service.serviceDate,
       status: service.status === "STARTED" ? "STOPPED" : "STARTED",
       updateOccorrence: true,
-      occurrenceStartDate: moment().format("YYYY-MM-DDTHH:mm:ss"),
-      occurrenceEndDate: moment().format("YYYY-MM-DDTHH:mm:ss"),
+      occurrenceStartDate: dayjs().format("YYYY-MM-DDTHH:mm:ss"),
+      occurrenceEndDate: dayjs().format("YYYY-MM-DDTHH:mm:ss"),
     });
 
     if (service.status === "STARTED" || service.status === "FINISHED") {
@@ -565,14 +565,14 @@ const timerCount = () => {
   // timer corrente
   valueTimer.value = 0;
 
-  const ocStart = moment(
-    props.item.lastOpenOccurence ?? moment().format("YYYY-MM-DDTHH:mm:ss")
+  const ocStart = dayjs(
+    props.item.lastOpenOccurence ?? dayjs().format("YYYY-MM-DDTHH:mm:ss")
   ); // substitua por sua primeira data
 
   interval.value = setInterval(() => {
-    const final = moment(); // substitua por sua segunda data
+    const final = dayjs(); // substitua por sua segunda data
 
-    const duration = moment.duration(final.diff(ocStart)).add(1, "second"); // calcula a duração entre as duas datas
+    const duration = dayjs.duration(final.diff(ocStart)).add(1, "second"); // calcula a duração entre as duas datas
     const totalHours = String(Math.floor(duration.asHours())).padStart(2, "0");
     const totalMinutes = String(Math.floor(duration.asMinutes()) % 60).padStart(
       2,
@@ -726,7 +726,7 @@ const handleFinishService = async () => {
       title: selectedItem.value!.title,
       clientProjectId: selectedItem.value!.clientProjectId,
       hourValue: selectedItem.value!.hourValue,
-      serviceEndDate: moment().format("YYYY-MM-DD"),
+      serviceEndDate: dayjs().format("YYYY-MM-DD"),
       status: "FINISHED",
       updateOccorrence: false,
     });
@@ -800,8 +800,8 @@ const handleUpdateOccorrence = async (item: ServiceOccurrenceProps) => {
   loading.value = true;
   try {
     await serviceStore.updateServiceOccurrence({
-      started: moment(item.started).format("YYYY-MM-DDTHH:mm:ss"),
-      ended: item.ended ? moment(item.ended).format("YYYY-MM-DDTHH:mm:ss") : "",
+      started: dayjs(item.started).format("YYYY-MM-DDTHH:mm:ss"),
+      ended: item.ended ? dayjs(item.ended).format("YYYY-MM-DDTHH:mm:ss") : "",
       publicId: item.publicId,
     });
   } catch (error) {

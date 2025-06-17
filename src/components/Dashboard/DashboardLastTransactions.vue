@@ -53,7 +53,7 @@
                 color: rgb(var(--v-theme-grey)) !important;
               "
             >
-              {{ moment(item.dueDate).format("DD MMM, YYYY") }}
+              {{ dayjs(item.dueDate).format("DD MMM, YYYY") }}
             </span>
           </div>
         </template>
@@ -63,7 +63,7 @@
 </template>
 
 <script setup lang="ts">
-import moment from "moment";
+import dayjs from "dayjs";
 const dashboard = useDashboardStore();
 const router = useRouter();
 const { amountFormated } = useUtils();

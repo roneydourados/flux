@@ -108,7 +108,7 @@
 </template>
 
 <script setup lang="ts">
-import moment from "moment";
+import dayjs from "dayjs";
 //import { useDisplay } from "vuetify";
 
 defineProps({
@@ -128,8 +128,8 @@ const filter = ref({
   type: "all",
   paymentForm: "all",
   status: "all",
-  initialDate: moment().startOf("month").format("YYYY-MM-DD"),
-  finalDate: moment().endOf("month").format("YYYY-MM-DD"),
+  initialDate: dayjs().startOf("month").format("YYYY-MM-DD"),
+  finalDate: dayjs().endOf("month").format("YYYY-MM-DD"),
   category: undefined as CategoryProps | undefined,
 });
 
@@ -163,14 +163,14 @@ const $transactionPaymentForms = computed(() => {
 });
 
 const updateDatesMonth = async (month: number) => {
-  const year = moment().year();
+  const year = dayjs().year();
   const selectMonth = month < 10 ? `0${month + 1}` : (month + 1).toString();
 
-  filter.value.initialDate = moment(`${year}-${selectMonth}`).format(
+  filter.value.initialDate = dayjs(`${year}-${selectMonth}`).format(
     "YYYY-MM-DD"
   );
 
-  filter.value.finalDate = moment(filter.value.initialDate)
+  filter.value.finalDate = dayjs(filter.value.initialDate)
     .endOf("month")
     .format("YYYY-MM-DD");
 
@@ -178,12 +178,12 @@ const updateDatesMonth = async (month: number) => {
 };
 
 const updateDatesYear = async (year: number) => {
-  const selectMonth = moment(filter.value.initialDate).format("MM");
+  const selectMonth = dayjs(filter.value.initialDate).format("MM");
 
-  filter.value.initialDate = moment(`${year}-${selectMonth}-01`).format(
+  filter.value.initialDate = dayjs(`${year}-${selectMonth}-01`).format(
     "YYYY-MM-DD"
   );
-  filter.value.finalDate = moment(filter.value.initialDate)
+  filter.value.finalDate = dayjs(filter.value.initialDate)
     .endOf("month")
     .format("YYYY-MM-DD");
 

@@ -4,7 +4,7 @@ import prisma from "~/lib/prisma";
 import { useServiceApiUtils } from "../utils/ApiUtils";
 import { TransactionPaymentMethod } from "@prisma/client";
 import { uuidv7 } from "uuidv7";
-import moment from "moment";
+import dayjs from "dayjs";
 
 interface FiltersProps {
   initialDate?: string;
@@ -358,8 +358,8 @@ export const invoiceServices = async (input: {
         },
       });
 
-      // const dueDateMomentLocal = moment(dueDate, "YYYY-MM-DD");
-      // const dueDateJS = dueDateMomentLocal.toDate();
+      // const dueDatedayjsLocal = dayjs(dueDate, "YYYY-MM-DD");
+      // const dueDateJS = dueDatedayjsLocal.toDate();
 
       // Zerar as horas para garantir que estamos no início do dia
       // dueDateJS.setHours(12, 10, 0, 0);

@@ -1,4 +1,4 @@
-import moment from "moment";
+import dayjs from "dayjs";
 import { type ServiceProps } from "@/interfaces/Service";
 
 export const useServiceUtils = () => {
@@ -10,13 +10,13 @@ export const useServiceUtils = () => {
     hourValue?: number
   ) => {
     if (ocStart && ocEnd && hourValue) {
-      const startDate = moment(ocStart).format("YYYY-MM-DD HH:mm:ss");
-      const endDate = moment(ocEnd).format("YYYY-MM-DD HH:mm:ss");
+      const startDate = dayjs(ocStart).format("YYYY-MM-DD HH:mm:ss");
+      const endDate = dayjs(ocEnd).format("YYYY-MM-DD HH:mm:ss");
 
-      const inital = moment(startDate); // substitua por sua primeira data
-      const final = moment(endDate); // substitua por sua segunda data
+      const inital = dayjs(startDate); // substitua por sua primeira data
+      const final = dayjs(endDate); // substitua por sua segunda data
 
-      const duration = moment.duration(final.diff(inital)); // calcula a duração entre as duas datas
+      const duration = dayjs.duration(final.diff(inital)); // calcula a duração entre as duas datas
 
       const totalHours = String(Math.floor(duration.asHours())).padStart(
         2,
@@ -48,19 +48,19 @@ export const useServiceUtils = () => {
     service.ServiceOccurrence?.map((oc) => {
       if (oc.started && oc.ended) {
         //deixar formatado para evitar diferenças de centavos
-        const startDate = moment(oc.started).format("YYYY-MM-DD HH:mm:ss");
-        const endDate = moment(oc.ended).format("YYYY-MM-DD HH:mm:ss");
+        const startDate = dayjs(oc.started).format("YYYY-MM-DD HH:mm:ss");
+        const endDate = dayjs(oc.ended).format("YYYY-MM-DD HH:mm:ss");
 
-        const inital = moment(startDate); // substitua por sua primeira data
-        const final = moment(endDate); // substitua por sua segunda data
+        const inital = dayjs(startDate); // substitua por sua primeira data
+        const final = dayjs(endDate); // substitua por sua segunda data
 
-        const duration = moment.duration(final.diff(inital)); // calcula a duração entre as duas datas
+        const duration = dayjs.duration(final.diff(inital)); // calcula a duração entre as duas datas
 
         totalHoursNumber = totalHoursNumber + duration.asHours(); // soma a duração em horas
       }
     });
 
-    const finalDuration = moment.duration(totalHoursNumber, "hours"); // converte as horas para duração
+    const finalDuration = dayjs.duration(totalHoursNumber, "hours"); // converte as horas para duração
 
     const valor = amountFormated(
       finalDuration.asHours() * service.hourValue,

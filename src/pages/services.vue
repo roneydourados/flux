@@ -4,7 +4,7 @@
 </template>
 
 <script setup lang="ts">
-import moment from "moment";
+import dayjs from "dayjs";
 
 const serviceStore = useServiceStore();
 const { getFiltersStoreServices } = useUtils();
@@ -14,19 +14,19 @@ onMounted(async () => {
   let filter = {
     ClientProject: undefined,
     Client: undefined as ClientProps | undefined,
-    initialDate: moment().startOf("month").format("YYYY-MM-DD"),
-    finalDate: moment().endOf("month").format("YYYY-MM-DD"),
+    initialDate: dayjs().startOf("month").format("YYYY-MM-DD"),
+    finalDate: dayjs().endOf("month").format("YYYY-MM-DD"),
     invoiced: "Todas",
-    month: moment().month(),
-    year: moment().year(),
+    month: dayjs().month(),
+    year: dayjs().year(),
     status: "Todas",
   };
 
   let filtersStore = getFiltersStoreServices();
 
   if (filtersStore) {
-    filter.month = filtersStore.month ?? moment().month();
-    filter.year = filtersStore.year ?? moment().year();
+    filter.month = filtersStore.month ?? dayjs().month();
+    filter.year = filtersStore.year ?? dayjs().year();
     filter.status = filtersStore.status ?? "Todas";
     filter.invoiced = filtersStore.invoiced;
     filter.Client = filtersStore.Client;

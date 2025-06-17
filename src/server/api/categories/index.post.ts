@@ -1,4 +1,4 @@
-import moment from "moment";
+import dayjs from "dayjs";
 import { CategoryProps } from "~/interfaces/Category";
 
 import { create } from "~/server/repositories/categoryRepository";

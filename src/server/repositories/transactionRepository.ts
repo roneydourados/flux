@@ -1,6 +1,6 @@
 import prisma from "@/lib/prisma";
 import { TransactionPaymentMethod, TransactionType } from "@prisma/client";
-import moment from "moment";
+import dayjs from "dayjs";
 import { TransactionProps } from "~/interfaces/Transaction";
 
 interface ChartMonthProps {
@@ -104,7 +104,7 @@ export const create = async ({
 
       for (let i = 1; i <= portionTotal!; i++) {
         if (i > 1) {
-          currentDue = moment(currentDue).add(1, "months").format("YYYY-MM-DD");
+          currentDue = dayjs(currentDue).add(1, "months").format("YYYY-MM-DD");
         }
 
         await prisma.transaction.create({

@@ -1,4 +1,4 @@
-import moment from "moment";
+import dayjs from "dayjs";
 
 export default defineEventHandler((event) => {
   const req = getRequestURL(event);
@@ -8,7 +8,7 @@ export default defineEventHandler((event) => {
     event.method.toUpperCase() !== "OPTIONS"
   ) {
     //const headers = getHeaders(event);
-    console.log("data/hora: ", moment().format("DD/MM/YYYY HH:mm:ss"));
+    console.log("data/hora: ", dayjs().format("DD/MM/YYYY HH:mm:ss"));
     console.log("Acessando: " + getRequestURL(event));
     console.log("Method: ", event.method);
     //console.log("Headers: ", headers.authorization?.split(" ")[1]);

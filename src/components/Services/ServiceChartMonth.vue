@@ -10,7 +10,7 @@
 </template>
 
 <script setup lang="ts">
-import moment from "moment";
+import dayjs from "dayjs";
 
 const { amountFormated } = useUtils();
 const serviceStore = useServiceStore();
@@ -27,8 +27,8 @@ const $servicesInvoice = computed(() => {
   const accumulatedServices: { [key: string]: AccumulatedService } = {};
 
   serviceStore.$services?.returnServices?.forEach((service) => {
-    // Formatar a data para YYYY-MM-DD usando moment
-    const serviceDay = moment(service.serviceDate).format("D");
+    // Formatar a data para YYYY-MM-DD usando dayjs
+    const serviceDay = dayjs(service.serviceDate).format("D");
 
     // Calcular o total do serviço
     const total = Number(calculeServiceTotals(service).valorNumber.toFixed(2));

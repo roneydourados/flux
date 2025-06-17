@@ -19,7 +19,7 @@
 </template>
 
 <script setup lang="ts">
-import moment from "moment";
+import dayjs from "dayjs";
 defineProps({
   title: {
     type: String,
@@ -31,10 +31,10 @@ const dashboard = useDashboardStore();
 const loading = ref(false);
 
 const filter = ref({
-  month: moment().month(),
-  year: moment().year(),
-  initialDate: moment().startOf("month").format("YYYY-MM-DD"),
-  finalDate: moment().endOf("month").format("YYYY-MM-DD"),
+  month: dayjs().month(),
+  year: dayjs().year(),
+  initialDate: dayjs().startOf("month").format("YYYY-MM-DD"),
+  finalDate: dayjs().endOf("month").format("YYYY-MM-DD"),
 });
 
 const getMonth = async (month: number) => {
@@ -44,8 +44,8 @@ const getMonth = async (month: number) => {
     .toString()
     .padStart(2, "0")}-01`;
 
-  filter.value.initialDate = moment(initial).format("YYYY-MM-DD");
-  filter.value.finalDate = moment(filter.value.initialDate)
+  filter.value.initialDate = dayjs(initial).format("YYYY-MM-DD");
+  filter.value.finalDate = dayjs(filter.value.initialDate)
     .endOf("month")
     .format("YYYY-MM-DD");
 
@@ -59,8 +59,8 @@ const getYear = async (year: number) => {
     .toString()
     .padStart(2, "0")}-01`;
 
-  filter.value.initialDate = moment(initial).format("YYYY-MM-DD");
-  filter.value.finalDate = moment(filter.value.initialDate)
+  filter.value.initialDate = dayjs(initial).format("YYYY-MM-DD");
+  filter.value.finalDate = dayjs(filter.value.initialDate)
     .endOf("month")
     .format("YYYY-MM-DD");
 

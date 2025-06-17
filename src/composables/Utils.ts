@@ -1,4 +1,4 @@
-import moment from "moment";
+import dayjs from "dayjs";
 import { formatCNPJ, formatCPF } from "@brazilian-utils/brazilian-utils";
 type CompactDisplayType = "short" | "long" | undefined;
 
@@ -19,17 +19,15 @@ export const useUtils = () => {
   };
 
   const cardInvoices = () => {
-    let momentDate = moment();
+    let dayjsDate = dayjs();
     let invoices = [] as String[];
 
     for (let i = 1; i <= 48; i++) {
       invoices.push(
-        `${moment(momentDate).format("MM")}/${moment(momentDate).format(
-          "yyyy"
-        )}`
+        `${dayjs(dayjsDate).format("MM")}/${dayjs(dayjsDate).format("yyyy")}`
       );
 
-      momentDate = moment(momentDate).add(1, "months");
+      dayjsDate = dayjs(dayjsDate).add(1, "months");
     }
 
     return invoices;
@@ -41,10 +39,10 @@ export const useUtils = () => {
 
   const formatDate = (date?: string) => {
     if (date) {
-      return moment(date.substring(0, 10)).format("DD/MM/yyyy");
+      return dayjs(date.substring(0, 10)).format("DD/MM/YYYY");
     }
 
-    return moment().format("DD/MM/yyyy");
+    return dayjs().format("DD/MM/YYYY");
   };
 
   const extenseDate = (date?: string) => {
@@ -88,26 +86,26 @@ export const useUtils = () => {
       return 0;
     }
 
-    const currentYear = moment().year();
-    const birthYear = moment(dateBirth).year();
+    const currentYear = dayjs().year();
+    const birthYear = dayjs(dateBirth).year();
 
-    const currentMonth = moment().month();
-    const birthMonth = moment(dateBirth).month();
+    const currentMonth = dayjs().month();
+    const birthMonth = dayjs(dateBirth).month();
 
     if (birthMonth === currentMonth && birthYear === currentYear) {
-      return `${moment().diff(dateBirth, "days")} ${
-        moment().diff(dateBirth, "days") > 1 ? "dias" : "dia"
+      return `${dayjs().diff(dateBirth, "days")} ${
+        dayjs().diff(dateBirth, "days") > 1 ? "dias" : "dia"
       }`;
     }
 
     if (birthYear === currentYear) {
-      return `${moment().diff(dateBirth, "months")} ${
-        moment().diff(dateBirth, "months") > 1 ? "meses" : "mês"
+      return `${dayjs().diff(dateBirth, "months")} ${
+        dayjs().diff(dateBirth, "months") > 1 ? "meses" : "mês"
       }`;
     }
 
-    return `${moment().diff(dateBirth, "years")} ${
-      moment().diff(dateBirth, "years") > 1 ? "anos" : "ano"
+    return `${dayjs().diff(dateBirth, "years")} ${
+      dayjs().diff(dateBirth, "years") > 1 ? "anos" : "ano"
     }`;
   };
 
@@ -135,7 +133,7 @@ export const useUtils = () => {
       return "Aguardando agenda...";
     }
 
-    const endDate = moment(`${initialDate} ${initialHour}`)
+    const endDate = dayjs(`${initialDate} ${initialHour}`)
       .add(intervalMinutes, "minutes")
       .format("HH:mm");
 
@@ -154,11 +152,11 @@ export const useUtils = () => {
       };
     }
 
-    const start = `${moment(`${initialDate} ${initialHour}`).format(
+    const start = `${dayjs(`${initialDate} ${initialHour}`).format(
       "YYYY-MM-DD HH:mm:ss"
     )}`;
 
-    const end = `${moment(`${initialDate} ${initialHour}`)
+    const end = `${dayjs(`${initialDate} ${initialHour}`)
       .add(intervalMinutes, "minutes")
       .format("YYYY-MM-DD HH:mm:ss")}`;
 
@@ -169,12 +167,12 @@ export const useUtils = () => {
   };
 
   const validateDateInterval = (initialDate: string, finalDate: string) => {
-    return moment(initialDate).isAfter(finalDate);
+    return dayjs(initialDate).isAfter(finalDate);
   };
 
   const difDays = (initialDate: string, finalDate: string) => {
-    const initDate = moment(initialDate);
-    const endDate = moment(finalDate);
+    const initDate = dayjs(initialDate);
+    const endDate = dayjs(finalDate);
 
     return endDate.diff(initDate, "days");
   };
@@ -221,15 +219,15 @@ export const useUtils = () => {
   const getTransactions = async () => {
     const transactionStore = useTransactionStore();
 
-    const year = localStorage.getItem("year_transaction") || moment().year();
+    const year = localStorage.getItem("year_transaction") || dayjs().year();
 
     const initial = `${year}-${
-      Number(localStorage.getItem("month_transaction") || moment().month()) + 1
+      Number(localStorage.getItem("month_transaction") || dayjs().month()) + 1
     }-01`;
     const status = localStorage.getItem("status_transaction") || undefined;
 
-    const initialDate = moment(initial).startOf("month").format("YYYY-MM-DD");
-    const finalDate = moment(initial).endOf("month").format("YYYY-MM-DD");
+    const initialDate = dayjs(initial).startOf("month").format("YYYY-MM-DD");
+    const finalDate = dayjs(initial).endOf("month").format("YYYY-MM-DD");
 
     await transactionStore.index({
       initialDate,
@@ -253,10 +251,10 @@ export const useUtils = () => {
     return {
       ClientProject: undefined,
       Client: undefined,
-      month: moment().month(),
-      year: moment().year(),
-      initialDate: moment().startOf("month").format("YYYY-MM-DD"),
-      finalDate: moment().endOf("month").format("YYYY-MM-DD"),
+      month: dayjs().month(),
+      year: dayjs().year(),
+      initialDate: dayjs().startOf("month").format("YYYY-MM-DD"),
+      finalDate: dayjs().endOf("month").format("YYYY-MM-DD"),
       invoiced: "Todas",
     };
   };

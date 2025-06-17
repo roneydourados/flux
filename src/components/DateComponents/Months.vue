@@ -60,9 +60,9 @@
 
 <script setup lang="ts">
 import { useDisplay } from "vuetify";
-import moment from "moment";
+import dayjs from "dayjs";
 
-const monthIndex = ref(moment().month());
+const monthIndex = ref(dayjs().month());
 
 const emit = defineEmits(["month", "year", "click"]);
 const { mobile } = useDisplay();
@@ -79,7 +79,7 @@ const getMonthWithChip = (month: number) => {
     monthIndex.value = monthSelected[0].monthIndex;
     emit("month", monthSelected[0].monthIndex);
   } else {
-    const currentMonth = moment().month();
+    const currentMonth = dayjs().month();
     monthIndex.value = currentMonth;
     emit("month", currentMonth);
   }

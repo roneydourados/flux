@@ -84,7 +84,7 @@
 </template>
 
 <script setup lang="ts">
-import moment from "moment";
+import dayjs from "dayjs";
 import { useForm } from "vee-validate";
 
 const { handleReset } = useForm();
@@ -110,8 +110,8 @@ const model = ref({
   type: "",
   paymentMethod: "",
   Category: undefined as CategoryProps | undefined,
-  emission: moment().format("YYYY-MM-DD"),
-  due: moment().format("YYYY-MM-DD"),
+  emission: dayjs().format("YYYY-MM-DD"),
+  due: dayjs().format("YYYY-MM-DD"),
   name: "",
   value: "",
   portions: "1",
@@ -135,8 +135,8 @@ const loadModel = () => {
     type: props.data.type!,
     paymentMethod: props.data.paymentMethod!,
     Category: props.data.Category,
-    emission: moment(props.data.emisstionDate).format("YYYY-MM-DD"),
-    due: moment(props.data.dueDate).format("YYYY-MM-DD"),
+    emission: dayjs(props.data.emisstionDate).format("YYYY-MM-DD"),
+    due: dayjs(props.data.dueDate).format("YYYY-MM-DD"),
     name: props.data.title!,
     value: amountFormated(props.data.amount!, false),
     portions: "1", //props.data.portionTotal!.toString() ?? "1",
@@ -153,7 +153,7 @@ const validations = () => {
     return false;
   }
 
-  // if (moment(model.value.due).isBefore(model.value.emission)) {
+  // if (dayjs(model.value.due).isBefore(model.value.emission)) {
   //   useNuxtApp().$toast.warn(
   //     "A Data de vencimento não pode ser inferior a data de emissão!"
   //   );
@@ -174,8 +174,8 @@ const clearModel = () => {
     publicId: "",
     type: "",
     Category: undefined,
-    emission: moment().format("YYYY-MM-DD"),
-    due: moment().format("YYYY-MM-DD"),
+    emission: dayjs().format("YYYY-MM-DD"),
+    due: dayjs().format("YYYY-MM-DD"),
     name: "",
     value: "",
     portions: "1",

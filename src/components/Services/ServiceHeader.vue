@@ -75,7 +75,17 @@
           @click="handleExportServicesToPDF"
         >
           <ServicePDFExportSVG class="mr-2" />
-          Exportar serviços
+          Exportar serviços PDF
+        </v-btn>
+        <v-btn
+          class="text-none"
+          variant="flat"
+          color="success"
+          size="small"
+          @click="handleExportServicesToExcel"
+        >
+          <v-icon icon="mdi-microsoft-excel" start size="22" />
+          Exportar serviços excel
         </v-btn>
       </v-col>
       <v-col cols="12" lg="3">
@@ -88,11 +98,12 @@
 </template>
 
 <script setup lang="ts">
-import moment from "moment";
+import dayjs from "dayjs";
 import { useDisplay } from "vuetify";
 
 import { pdfMakeFonts } from "@/utils/pdfMakeFonts";
 import pdfMake from "pdfmake/build/pdfmake";
+import { useExportReport } from "~/composables/ExportReport";
 
 defineProps({
   title: {
@@ -103,20 +114,20 @@ defineProps({
 
 //const { mobile } = useDisplay();
 const { saveServiceFilters, getFiltersStoreServices } = useUtils();
-const { serviceReport } = useExportPDF();
+const { exportReportPDF, exportReportExcel } = useExportReport();
 const { user } = useUserSession();
 const serviceStore = useServiceStore();
 
 const loading = ref(false);
 
 const filter = ref({
-  month: moment().month(),
-  year: moment().year(),
+  month: dayjs().month(),
+  year: dayjs().year(),
   status: "Todas",
   invoiced: "Todas",
   Client: undefined as ClientProps | undefined,
-  initialDate: moment().startOf("month").format("YYYY-MM-DD"),
-  finalDate: moment().endOf("month").format("YYYY-MM-DD"),
+  initialDate: dayjs().startOf("month").format("YYYY-MM-DD"),
+  finalDate: dayjs().endOf("month").format("YYYY-MM-DD"),
 });
 
 const serviceStatusItens = [
@@ -131,8 +142,8 @@ onMounted(async () => {
   const filters = getFiltersStoreServices();
 
   if (filters) {
-    filter.value.month = filters.month ?? moment().month();
-    filter.value.year = filters.year ?? moment().year();
+    filter.value.month = filters.month ?? dayjs().month();
+    filter.value.year = filters.year ?? dayjs().year();
     filter.value.status = filters.status ?? "Todas";
     filter.value.invoiced = filters.invoiced;
     filter.value.Client = filters.Client;
@@ -145,7 +156,8 @@ onMounted(async () => {
 
 const handleExportServicesToPDF = () => {
   const initialDate = `01-${filter.value.month + 1}-${filter.value.year}`;
-  const finalDate = moment(initialDate, "DD-MM-YYYY")
+
+  const finalDate = dayjs(initialDate, "DD-MM-YYYY")
     .endOf("month")
     .format("YYYY-MM-DD");
 
@@ -156,7 +168,7 @@ const handleExportServicesToPDF = () => {
     invoiced: filter.value.status,
   } as ServiceFilterProps;
 
-  const report = serviceReport(
+  const report = exportReportPDF(
     $services.value?.returnServices ?? [],
     payloadFilters
   );
@@ -172,15 +184,32 @@ const handleExportServicesToPDF = () => {
     );
 };
 
+const handleExportServicesToExcel = () => {
+  const month = filter.value.month + 1;
+  const formattedMonth = month < 10 ? `0${month}` : `${month}`;
+  const initialDate = `${filter.value.year}-${formattedMonth}-01`;
+
+  const finalDate = dayjs(initialDate).endOf("month").format("YYYY-MM-DD");
+
+  const payloadFilters = {
+    initialDate,
+    finalDate,
+    Client: filter.value.Client,
+    invoiced: filter.value.status,
+  } as ServiceFilterProps;
+
+  exportReportExcel($services.value?.returnServices ?? [], payloadFilters);
+};
+
 const getMonth = async (month: number) => {
-  const year = moment().year();
+  const year = dayjs().year();
   const selectMonth = month < 10 ? `0${month + 1}` : (month + 1).toString();
 
-  filter.value.initialDate = moment(`${year}-${selectMonth}`).format(
+  filter.value.initialDate = dayjs(`${year}-${selectMonth}`).format(
     "YYYY-MM-DD"
   );
 
-  filter.value.finalDate = moment(filter.value.initialDate)
+  filter.value.finalDate = dayjs(filter.value.initialDate)
     .endOf("month")
     .format("YYYY-MM-DD");
 
@@ -188,12 +217,12 @@ const getMonth = async (month: number) => {
 };
 
 const getYear = async (year: number) => {
-  const selectMonth = moment(filter.value.initialDate).format("MM");
+  const selectMonth = dayjs(filter.value.initialDate).format("MM");
 
-  filter.value.initialDate = moment(`${year}-${selectMonth}-01`).format(
+  filter.value.initialDate = dayjs(`${year}-${selectMonth}-01`).format(
     "YYYY-MM-DD"
   );
-  filter.value.finalDate = moment(filter.value.initialDate)
+  filter.value.finalDate = dayjs(filter.value.initialDate)
     .endOf("month")
     .format("YYYY-MM-DD");
 

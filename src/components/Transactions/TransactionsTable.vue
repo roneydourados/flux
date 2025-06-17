@@ -94,10 +94,10 @@
         {{ amountFormated(item.amount, true) }}
       </template>
       <!-- <template v-slot:item.emissionDate="{ item }">
-          {{ moment(item.emissonDate).format("DD/MM/YYYY") }}
+          {{ dayjs(item.emissonDate).format("DD/MM/YYYY") }}
         </template> -->
       <template v-slot:item.dueDate="{ item }">
-        {{ formatDate(item.dueDate) }}
+        {{ formatDate(String(item.dueDate)) }}
       </template>
       <template v-slot:item.Category="{ item }">
         <div
@@ -229,7 +229,7 @@
 
 <script setup lang="ts">
 import { useDisplay } from "vuetify";
-import moment from "moment";
+import dayjs from "dayjs";
 
 const { mobile } = useDisplay();
 const { amountFormated, getTransactions, formatDate } = useUtils();
