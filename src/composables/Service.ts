@@ -1,6 +1,9 @@
 import dayjs from "dayjs";
 import { type ServiceProps } from "@/interfaces/Service";
 
+import duration from "dayjs/plugin/duration";
+dayjs.extend(duration);
+
 export const useServiceUtils = () => {
   const { amountFormated } = useUtils();
 

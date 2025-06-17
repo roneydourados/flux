@@ -1,5 +1,7 @@
 import dayjs from "dayjs";
 import { ServiceProps } from "~/interfaces/Service";
+import duration from "dayjs/plugin/duration";
+dayjs.extend(duration);
 
 export const useServiceApiUtils = () => {
   const amountFormated = (value: number, isCurrencyStyle: boolean) => {
