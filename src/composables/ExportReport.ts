@@ -32,16 +32,20 @@ export const useExportReport = () => {
 
       const serviceDate = {
         text: service.serviceDate
-          ? dayjs(service.serviceDate).format("DD/MM/YYYY")
+          ? dayjs(service.serviceDate.substring(0, 10)).format("DD/MM/YYYY")
           : "",
         italics: false,
         color: "gray",
         alignment: "right",
       };
 
+      console.log(
+        "service.serviceEndDate",
+        service.serviceEndDate?.substring(0, 10)
+      );
       const serviceEndDate = {
         text: service.serviceEndDate
-          ? dayjs(service.serviceEndDate).format("DD/MM/YYYY")
+          ? dayjs(service.serviceEndDate.substring(0, 10)).format("DD/MM/YYYY")
           : "Aberta",
         italics: false,
         color: "gray",
