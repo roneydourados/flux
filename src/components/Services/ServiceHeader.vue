@@ -155,15 +155,19 @@ onMounted(async () => {
 });
 
 const handleExportServicesToPDF = () => {
-  const initialDate = `01-${filter.value.month + 1}-${filter.value.year}`;
+  // const initialDate = dayjs(
+  //   `01-${filter.value.month <= 9 ? "0" : ""}${filter.value.month + 1}-${
+  //     filter.value.year
+  //   }`
+  // ).format("DD-MM-YYYY");
 
-  const finalDate = dayjs(initialDate, "DD-MM-YYYY")
-    .endOf("month")
-    .format("YYYY-MM-DD");
+  // const finalDate = dayjs(initialDate, "DD-MM-YYYY")
+  //   .endOf("month")
+  //   .format("YYYY-MM-DD");
 
   const payloadFilters = {
-    initialDate,
-    finalDate,
+    initialDate: filter.value.initialDate,
+    finalDate: filter.value.finalDate,
     Client: filter.value.Client,
     invoiced: filter.value.status,
   } as ServiceFilterProps;
@@ -185,15 +189,15 @@ const handleExportServicesToPDF = () => {
 };
 
 const handleExportServicesToExcel = () => {
-  const month = filter.value.month + 1;
-  const formattedMonth = month < 10 ? `0${month}` : `${month}`;
-  const initialDate = `${filter.value.year}-${formattedMonth}-01`;
+  // const month = filter.value.month + 1;
+  // const formattedMonth = month < 10 ? `0${month}` : `${month}`;
+  // const initialDate = `${filter.value.year}-${formattedMonth}-01`;
 
-  const finalDate = dayjs(initialDate).endOf("month").format("YYYY-MM-DD");
+  // const finalDate = dayjs(initialDate).endOf("month").format("YYYY-MM-DD");
 
   const payloadFilters = {
-    initialDate,
-    finalDate,
+    initialDate: filter.value.initialDate,
+    finalDate: filter.value.finalDate,
     Client: filter.value.Client,
     invoiced: filter.value.status,
   } as ServiceFilterProps;
