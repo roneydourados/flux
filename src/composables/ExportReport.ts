@@ -39,10 +39,6 @@ export const useExportReport = () => {
         alignment: "right",
       };
 
-      console.log(
-        "service.serviceEndDate",
-        service.serviceEndDate?.substring(0, 10)
-      );
       const serviceEndDate = {
         text: service.serviceEndDate
           ? dayjs(service.serviceEndDate.substring(0, 10)).format("DD/MM/YYYY")
