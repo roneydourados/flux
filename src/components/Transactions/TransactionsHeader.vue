@@ -3,8 +3,10 @@
     <v-row>
       <v-col cols="12">
         <Months
-          @month="updateDatesMonth($event)"
-          @year="updateDatesYear($event)"
+          @month="updateDatesMonth"
+          @year="updateDatesYear"
+          v-model:month="filter.month"
+          v-model:year="filter.year"
         />
       </v-col>
     </v-row>
@@ -109,6 +111,7 @@
 
 <script setup lang="ts">
 import dayjs from "dayjs";
+import Years from "../DateComponents/Years.vue";
 //import { useDisplay } from "vuetify";
 
 defineProps({
@@ -124,8 +127,9 @@ const transactionStore = useTransactionStore();
 const showForm = ref(false);
 const loading = ref(false);
 const filter = ref({
-  month: "",
+  month: dayjs().month(),
   type: "all",
+  year: dayjs().year(),
   paymentForm: "all",
   status: "all",
   initialDate: dayjs().startOf("month").format("YYYY-MM-DD"),
@@ -162,13 +166,24 @@ const $transactionPaymentForms = computed(() => {
   return tp;
 });
 
-const updateDatesMonth = async (month: number) => {
-  const year = dayjs().year();
-  const selectMonth = month < 10 ? `0${month + 1}` : (month + 1).toString();
+const updateDatesMonth = async () => {
+  // //const year = dayjs().year();
+  // const selectMonth = month < 10 ? `0${month + 1}` : (month + 1).toString();
 
-  filter.value.initialDate = dayjs(`${year}-${selectMonth}`).format(
-    "YYYY-MM-DD"
-  );
+  // filter.value.initialDate = dayjs(`${year}-${selectMonth}`).format(
+  //   "YYYY-MM-DD"
+  // );
+
+  // filter.value.finalDate = dayjs(filter.value.initialDate)
+  //   .endOf("month")
+  //   .format("YYYY-MM-DD");
+
+  const m = Number(filter.value.month) + 1;
+  const selectMonth = m < 10 ? `0${m}` : m.toString();
+
+  filter.value.initialDate = dayjs(
+    `${filter.value.year}-${selectMonth}`
+  ).format("YYYY-MM-DD");
 
   filter.value.finalDate = dayjs(filter.value.initialDate)
     .endOf("month")
@@ -177,12 +192,21 @@ const updateDatesMonth = async (month: number) => {
   await getTransactions();
 };
 
-const updateDatesYear = async (year: number) => {
+const updateDatesYear = async () => {
+  // const selectMonth = dayjs(filter.value.initialDate).format("MM");
+
+  // filter.value.initialDate = dayjs(`${year}-${selectMonth}-01`).format(
+  //   "YYYY-MM-DD"
+  // );
+  // filter.value.finalDate = dayjs(filter.value.initialDate)
+  //   .endOf("month")
+  //   .format("YYYY-MM-DD");
+
   const selectMonth = dayjs(filter.value.initialDate).format("MM");
 
-  filter.value.initialDate = dayjs(`${year}-${selectMonth}-01`).format(
-    "YYYY-MM-DD"
-  );
+  filter.value.initialDate = dayjs(
+    `${filter.value.year}-${selectMonth}-01`
+  ).format("YYYY-MM-DD");
   filter.value.finalDate = dayjs(filter.value.initialDate)
     .endOf("month")
     .format("YYYY-MM-DD");

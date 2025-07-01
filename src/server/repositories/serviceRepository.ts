@@ -210,7 +210,7 @@ export const update = async ({
         clientProjectId, // Add the missing property
         hourValue,
         title,
-        //serviceDate: serviceDate ? new Date(String(serviceDate)) : undefined,
+        //serviceDate: serviceDate ? new Date(String(serviceDate)) : undefined, aui estava zoando a data de abertura do serviço
         serviceEndDate: serviceEndDate
           ? new Date(String(serviceEndDate))
           : null,

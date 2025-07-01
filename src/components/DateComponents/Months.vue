@@ -3,6 +3,7 @@
     <Years
       :style="`${mobile ? 'width: 100%' : 'width: 15%'}`"
       @year="$emit('year', $event)"
+      v-model="year"
     />
     <v-carousel
       v-model="monthIndex"
@@ -62,7 +63,13 @@
 import { useDisplay } from "vuetify";
 import dayjs from "dayjs";
 
-const monthIndex = ref(dayjs().month());
+const monthIndex = defineModel("month", {
+  default: dayjs().month(),
+});
+
+const year = defineModel("year", {
+  default: dayjs().year(),
+});
 
 const emit = defineEmits(["month", "year", "click"]);
 const { mobile } = useDisplay();

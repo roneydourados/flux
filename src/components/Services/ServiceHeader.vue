@@ -4,8 +4,10 @@
       <v-col cols="12" lg="9" class="d-flex flex-column">
         <Months
           class="w-100"
-          @month="getMonth($event)"
-          @year="getYear($event)"
+          v-model:month="filter.month"
+          v-model:year="filter.year"
+          @month="getMonth"
+          @year="getYear"
         />
       </v-col>
     </v-row>
@@ -48,17 +50,6 @@
             Atualiazar
           </v-tooltip>
         </v-btn>
-        <!-- <Button
-          color="green"
-          :block="mobile"
-          @click="showForm = true"
-          rounded="lg"
-          class="mt-1"
-        >
-          <strong class="mr-1" style="font-size: 0.8rem">+</strong>
-          Novo serviço
-          <v-icon icon="mdi-account-wrench-outline" end />
-        </Button> -->
       </v-col>
     </v-row>
     <v-row dense>
@@ -99,7 +90,6 @@
 
 <script setup lang="ts">
 import dayjs from "dayjs";
-import { useDisplay } from "vuetify";
 
 import { pdfMakeFonts } from "@/utils/pdfMakeFonts";
 import pdfMake from "pdfmake/build/pdfmake";
@@ -205,13 +195,13 @@ const handleExportServicesToExcel = () => {
   exportReportExcel($services.value?.returnServices ?? [], payloadFilters);
 };
 
-const getMonth = async (month: number) => {
-  const year = dayjs().year();
-  const selectMonth = month < 10 ? `0${month + 1}` : (month + 1).toString();
+const getMonth = async () => {
+  const m = Number(filter.value.month) + 1;
+  const selectMonth = m < 10 ? `0${m}` : m.toString();
 
-  filter.value.initialDate = dayjs(`${year}-${selectMonth}`).format(
-    "YYYY-MM-DD"
-  );
+  filter.value.initialDate = dayjs(
+    `${filter.value.year}-${selectMonth}`
+  ).format("YYYY-MM-DD");
 
   filter.value.finalDate = dayjs(filter.value.initialDate)
     .endOf("month")
@@ -220,12 +210,12 @@ const getMonth = async (month: number) => {
   await getServices();
 };
 
-const getYear = async (year: number) => {
+const getYear = async () => {
   const selectMonth = dayjs(filter.value.initialDate).format("MM");
 
-  filter.value.initialDate = dayjs(`${year}-${selectMonth}-01`).format(
-    "YYYY-MM-DD"
-  );
+  filter.value.initialDate = dayjs(
+    `${filter.value.year}-${selectMonth}-01`
+  ).format("YYYY-MM-DD");
   filter.value.finalDate = dayjs(filter.value.initialDate)
     .endOf("month")
     .format("YYYY-MM-DD");
@@ -246,7 +236,11 @@ const getServices = async () => {
 
     await serviceStore.index(payloadFilters);
 
-    saveServiceFilters(payloadFilters);
+    saveServiceFilters({
+      ...payloadFilters,
+      month: filter.value.month,
+      year: filter.value.year,
+    });
   } catch (error) {
     console.error(error);
   } finally {
