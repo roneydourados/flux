@@ -667,49 +667,6 @@ const handleClickMenuButton = async (title: string, service: ServiceProps) => {
       selectedItem.value = service;
       showReopen.value = true;
     }
-    /*
-    else if (title === "Estornar faturamento") {
-      if (!service.isInvoiced) {
-        useNuxtApp().$toast.warning("Serviço não faturado!");
-        return;
-      }
-
-      loading.value = true;
-      try {
-        await serviceStore.update({
-          publicId: service.publicId,
-          hourValue: service.hourValue,
-          title: service.title,
-          clientProjectId: service.clientProjectId,
-          serviceEndDate: service.serviceEndDate,
-          isInvoiced: false,
-        });
-        await loadServices();
-      } finally {
-        loading.value = false;
-      }
-    } else if (title === "Faturar") {
-      if (service.isInvoiced) {
-        useNuxtApp().$toast.warning("Serviço já faturado!");
-        return;
-      }
-
-      loading.value = true;
-      try {
-        await serviceStore.update({
-          publicId: service.publicId,
-          hourValue: service.hourValue,
-          title: service.title,
-          clientProjectId: service.clientProjectId,
-          serviceEndDate: service.serviceEndDate,
-          isInvoiced: true,
-        });
-        await loadServices();
-      } finally {
-        loading.value = false;
-      }
-    }
-    */
   } finally {
     isUpdate.value = false;
   }

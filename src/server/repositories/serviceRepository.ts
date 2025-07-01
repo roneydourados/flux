@@ -188,7 +188,7 @@ export const update = async ({
   clientProjectId,
   hourValue,
   title,
-  serviceDate,
+  //serviceDate,
   serviceEndDate,
   updateOccorrence,
   isInvoiced,
@@ -210,7 +210,7 @@ export const update = async ({
         clientProjectId, // Add the missing property
         hourValue,
         title,
-        serviceDate: serviceDate ? new Date(String(serviceDate)) : undefined,
+        //serviceDate: serviceDate ? new Date(String(serviceDate)) : undefined,
         serviceEndDate: serviceEndDate
           ? new Date(String(serviceEndDate))
           : null,
