@@ -5,13 +5,12 @@
         <h2>{{ title }}</h2>
       </v-col>
       <v-col cols="12" lg="10" class="d-flex align-center justify-end">
-        <Months @month="getMonth($event)" @year="getYear($event)" />
-        <!-- <Button color="background">
-          <span style="font-weight: 100" class="text-greylight">
-            Relatório de IA
-          </span>
-          <v-icon icon="mdi-file-table-outline" end />
-        </Button> -->
+        <Months
+          v-model:month="filter.month"
+          v-model:year="filter.year"
+          @month="getMonth"
+          @year="getYear"
+        />
       </v-col>
     </v-row>
     <DialogLoading :dialog="loading" />
@@ -37,14 +36,25 @@ const filter = ref({
   finalDate: dayjs().endOf("month").format("YYYY-MM-DD"),
 });
 
-const getMonth = async (month: number) => {
-  filter.value.month = month + 1;
+const getMonth = async () => {
+  // filter.value.month = month + 1;
 
-  const initial = `${filter.value.year}-${filter.value.month
-    .toString()
-    .padStart(2, "0")}-01`;
+  // const initial = `${filter.value.year}-${filter.value.month
+  //   .toString()
+  //   .padStart(2, "0")}-01`;
 
-  filter.value.initialDate = dayjs(initial).format("YYYY-MM-DD");
+  // filter.value.initialDate = dayjs(initial).format("YYYY-MM-DD");
+  // filter.value.finalDate = dayjs(filter.value.initialDate)
+  //   .endOf("month")
+  //   .format("YYYY-MM-DD");
+
+  const m = Number(filter.value.month) + 1;
+  const selectMonth = m < 10 ? `0${m}` : m.toString();
+
+  filter.value.initialDate = dayjs(
+    `${filter.value.year}-${selectMonth}`
+  ).format("YYYY-MM-DD");
+
   filter.value.finalDate = dayjs(filter.value.initialDate)
     .endOf("month")
     .format("YYYY-MM-DD");
@@ -52,14 +62,23 @@ const getMonth = async (month: number) => {
   await getDashboard();
 };
 
-const getYear = async (year: number) => {
-  filter.value.year = year;
+const getYear = async () => {
+  // filter.value.year = year;
 
-  const initial = `${filter.value.year}-${filter.value.month
-    .toString()
-    .padStart(2, "0")}-01`;
+  // const initial = `${filter.value.year}-${filter.value.month
+  //   .toString()
+  //   .padStart(2, "0")}-01`;
 
-  filter.value.initialDate = dayjs(initial).format("YYYY-MM-DD");
+  // filter.value.initialDate = dayjs(initial).format("YYYY-MM-DD");
+  // filter.value.finalDate = dayjs(filter.value.initialDate)
+  //   .endOf("month")
+  //   .format("YYYY-MM-DD");
+
+  const selectMonth = dayjs(filter.value.initialDate).format("MM");
+
+  filter.value.initialDate = dayjs(
+    `${filter.value.year}-${selectMonth}-01`
+  ).format("YYYY-MM-DD");
   filter.value.finalDate = dayjs(filter.value.initialDate)
     .endOf("month")
     .format("YYYY-MM-DD");
