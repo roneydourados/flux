@@ -19,7 +19,7 @@ export const useJwtToken = () => {
       },
       secret,
       {
-        expiresIn: "7d",
+        expiresIn: "30d", // Alterado para 30 dias para corresponder ao cookie
         subject: publicId,
         issuer,
         audience,
