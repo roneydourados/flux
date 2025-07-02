@@ -34,9 +34,6 @@
               }}
               <span>Duração</span>
               {{ calculeServiceTotals(item).horas }}
-
-              <span>Início</span>
-              {{ dayjs(item.serviceDate).format("DD/MM/YYYY") }}
             </div>
 
             <div class="d-flex align-center mr-6" style="gap: 0.5rem">
@@ -190,6 +187,31 @@
           </v-list>
         </v-expansion-panel-title>
         <v-expansion-panel-text>
+          <v-row class="mb-4">
+            <v-col
+              cols="12"
+              lg="3"
+              style="gap: 0.5rem"
+              class="d-flex flex-wrap"
+            >
+              <span>Início:</span>
+              <strong>
+                {{
+                  dayjs(item.serviceDate?.substring(0, 10)).format("DD/MM/YYYY")
+                }}
+              </strong>
+              <span>Fim:</span>
+              <strong>
+                {{
+                  item.serviceEndDate
+                    ? dayjs(item.serviceEndDate.substring(0, 10)).format(
+                        "DD/MM/YYYY"
+                      )
+                    : "Em aberto"
+                }}
+              </strong>
+            </v-col>
+          </v-row>
           <v-row dense class="mb-4">
             <v-col cols="12" lg="2">
               <InfoLabel
@@ -214,6 +236,9 @@
           </v-row>
           <v-row dense class="mb-4">
             <v-col cols="12">
+              <div>
+                <strong>Descrição</strong>
+              </div>
               <div style="white-space: pre-line" v-html="item.title" />
             </v-col>
           </v-row>
